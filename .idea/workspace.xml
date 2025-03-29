@@ -6,9 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="b36c3f65-8ee5-4ade-af85-b2a335c13185" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/biz/dss/ticketbookingsystem/GraphPoint.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/biz/dss/ticketbookingsystem/serviceimpl/AuthenticationServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/biz/dss/ticketbookingsystem/serviceimpl/AuthenticationServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/biz/dss/ticketbookingsystem/view/BookingView.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/biz/dss/ticketbookingsystem/view/BookingView.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
