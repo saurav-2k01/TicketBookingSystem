@@ -131,7 +131,7 @@ public class BookingView {
 
 
     public void displayTickets(AuthenticatedUser authenticatedUser) {
-        Response userResponse = userController.getUserById(authenticatedUser.getId());
+        Response userResponse = authenticationController.getAuthenticatedUser(authenticatedUser);
         if (!userResponse.isSuccess()) {
             System.out.println(userResponse.getMessage());
             return;
@@ -148,7 +148,7 @@ public class BookingView {
 
 
     public void cancelTicket(AuthenticatedUser authenticatedUser) {
-        Response userResponse = userController.getUserById(authenticatedUser.getId());
+        Response userResponse = authenticationController.getAuthenticatedUser(authenticatedUser);
         if (!userResponse.isSuccess()) {
             System.out.println(userResponse.getMessage());
             return;

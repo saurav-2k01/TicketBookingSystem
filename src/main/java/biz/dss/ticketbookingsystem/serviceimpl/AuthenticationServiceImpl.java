@@ -20,7 +20,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private static final Logger logger = LoggerFactory.getLogger(AuthenticationServiceImpl.class);
     private final UserDao userDao;
     private Response response;
-    private final List<AuthenticatedUser> authenticatedUsers = new ArrayList<>();
 
     public AuthenticationServiceImpl(UserDao userDao){
         this.userDao = userDao;
@@ -44,8 +43,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                         .userName(user.get().getUserName())
                         .userType(user.get().getUserType())
                         .isLoggedIn(user.get().getIsLoggedIn()).build();
-
-                authenticatedUsers.add(authenticatedUser);
                 response = new Response(authenticatedUser, SUCCESS, String.format("%s is now logged in.", userName));
                 logger.info("user '{}' is successfully logged in.", userName);
             } else {
@@ -65,16 +62,24 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         }
         Optional<User> user = userDao.getUserById(authenticatedUser.getId());
         user.ifPresent(u->u.setIsLoggedIn(false));
-        authenticatedUsers.remove(authenticatedUser);
         response = new Response(SUCCESS, "User is now logged out.");
         return response;
     }
 
     private Response checkLogin(AuthenticatedUser authenticatedUser) {
-        if (Objects.isNull(authenticatedUser) || Boolean.FALSE.equals(authenticatedUser.getIsLoggedIn()) ||Boolean.FALSE.equals(authenticatedUsers.contains(authenticatedUser))) {
-            response = new Response(false,FAILURE,"Login Required.");
+        if(Objects.isNull(authenticatedUser)){
+            response = new Response(FAILURE, "Authenticated user cannot be null.");
+        }
+        Optional<User> userByIdResponse = userDao.getUserById(authenticatedUser.getId());
+        if(userByIdResponse.isPresent()){
+            Boolean isLoggedIn = userByIdResponse.get().getIsLoggedIn();
+            if(isLoggedIn){
+                response = new Response(isLoggedIn, SUCCESS, String.format("%s is logged in.", authenticatedUser.getUserName()));
+            }else{
+                response = new Response(isLoggedIn, FAILURE, "User is not logged in.");
+            }
         }else{
-            response = new Response(true, SUCCESS, "User is Logged in.");
+            response = new Response(FAILURE, "User not found.");
         }
         return response;
     }
