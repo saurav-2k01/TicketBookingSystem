@@ -74,9 +74,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         if(userByIdResponse.isPresent()){
             Boolean isLoggedIn = userByIdResponse.get().getIsLoggedIn();
             if(isLoggedIn){
-                response = new Response(isLoggedIn, SUCCESS, String.format("%s is logged in.", authenticatedUser.getUserName()));
+                response = new Response(true, SUCCESS, String.format("%s is logged in.", authenticatedUser.getUserName()));
             }else{
-                response = new Response(isLoggedIn, FAILURE, "User is not logged in.");
+                response = new Response(false, FAILURE, "User is not logged in.");
             }
         }else{
             response = new Response(FAILURE, "User not found.");
