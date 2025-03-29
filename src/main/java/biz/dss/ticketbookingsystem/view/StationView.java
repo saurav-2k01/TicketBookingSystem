@@ -3,6 +3,7 @@ package biz.dss.ticketbookingsystem.view;
 import biz.dss.ticketbookingsystem.controller.StationController;
 import biz.dss.ticketbookingsystem.models.Station;
 import biz.dss.ticketbookingsystem.utils.*;
+import biz.dss.ticketbookingsystem.valueobjects.AuthenticatedUser;
 
 import java.util.List;
 
@@ -17,18 +18,18 @@ public class StationView {
         this.inputView = inputView;
         this.stationController = stationController;
     }
-    public void addStation(Station station){
+    public void addStation(AuthenticatedUser authenticatedUser, Station station){
         String name = inputView.getName("Station Name: ");
         String shortName = inputView.getName("Shortname: ");
-        Response response = stationController.addStation(new Station(name, shortName));
+        Response response = stationController.addStation(authenticatedUser, new Station(name, shortName));
         System.out.println(response.getMessage());
     }
 
-    public void removeStation(){
+    public void removeStation(AuthenticatedUser authenticatedUser){
         displayStations();
         String name = inputView.getName("Enter Station Name: ");
         Station  station = getStationByName(name);
-        stationController.removeStation(station.getId());
+        stationController.removeStation(authenticatedUser, station.getId());
         displayStations();
     }
 

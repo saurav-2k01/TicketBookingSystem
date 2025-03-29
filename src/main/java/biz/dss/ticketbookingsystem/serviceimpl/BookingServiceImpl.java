@@ -4,10 +4,12 @@ import biz.dss.ticketbookingsystem.dao.TrainBookingDao;
 import biz.dss.ticketbookingsystem.dao.TransactionDao;
 import biz.dss.ticketbookingsystem.enums.TravellingClass;
 import biz.dss.ticketbookingsystem.models.*;
+import biz.dss.ticketbookingsystem.service.AuthenticationService;
 import biz.dss.ticketbookingsystem.service.BookingService;
 import biz.dss.ticketbookingsystem.service.TrainService;
 import biz.dss.ticketbookingsystem.utils.Formatter;
 import biz.dss.ticketbookingsystem.utils.Response;
+import biz.dss.ticketbookingsystem.valueobjects.AuthenticatedUser;
 import biz.dss.ticketbookingsystem.valueobjects.BookingDetail;
 
 import java.time.LocalDate;
@@ -18,15 +20,20 @@ import static biz.dss.ticketbookingsystem.utils.ResponseStatus.*;
 public class BookingServiceImpl implements BookingService {
     private final TransactionDao transactionDao;
     private final TrainBookingDao trainBookingDao;
+    private final AuthenticationService authenticationService;
     private Response response;
 
-    public BookingServiceImpl(TransactionDao transactionDao, TrainBookingDao trainBookingDao) {
+    public BookingServiceImpl(AuthenticationService authenticationService, TransactionDao transactionDao, TrainBookingDao trainBookingDao) {
+        this.authenticationService = authenticationService;
         this.trainBookingDao = trainBookingDao;
         this.transactionDao = transactionDao;
     }
 
     @Override
-    public Response bookTicket(User user, BookingDetail bookingDetail) {
+    public Response bookTicket(AuthenticatedUser authenticatedUser, BookingDetail bookingDetail) {
+        response = authenticationService.getAuthenticatedUser(authenticatedUser);
+        if(!response.isSuccess()) return response;
+        User user = (User)(response.getData());
         List<User> passengerList = bookingDetail.getPassengerList();
         TravellingClass travellingClass = bookingDetail.getTravellingClass();
         LocalDate dateOfJourney = bookingDetail.getDateOfJourney();
@@ -108,7 +115,10 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public Response getTransaction(int pnr) {
+    public Response getTransaction(AuthenticatedUser authenticatedUser, int pnr) {
+        response = authenticationService.getAuthenticatedUser(authenticatedUser);
+        if(!response.isSuccess()) return response;
+        User user = (User)(response.getData());
         Optional<Transaction> transaction = transactionDao.getTransactionByPnr(pnr);
         response = transaction.map(value -> new Response(value, SUCCESS, "Transaction found."))
                 .orElseGet(() -> new Response(FAILURE, "No transaction found with specified PNR"));
@@ -117,8 +127,11 @@ public class BookingServiceImpl implements BookingService {
 
 
 
-    public Response getTickets(User user) {
-        List<Transaction> etickets = user.getPnrList().stream().map(this::getTransaction).filter(Response::isSuccess).map(r -> (Transaction) (r.getData())).toList();
+    public Response getTickets(AuthenticatedUser authenticatedUser) {
+        response = authenticationService.getAuthenticatedUser(authenticatedUser);
+        if(!response.isSuccess()) return response;
+        User user = (User)(response.getData());
+        List<Transaction> etickets = user.getPnrList().stream().map(pnr->getTransaction(authenticatedUser, pnr)).filter(Response::isSuccess).map(r -> (Transaction) (r.getData())).toList();
         if(etickets.isEmpty()){
             response = new Response(FAILURE, "No e-tickets were found.");
         }else{
@@ -127,9 +140,12 @@ public class BookingServiceImpl implements BookingService {
         return response;
     }
 
-        public Response cancelTicket(int pnr) {
+        public Response cancelTicket(AuthenticatedUser authenticatedUser, int pnr) {
+            response = authenticationService.getAuthenticatedUser(authenticatedUser);
+            if(!response.isSuccess()) return response;
+            User user = (User)(response.getData());
 
-        Response transactionResponse = getTransaction(pnr);
+        Response transactionResponse = getTransaction(authenticatedUser, pnr);
         if(transactionResponse.getStatus().equals(FAILURE)){
             return transactionResponse;
         }

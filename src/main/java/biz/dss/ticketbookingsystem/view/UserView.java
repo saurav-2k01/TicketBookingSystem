@@ -47,25 +47,5 @@ public class UserView{
     }
 
 
-    public void deleteUser() {
-        String userName = inputView.getName("Username: ");
-        response = userController.deleteUser(userName);
-        System.out.println(response.getMessage());
-    }
 
-    
-    public void getUsers() {
-        Response usersResponse = userController.getUsers();
-        if(usersResponse.isSuccess()){
-            Formatter.tableTemplate((List<User>)(usersResponse.getData()));
-        }
-    }
-
-    
-    public void displayAllAdmins() {
-        Response allAdminsResponse = userController.getAllAdmins();
-        if(allAdminsResponse.isSuccess()){
-            Formatter.tableTemplate((List<User>)(allAdminsResponse.getData()));
-        }
-    }
 }

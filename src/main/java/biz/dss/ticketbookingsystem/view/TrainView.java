@@ -8,6 +8,7 @@ import biz.dss.ticketbookingsystem.models.Station;
 import biz.dss.ticketbookingsystem.models.Train;
 import biz.dss.ticketbookingsystem.utils.Formatter;
 import biz.dss.ticketbookingsystem.utils.Response;
+import biz.dss.ticketbookingsystem.valueobjects.AuthenticatedUser;
 
 import java.time.DayOfWeek;
 import java.util.ArrayList;
@@ -28,25 +29,25 @@ public class TrainView {
         this.stationController = stationController;
     }
 
-    public void addTrain() {
+    public void addTrain(AuthenticatedUser authenticatedUser) {
         
         Integer trainNumber = inputview.getIntegerInput("Enter Train Number: ");
         String trainName = inputview.getName("Enter Train Name: ");
 
         Train train = new Train(trainNumber, trainName);
-        Response response = trainController.addTrain(train);
+        Response response = trainController.addTrain(authenticatedUser, train);
         System.out.println(response.getMessage());
 
     }
 
-    public void removeTrain() {
+    public void removeTrain(AuthenticatedUser authenticatedUser) {
         displayTrainDetail();
         Integer trainNumber = inputview.getIntegerInput("Enter train number: ");
-        Response response = this.trainController.removeTrain(trainNumber);
+        Response response = this.trainController.removeTrain(authenticatedUser, trainNumber);
         System.out.println(response.getMessage());
     }
 
-    public void addCoach() {
+    public void addCoach(AuthenticatedUser authenticatedUser) {
         List<TravellingClass> travellingClasses = Arrays.stream(TravellingClass.values()).toList();
         travellingClasses.forEach(System.out::println);//todo show index
         TravellingClass travellingClass = inputview.getTravellingClass("Select Travelling CLass: ", travellingClasses);
@@ -60,12 +61,12 @@ public class TrainView {
         for(int i=0;i<qty;i++){
             String name = inputview.getName("Enter Coach Name for coach "+i+1+": ");
             Coach coach = new Coach(travellingClass, name, totalSeats, fareFactor);
-            Response response = trainController.addCoach(coach);
+            Response response = trainController.addCoach(authenticatedUser, coach);
             System.out.println(response.getMessage());
         }
     }
 
-    public void removeCoach() {
+    public void removeCoach(AuthenticatedUser authenticatedUser) {
         getCoaches();
         int coachId = inputview.getIntegerInput("Enter Coach Id: ");
         Response coachResponse = trainController.getCoach(coachId);
@@ -74,7 +75,7 @@ public class TrainView {
             return;
         }
         Coach coach = (Coach) (coachResponse.getData());
-        Response response = trainController.removeCoach(coach);
+        Response response = trainController.removeCoach(authenticatedUser, coach);
         System.out.println(response.getMessage());
     }
 
@@ -90,7 +91,7 @@ public class TrainView {
         Formatter.tableTemplate(trains.values().stream().toList());
     }
 
-    public void addRoute() {
+    public void addRoute(AuthenticatedUser authenticatedUser) {
         List<Station> route = new ArrayList<>();
         Response stationsResponse = stationController.getStations();
         if(stationsResponse.getStatus().equals(FAILURE)){
@@ -114,11 +115,11 @@ public class TrainView {
                 route.add(station);
             }
         }
-        Response response = trainController.addRoute(route);
+        Response response = trainController.addRoute(authenticatedUser, route);
         System.out.println(response.getMessage());
     }
 
-    public void removeRoute() {
+    public void removeRoute(AuthenticatedUser authenticatedUser) {
         Integer trainNumber = inputview.getIntegerInput("Enter Train Number: ");
         Response trainResponse = trainController.getTrain(trainNumber);
         if(trainResponse.getStatus().equals(FAILURE)){
@@ -126,7 +127,7 @@ public class TrainView {
             return;
         }
         Train train = (Train)(trainResponse.getData());
-        Response response = this.trainController.removeRoute(train);
+        Response response = this.trainController.removeRoute(authenticatedUser, train);
         System.out.println(response.getMessage());
     }
 
@@ -154,15 +155,15 @@ public class TrainView {
         route.forEach(System.out::println);
     }
 
-    public void addRunningDay() {
+    public void addRunningDay(AuthenticatedUser authenticatedUser) {
         DayOfWeek runningDay = inputview.getRunningDay("Enter Day: ");
-        Response response = trainController.addRunningDay(runningDay);
+        Response response = trainController.addRunningDay(authenticatedUser, runningDay);
         System.out.println(response.getMessage());
     }
 
-    public void removeRunningDay() {
+    public void removeRunningDay(AuthenticatedUser authenticatedUser) {
         DayOfWeek runningDay = inputview.getRunningDay("Enter Day: ");
-        Response response = trainController.removeRunningDay(runningDay);
+        Response response = trainController.removeRunningDay(authenticatedUser, runningDay);
         System.out.println(response.getMessage());
     }
 

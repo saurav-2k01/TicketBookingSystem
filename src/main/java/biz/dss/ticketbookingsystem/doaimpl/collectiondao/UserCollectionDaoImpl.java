@@ -1,6 +1,7 @@
 package biz.dss.ticketbookingsystem.doaimpl.collectiondao;
 
 import biz.dss.ticketbookingsystem.dao.UserDao;
+import biz.dss.ticketbookingsystem.models.Train;
 import biz.dss.ticketbookingsystem.models.User;
 import biz.dss.ticketbookingsystem.utils.PopulateSomeHardCodedData;
 import java.util.List;
@@ -44,6 +45,22 @@ public class UserCollectionDaoImpl implements UserDao {
             throw new NullPointerException();
         }
         return users.stream().filter(user -> user.getUserName().equals(userName)).findFirst();
+    }
+
+    @Override
+    public Optional<User> updateUser(User user) {
+        if(Objects.isNull(user)){
+            throw new NullPointerException();
+        }
+        Integer id = user.getId();
+        Optional<User> trainResult = users.stream().filter(t -> t.getId().equals(id)).findFirst();
+        if(trainResult.isPresent()){
+            int index = users.indexOf(trainResult.get());
+            users.set(index, user);
+            return Optional.of(user);
+        }else{
+            return Optional.empty();
+        }
     }
 
     public Optional<User> getUserByEmail(String email) {

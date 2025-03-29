@@ -3,6 +3,7 @@ package biz.dss.ticketbookingsystem.service;
 import biz.dss.ticketbookingsystem.enums.TravellingClass;
 import biz.dss.ticketbookingsystem.models.*;
 import biz.dss.ticketbookingsystem.utils.Response;
+import biz.dss.ticketbookingsystem.valueobjects.AuthenticatedUser;
 import biz.dss.ticketbookingsystem.valueobjects.BookingDetail;
 
 import java.time.LocalDate;
@@ -15,11 +16,11 @@ import static biz.dss.ticketbookingsystem.utils.ResponseStatus.FAILURE;
 import static biz.dss.ticketbookingsystem.utils.ResponseStatus.SUCCESS;
 //todo pass authenticatedUser to all service methods
 public interface BookingService {
-    Response bookTicket(User user, BookingDetail bookingDetail);
-    Response getTransaction(int pnr);
+    Response bookTicket(AuthenticatedUser authenticatedUser, BookingDetail bookingDetail);
+    Response getTransaction(AuthenticatedUser authenticatedUser, int pnr);
     Response getAvailableSeats(Train train, LocalDate date);
 
-    Response getTickets(User user) ;
+    Response getTickets(AuthenticatedUser authenticatedUser) ;
 
-    Response cancelTicket(int pnr);
+    Response cancelTicket(AuthenticatedUser authenticatedUser, int pnr);
 }

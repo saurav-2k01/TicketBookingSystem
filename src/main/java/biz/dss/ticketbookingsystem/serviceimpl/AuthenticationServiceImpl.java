@@ -37,6 +37,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
             if (user.get().getPassword().equals(password)) {
                 user.get().setIsLoggedIn(true);
+                userDao.updateUser(user.get());
                 AuthenticatedUser authenticatedUser = AuthenticatedUser
                         .builder()
                         .id(user.get().getId())
@@ -57,18 +58,22 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     public Response logout(AuthenticatedUser authenticatedUser) {
-        if(Boolean.FALSE.equals(checkLogin(authenticatedUser).isSuccess())){
-            return checkLogin(authenticatedUser);
+        response = checkLogin(authenticatedUser);
+        if(! response.isSuccess()){
+            return response;
         }
         Optional<User> user = userDao.getUserById(authenticatedUser.getId());
-        user.ifPresent(u->u.setIsLoggedIn(false));
+        if (user.isPresent()) {
+            user.get().setIsLoggedIn(false);
+            userDao.updateUser(user.get());
+        }
         response = new Response(SUCCESS, "User is now logged out.");
         return response;
     }
 
     private Response checkLogin(AuthenticatedUser authenticatedUser) {
         if(Objects.isNull(authenticatedUser)){
-            response = new Response(FAILURE, "Authenticated user cannot be null.");
+            return new Response(FAILURE, "Authenticated user cannot be null.");
         }
         Optional<User> userByIdResponse = userDao.getUserById(authenticatedUser.getId());
         if(userByIdResponse.isPresent()){

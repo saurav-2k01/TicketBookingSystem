@@ -5,6 +5,7 @@ import biz.dss.ticketbookingsystem.models.Station;
 import biz.dss.ticketbookingsystem.models.Train;
 import biz.dss.ticketbookingsystem.service.TrainService;
 import biz.dss.ticketbookingsystem.utils.Response;
+import biz.dss.ticketbookingsystem.valueobjects.AuthenticatedUser;
 import biz.dss.ticketbookingsystem.valueobjects.TrainSearchDetail;
 import lombok.RequiredArgsConstructor;
 
@@ -18,12 +19,12 @@ public class TrainController {
     private final TrainService trainService;
 
     /*Methods*/
-    public Response addTrain(Train train) {
-        return trainService.addTrain(train);
+    public Response addTrain(AuthenticatedUser authenticatedUser, Train train) {
+        return trainService.addTrain(authenticatedUser, train);
     }
 
-    public Response removeTrain(Integer trainNumber) {
-        return trainService.removeTrain(trainNumber);
+    public Response removeTrain(AuthenticatedUser authenticatedUser, Integer trainNumber) {
+        return trainService.removeTrain(authenticatedUser,trainNumber);
     }
 
     public Response getTrain(Integer trainNumber) {
@@ -42,36 +43,36 @@ public class TrainController {
         return trainService.getTrains();
     }
 
-    public Response addCoach(Coach coach) {
-        return trainService.addCoach(coach);
+    public Response addCoach(AuthenticatedUser authenticatedUser, Coach coach) {
+        return trainService.addCoach(authenticatedUser,coach);
     }
 
-    public Response removeCoach(Coach coach) {
-        return trainService.removeCoach(coach);
+    public Response removeCoach(AuthenticatedUser authenticatedUser, Coach coach) {
+        return trainService.removeCoach(authenticatedUser,coach);
     }
 
     public Response getCoach(Integer coachId) {
         return trainService.getTrain(coachId);
     }
 
-    public Response addRoute(List<Station> route) {
-        return trainService.addRoute(route);
+    public Response addRoute(AuthenticatedUser authenticatedUser, List<Station> route) {
+        return trainService.addRoute(authenticatedUser, route);
     }
 
-    public Response removeRoute(Train train) {
-        return trainService.removeRoute(train);
+    public Response removeRoute(AuthenticatedUser authenticatedUser, Train train) {
+        return trainService.removeRoute(authenticatedUser, train);
     }
 
     public Response getRoute() {
         return trainService.getRoute();
     }
 
-    public Response addRunningDay(DayOfWeek day) {
-        return trainService.addRunningDay(day);
+    public Response addRunningDay(AuthenticatedUser authenticatedUser, DayOfWeek day) {
+        return trainService.addRunningDay(authenticatedUser, day);
     }
 
-    public Response removeRunningDay(DayOfWeek day) {
-        return trainService.removeRunningDay(day);
+    public Response removeRunningDay(AuthenticatedUser authenticatedUser, DayOfWeek day) {
+        return trainService.removeRunningDay(authenticatedUser, day);
     }
 
     public Response getRunningDays() {

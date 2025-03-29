@@ -2,6 +2,7 @@ package biz.dss.ticketbookingsystem.service;
 
 import biz.dss.ticketbookingsystem.models.User;
 import biz.dss.ticketbookingsystem.utils.Response;
+import biz.dss.ticketbookingsystem.valueobjects.AuthenticatedUser;
 
 public interface UserService {
 
@@ -13,10 +14,10 @@ public interface UserService {
 
     Response getUserByUserName(String username);
 
-    Response deleteUser(String username);
+    Response deleteUser(AuthenticatedUser authenticatedUser, String username);
 
-    Response getUsers();
+    Response getUsers(AuthenticatedUser authenticatedUser);
 
-    Response getAllAdmins();
+    Response getAllAdmins(AuthenticatedUser authenticatedUser);
 
 }

@@ -80,7 +80,7 @@ public class DaoFactory {
 
     public static TrainBookingDao getInstanceOfTrainBookingDao(Class<?> implementationClass){
         if (Objects.isNull(trainBookingDao)){
-            synchronized (UserCollectionDaoImpl.class){
+            synchronized (DaoFactory.class){
                 if(Objects.isNull(trainBookingDao)){
                     try {
                         trainBookingDao = (TrainBookingDao) implementationClass.getConstructor().newInstance();

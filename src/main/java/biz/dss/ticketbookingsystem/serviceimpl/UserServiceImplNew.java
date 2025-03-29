@@ -2,8 +2,10 @@ package biz.dss.ticketbookingsystem.serviceimpl;
 
 import biz.dss.ticketbookingsystem.dao.UserDao;
 import biz.dss.ticketbookingsystem.models.User;
+import biz.dss.ticketbookingsystem.service.AuthenticationService;
 import biz.dss.ticketbookingsystem.service.UserService;
 import biz.dss.ticketbookingsystem.utils.Response;
+import biz.dss.ticketbookingsystem.valueobjects.AuthenticatedUser;
 
 import java.util.List;
 import java.util.Objects;
@@ -15,9 +17,11 @@ import static biz.dss.ticketbookingsystem.utils.ResponseStatus.SUCCESS;
 
 public class UserServiceImplNew implements UserService {
     private final UserDao userDao;
+    private final AuthenticationService authenticationService;
     private Response response;
 
-    public UserServiceImplNew(UserDao userDao) {
+    public UserServiceImplNew(AuthenticationService authenticationService, UserDao userDao) {
+        this.authenticationService = authenticationService;
         this.userDao = userDao;
     }
 
@@ -63,18 +67,31 @@ public class UserServiceImplNew implements UserService {
     }
 
 
-    public Response deleteUser(String username) {
+
+
+    public Response deleteUser(AuthenticatedUser authenticatedUser, String username) {
+        response = authenticationService.getAuthenticatedUser(authenticatedUser);
+        if(!response.isSuccess()) return response;
+        User user = (User)(response.getData());
+        if (Boolean.FALSE.equals(user.getIsLoggedIn()) && Boolean.FALSE.equals(user.getUserType().equals(ADMIN))){
+            return response = new Response(FAILURE, "only admins can use this feature.");
+        }
         if (Objects.isNull(username)) {
             return new Response(FAILURE, "Email cannot be null.");
         }
         Optional<User> deletedUser = userDao.deleteUser(username);
-        return deletedUser.map(user -> response = new Response(user, SUCCESS, String.format("user '%s' was deleted.", user.getName())))
+        return deletedUser.map(userValue -> response = new Response(userValue, SUCCESS, String.format("user '%s' was deleted.", user.getName())))
                 .orElseGet(() -> response = new Response(FAILURE, String.format("No user found for username '%s'.", username)));
     }
 
 
-    public Response getUsers() {
-
+    public Response getUsers(AuthenticatedUser authenticatedUser) {
+        response = authenticationService.getAuthenticatedUser(authenticatedUser);
+        if(!response.isSuccess()) return response;
+        User user = (User)(response.getData());
+        if (Boolean.FALSE.equals(user.getIsLoggedIn()) && Boolean.FALSE.equals(user.getUserType().equals(ADMIN))){
+            return response = new Response(FAILURE, "only admins can use this feature.");
+        }
         List<User> users = userDao.getUsers();
         if (Objects.isNull(users)) {
             response = new Response(FAILURE, "no users found.");
@@ -84,9 +101,14 @@ public class UserServiceImplNew implements UserService {
         return response;
     }
 
-    public Response getAllAdmins() {
-
-        List<User> admins = userDao.getUsers().stream().filter(user -> user.getUserType().equals(ADMIN)).toList();
+    public Response getAllAdmins(AuthenticatedUser authenticatedUser) {
+        response = authenticationService.getAuthenticatedUser(authenticatedUser);
+        if(!response.isSuccess()) return response;
+        User user = (User)(response.getData());
+        if (Boolean.FALSE.equals(user.getIsLoggedIn()) && Boolean.FALSE.equals(user.getUserType().equals(ADMIN))){
+            return response = new Response(FAILURE, "only admins can use this feature.");
+        }
+        List<User> admins = userDao.getUsers().stream().filter(u -> u.getUserType().equals(ADMIN)).toList();
         if (admins.isEmpty()) {
             response = new Response(admins, SUCCESS, "No admins found.");
         } else {
