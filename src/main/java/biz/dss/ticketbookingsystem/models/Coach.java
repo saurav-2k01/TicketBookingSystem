@@ -11,8 +11,6 @@ public class Coach {
     private Integer totalSeats;
     private Integer availableSeats;
     private Double fareFactor;
-//    private List<Seat> seatList;
-
 
     public Coach(TravellingClass travellingClass, String coachName, Integer totalSeats,Double fareFactor) {
         this.id = (int)(Math.random()*1000);

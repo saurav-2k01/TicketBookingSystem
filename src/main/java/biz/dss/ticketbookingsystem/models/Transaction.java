@@ -10,7 +10,8 @@ import java.util.List;
 
 @Getter
 public class Transaction implements Formatable {
-    private final Integer pnr = UtilClass.random.nextInt(1000, 100_000_000);
+    @Setter
+    private Integer pnr;
     private final Train train;
     private final Station source;
     private final Station destination;

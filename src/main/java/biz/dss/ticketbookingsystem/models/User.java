@@ -6,6 +6,7 @@ import biz.dss.ticketbookingsystem.intefaces.Formatable;
 import biz.dss.ticketbookingsystem.utils.UtilClass;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.Formattable;
@@ -17,7 +18,7 @@ import static biz.dss.ticketbookingsystem.enums.UserType.REGISTERED_USER;
 @Data
 @Builder
 public class User implements Formatable {
-    private final Integer id = UtilClass.random.nextInt(1000, 10_000_000);
+    private Integer id;
     private String name;
     private String userName;
     private Integer age;
@@ -26,7 +27,7 @@ public class User implements Formatable {
     private String password;
     private String seatNumber;
     private UserType userType;
-    private Boolean isLoggedIn;
+    private Boolean isLoggedIn = false;
     private final List<Integer> pnrList = new ArrayList<>();
 
 
