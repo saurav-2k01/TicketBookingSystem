@@ -8,26 +8,12 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/biz/dss/ticketbookingsystem/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/biz/dss/ticketbookingsystem/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/biz/dss/ticketbookingsystem/Ui/AbstractUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/biz/dss/ticketbookingsystem/Ui/AbstractUI.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/biz/dss/ticketbookingsystem/Ui/AdminUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/biz/dss/ticketbookingsystem/Ui/AdminUI.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/biz/dss/ticketbookingsystem/Ui/UserUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/biz/dss/ticketbookingsystem/Ui/UserUI.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/biz/dss/ticketbookingsystem/controller/BookingController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/biz/dss/ticketbookingsystem/controller/BookingController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/biz/dss/ticketbookingsystem/controller/StationController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/biz/dss/ticketbookingsystem/controller/StationController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/biz/dss/ticketbookingsystem/controller/TrainController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/biz/dss/ticketbookingsystem/controller/TrainController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/biz/dss/ticketbookingsystem/controller/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/biz/dss/ticketbookingsystem/controller/UserController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/biz/dss/ticketbookingsystem/dao/UserDao.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/biz/dss/ticketbookingsystem/dao/UserDao.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/biz/dss/ticketbookingsystem/doaimpl/collectiondao/UserCollectionDaoImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/biz/dss/ticketbookingsystem/doaimpl/collectiondao/UserCollectionDaoImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/biz/dss/ticketbookingsystem/doaimpl/jdbcdao/UserJdbcDaoImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/biz/dss/ticketbookingsystem/doaimpl/jdbcdao/UserJdbcDaoImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/biz/dss/ticketbookingsystem/factory/DaoFactory.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/biz/dss/ticketbookingsystem/factory/DaoFactory.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/biz/dss/ticketbookingsystem/service/BookingService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/biz/dss/ticketbookingsystem/service/BookingService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/biz/dss/ticketbookingsystem/service/StationService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/biz/dss/ticketbookingsystem/service/StationService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/biz/dss/ticketbookingsystem/service/TrainService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/biz/dss/ticketbookingsystem/service/TrainService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/biz/dss/ticketbookingsystem/service/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/biz/dss/ticketbookingsystem/service/UserService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/biz/dss/ticketbookingsystem/serviceimpl/AuthenticationServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/biz/dss/ticketbookingsystem/serviceimpl/AuthenticationServiceImpl.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/biz/dss/ticketbookingsystem/serviceimpl/BookingServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/biz/dss/ticketbookingsystem/serviceimpl/BookingServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/biz/dss/ticketbookingsystem/serviceimpl/StationServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/biz/dss/ticketbookingsystem/serviceimpl/StationServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/biz/dss/ticketbookingsystem/serviceimpl/TrainServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/biz/dss/ticketbookingsystem/serviceimpl/TrainServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/biz/dss/ticketbookingsystem/serviceimpl/UserServiceImplNew.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/biz/dss/ticketbookingsystem/serviceimpl/UserServiceImplNew.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/biz/dss/ticketbookingsystem/view/BookingView.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/biz/dss/ticketbookingsystem/view/BookingView.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/biz/dss/ticketbookingsystem/view/StationView.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/biz/dss/ticketbookingsystem/view/StationView.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/biz/dss/ticketbookingsystem/view/InputView.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/biz/dss/ticketbookingsystem/view/InputView.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/biz/dss/ticketbookingsystem/view/TrainView.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/biz/dss/ticketbookingsystem/view/TrainView.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/biz/dss/ticketbookingsystem/view/UserView.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/biz/dss/ticketbookingsystem/view/UserView.java" afterDir="false" />
     </list>
@@ -54,17 +40,17 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Application.Main.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "service",
-    "ignore.virus.scanning.warn.message": "true",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "E:/dss/TicketBookingSystem"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Application.Main.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;service&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;E:/dss/TicketBookingSystem&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager">
     <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="biz.dss.ticketbookingsystem.Main" />

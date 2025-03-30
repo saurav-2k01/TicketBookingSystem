@@ -24,7 +24,7 @@ public class UserView{
     
     public void registerUser() {
         String name = inputView.getName("Name: ");
-        Integer age = inputView.getAge("Age: ", 18, 100);
+        Integer age = inputView.getAge("Age: ", 100, 18);
         Gender gender = inputView.getGender("Gender: ");
         String userName = inputView.getName("Username: ");
         String email = inputView.getEmail("Email: ");

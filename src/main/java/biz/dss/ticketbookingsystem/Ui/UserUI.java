@@ -14,7 +14,7 @@ public class UserUI extends AbstractUI {
 
 
     public UserUI(AuthenticationController authenticationController, InputView inputView, UserView userView, BookingView bookingView, TrainView trainView,  StationView stationView) {
-        super(authenticationController, inputView);
+        super(authenticationController, inputView, userView, trainView);
         this.bookingView = bookingView;
     }
 

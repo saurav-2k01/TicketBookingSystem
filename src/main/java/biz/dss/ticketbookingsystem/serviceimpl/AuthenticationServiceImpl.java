@@ -66,8 +66,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         if (user.isPresent()) {
             user.get().setIsLoggedIn(false);
             userDao.updateUser(user.get());
+            authenticatedUser.setIsLoggedIn(false);
         }
-        response = new Response(SUCCESS, "User is now logged out.");
+
+        response = new Response(authenticatedUser, SUCCESS, "User is now logged out.");
         return response;
     }
 

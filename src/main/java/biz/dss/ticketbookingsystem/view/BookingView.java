@@ -40,7 +40,8 @@ public class BookingView {
     }
 
     public void bookTicket(AuthenticatedUser authenticatedUser) {
-        TrainSearchDetail trainSearchInput = getTrainSearchInput(false);
+        if(!authenticatedUser.getIsLoggedIn()) return;
+        TrainSearchDetail trainSearchInput = inputView.getTrainSearchInput(false);
         List<Train> trains = filterTrains(trainSearchInput);
         if (trains.isEmpty()) {
             System.out.println("No train available.");return;
@@ -98,7 +99,7 @@ public class BookingView {
     }
 
 
-    private List<AvailableSeats> getAvailableSeatsWithFare(Train train, TrainSearchDetail trainSearchDetail) {
+    public List<AvailableSeats> getAvailableSeatsWithFare(Train train, TrainSearchDetail trainSearchDetail) {
         FareCalculator fareCalculator = new StationBasedFareCalc();
         response = bookingController.getAvailableSeats(train, trainSearchDetail.getDate());
 
@@ -135,6 +136,7 @@ public class BookingView {
 
     public void cancelTicket(AuthenticatedUser authenticatedUser) {
         //todo don't move further without checking user login.
+        if(! authenticatedUser.getIsLoggedIn()) return;
         displayTickets(authenticatedUser);
         Integer pnr = inputView.getIntegerInput("PNR: ");
         response = bookingController.cancelTicket(authenticatedUser, pnr);
@@ -153,36 +155,7 @@ public class BookingView {
         return filteredTrains;
     }
 
-    private TrainSearchDetail getTrainSearchInput(boolean isDateOptional) {
-        Station source = inputView.getStation("Enter Source: ");
-        Station destination = inputView.getStation("Enter destination: ");
-        while (true) {
-            if (source.equals(destination)) {
-                System.out.println("source and destination cannot be same.");
-                destination = inputView.getStation("Enter destination: ");
-            }else{
-                break;
-            }
-        }
-        LocalDate date;
 
-        if (isDateOptional) {
-            System.out.println("Do you want to search train for specific date? (Y/N): ");
-            String choice = inputView.getStringInput("Choice: ");
-            while (true) {
-                if (choice.equalsIgnoreCase("Y")) {
-                    date = inputView.getDate("Enter Date: ");
-                    break;
-                } else if (!choice.equalsIgnoreCase("N")) {
-                    System.out.println("Enter a valid input.");
-                    choice = inputView.getStringInput("Choice: ");
-                }
-            }
-        } else {
-            date = inputView.getDate("Enter Date: ");
-        }
-        return new TrainSearchDetail(source, destination, date);
-    }
 
     private boolean confirmBooking() {
         String choice = inputView.getStringInput("Choice: ");

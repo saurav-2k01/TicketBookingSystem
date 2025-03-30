@@ -83,10 +83,11 @@ public class BookingServiceImpl implements BookingService {
     }
 
     public Response getAvailableSeats(Train train, LocalDate date) {
-
         List<TrainBooking> filteredBookings = filterTrainBooking(train.getTrainNumber(), date);
-        updateTrainBookingData(train, date);
-        filteredBookings = filterTrainBooking(train.getTrainNumber(), date);
+        if(filteredBookings.isEmpty()){
+            updateTrainBookingData(train, date);
+            filteredBookings = filterTrainBooking(train.getTrainNumber(), date);
+        }
         Map<TravellingClass, Integer> availableSeats = new HashMap<>();
 
         for (TrainBooking trainBooking : filteredBookings) {

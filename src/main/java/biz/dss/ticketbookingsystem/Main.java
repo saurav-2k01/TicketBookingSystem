@@ -38,7 +38,7 @@ public class Main {
         InputView inputView = new InputView(userController, stationController);
         BookingView bookingView = new BookingView(inputView, authenticationController, trainController, bookingController, userController);
         StationView stationView = new StationView(inputView, stationController);
-        TrainView trainView = new TrainView(inputView, trainController, stationController);
+        TrainView trainView = new TrainView(inputView, trainController, stationController, bookingView);
         UserView userView = new UserView(inputView, userController);
 
         UserUI userUI = new UserUI(authenticationController,inputView, userView, bookingView, trainView, stationView);
