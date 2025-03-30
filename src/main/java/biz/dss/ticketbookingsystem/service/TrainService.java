@@ -4,6 +4,7 @@ import biz.dss.ticketbookingsystem.models.Coach;
 import biz.dss.ticketbookingsystem.models.Station;
 import biz.dss.ticketbookingsystem.models.Train;
 import biz.dss.ticketbookingsystem.utils.Response;
+import biz.dss.ticketbookingsystem.valueobjects.AuthenticatedUser;
 import biz.dss.ticketbookingsystem.valueobjects.TrainSearchDetail;
 
 import java.time.DayOfWeek;
@@ -14,9 +15,9 @@ import java.util.List;
 
 public interface TrainService {
 
-    Response addTrain(Train train);
+    Response addTrain(AuthenticatedUser authenticatedUser, Train train);
 
-    Response removeTrain(Integer trainNumber);
+    Response removeTrain(AuthenticatedUser authenticatedUser, Integer trainNumber);
 
     Response getTrain(Integer trainNumber);
 
@@ -26,21 +27,21 @@ public interface TrainService {
 
     Response getTrains();
 
-    Response addCoach(Coach coach);
+    Response addCoach(AuthenticatedUser authenticatedUser, Coach coach);
 
-    Response removeCoach(Coach coach);
+    Response removeCoach(AuthenticatedUser authenticatedUser, Coach coach);
 
     Response getCoach(Integer coachId);
 
-    Response addRoute(List<Station> route);
+    Response addRoute(AuthenticatedUser authenticatedUser, List<Station> route);
 
-    Response removeRoute(Train train);
+    Response removeRoute(AuthenticatedUser authenticatedUser, Train train);
 
     Response getRoute();
 
-    Response addRunningDay(DayOfWeek day);
+    Response addRunningDay(AuthenticatedUser authenticatedUser, DayOfWeek day);
 
-    Response removeRunningDay(DayOfWeek day);
+    Response removeRunningDay(AuthenticatedUser authenticatedUser, DayOfWeek day);
 
     Response getRunningDays();
 

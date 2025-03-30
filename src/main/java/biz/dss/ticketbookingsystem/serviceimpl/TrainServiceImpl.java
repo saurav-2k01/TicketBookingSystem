@@ -4,37 +4,55 @@ import biz.dss.ticketbookingsystem.dao.TrainDao;
 import biz.dss.ticketbookingsystem.models.Coach;
 import biz.dss.ticketbookingsystem.models.Station;
 import biz.dss.ticketbookingsystem.models.Train;
+import biz.dss.ticketbookingsystem.models.User;
+import biz.dss.ticketbookingsystem.service.AuthenticationService;
 import biz.dss.ticketbookingsystem.service.TrainService;
 import biz.dss.ticketbookingsystem.utils.FilterTrain;
 import biz.dss.ticketbookingsystem.utils.Response;
+import biz.dss.ticketbookingsystem.valueobjects.AuthenticatedUser;
 import biz.dss.ticketbookingsystem.valueobjects.TrainSearchDetail;
 
 import java.time.DayOfWeek;
 import java.util.*;
 
+import static biz.dss.ticketbookingsystem.enums.UserType.ADMIN;
 import static biz.dss.ticketbookingsystem.utils.ResponseStatus.FAILURE;
 import static biz.dss.ticketbookingsystem.utils.ResponseStatus.SUCCESS;
 
 public class TrainServiceImpl implements TrainService {
     private final TrainDao trainDao;
+    private final AuthenticationService authenticationService;
     private Train currentTrain;
     private final FilterTrain filterTrain;
     private Response response;
 
-    public TrainServiceImpl(TrainDao trainDao) {
+    public TrainServiceImpl(AuthenticationService authenticationService, TrainDao trainDao) {
+        this.authenticationService = authenticationService;
         this.trainDao = trainDao;
         this.filterTrain = new FilterTrain(trainDao.getTrains());
     }
 
     @Override
-    public Response addTrain(Train train) {
+    public Response addTrain(AuthenticatedUser authenticatedUser, Train train) {
+        response = authenticationService.getAuthenticatedUser(authenticatedUser);
+        if(!response.isSuccess()) return response;
+        User user = (User)(response.getData());
+        if (Boolean.FALSE.equals(user.getIsLoggedIn()) && Boolean.FALSE.equals(user.getUserType().equals(ADMIN))){
+            return response = new Response(FAILURE, "only admins can use this feature.");
+        }
         trainDao.addTrain(train);
         response = new Response(train, SUCCESS, "train added successfully");
         return response;
     }
 
     @Override
-    public Response removeTrain(Integer trainNumber) {
+    public Response removeTrain(AuthenticatedUser authenticatedUser, Integer trainNumber) {
+        response = authenticationService.getAuthenticatedUser(authenticatedUser);
+        if(!response.isSuccess()) return response;
+        User user = (User)(response.getData());
+        if (Boolean.FALSE.equals(user.getIsLoggedIn()) && Boolean.FALSE.equals(user.getUserType().equals(ADMIN))){
+            return response = new Response(FAILURE, "only admins can use this feature.");
+        }
         Optional<Train> train = trainDao.getTrainByTrainNumber(trainNumber);
         if (train.isPresent()) {
             Optional<Train> removedTrain = trainDao.deleteTrain(train.get());
@@ -48,7 +66,14 @@ public class TrainServiceImpl implements TrainService {
     }
 
     @Override
-    public Response addCoach(Coach coach) {
+    public Response addCoach(AuthenticatedUser authenticatedUser, Coach coach) {
+        response = authenticationService.getAuthenticatedUser(authenticatedUser);
+        if(!response.isSuccess()) return response;
+        User user = (User)(response.getData());
+        if (Boolean.FALSE.equals(user.getIsLoggedIn()) && Boolean.FALSE.equals(user.getUserType().equals(ADMIN))){
+            return response = new Response(FAILURE, "only admins can use this feature.");
+        }
+
         boolean addedCoach = currentTrain.getCoachList().add(coach);
         if (addedCoach) {
             response = new Response(FAILURE, "Unable to add coach");
@@ -59,7 +84,13 @@ public class TrainServiceImpl implements TrainService {
     }
 
     @Override
-    public Response removeCoach(Coach coach) {
+    public Response removeCoach(AuthenticatedUser authenticatedUser, Coach coach) {
+        response = authenticationService.getAuthenticatedUser(authenticatedUser);
+        if(!response.isSuccess()) return response;
+        User user = (User)(response.getData());
+        if (Boolean.FALSE.equals(user.getIsLoggedIn()) && Boolean.FALSE.equals(user.getUserType().equals(ADMIN))){
+            return response = new Response(FAILURE, "only admins can use this feature.");
+        }
         boolean removeTrain = currentTrain.getCoachList().remove(coach);
         if (removeTrain) {
             response = new Response(FAILURE, "Unable to add coach");
@@ -104,14 +135,26 @@ public class TrainServiceImpl implements TrainService {
     }
 
     @Override
-    public Response addRoute(List<Station> route) {
+    public Response addRoute(AuthenticatedUser authenticatedUser, List<Station> route) {
+        response = authenticationService.getAuthenticatedUser(authenticatedUser);
+        if(!response.isSuccess()) return response;
+        User user = (User)(response.getData());
+        if (Boolean.FALSE.equals(user.getIsLoggedIn()) && Boolean.FALSE.equals(user.getUserType().equals(ADMIN))){
+            return response = new Response(FAILURE, "only admins can use this feature.");
+        }
         currentTrain.setRoute(route);
         response = new Response(SUCCESS, "Added route.");
         return response;
     }
 
     @Override
-    public Response removeRoute(Train train) {
+    public Response removeRoute(AuthenticatedUser authenticatedUser, Train train) {
+        response = authenticationService.getAuthenticatedUser(authenticatedUser);
+        if(!response.isSuccess()) return response;
+        User user = (User)(response.getData());
+        if (Boolean.FALSE.equals(user.getIsLoggedIn()) && Boolean.FALSE.equals(user.getUserType().equals(ADMIN))){
+            return response = new Response(FAILURE, "only admins can use this feature.");
+        }
         train.getRoute().clear();
         response = new Response(SUCCESS, "Removed route from the train.");
         return response;
@@ -148,7 +191,13 @@ public class TrainServiceImpl implements TrainService {
     }
 
     @Override
-    public Response addRunningDay(DayOfWeek day) {
+    public Response addRunningDay(AuthenticatedUser authenticatedUser, DayOfWeek day) {
+        response = authenticationService.getAuthenticatedUser(authenticatedUser);
+        if(!response.isSuccess()) return response;
+        User user = (User)(response.getData());
+        if (Boolean.FALSE.equals(user.getIsLoggedIn()) && Boolean.FALSE.equals(user.getUserType().equals(ADMIN))){
+            return response = new Response(FAILURE, "only admins can use this feature.");
+        }
         boolean addedDay = currentTrain.getRunningDays().add(day);
         if (addedDay) {
             response = new Response(FAILURE, "Unable to add running day");
@@ -159,7 +208,13 @@ public class TrainServiceImpl implements TrainService {
     }
 
     @Override
-    public Response removeRunningDay(DayOfWeek day) {
+    public Response removeRunningDay(AuthenticatedUser authenticatedUser, DayOfWeek day) {
+        response = authenticationService.getAuthenticatedUser(authenticatedUser);
+        if(!response.isSuccess()) return response;
+        User user = (User)(response.getData());
+        if (Boolean.FALSE.equals(user.getIsLoggedIn()) && Boolean.FALSE.equals(user.getUserType().equals(ADMIN))){
+            return response = new Response(FAILURE, "only admins can use this feature.");
+        }
         boolean removedDay = currentTrain.getRunningDays().remove(day);
         if (removedDay) {
             response = new Response(FAILURE, "unable to remove running day.");

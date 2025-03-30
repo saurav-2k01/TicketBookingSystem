@@ -14,6 +14,8 @@ public interface UserDao {
 
     Optional<User> getUserByUserName(String username);
 
+    Optional<User> updateUser(User user);
+
     Optional<User> deleteUser(String username);
 
     List<User> getUsers();

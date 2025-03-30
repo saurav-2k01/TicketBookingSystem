@@ -2,28 +2,40 @@ package biz.dss.ticketbookingsystem.serviceimpl;
 
 import biz.dss.ticketbookingsystem.dao.StationDao;
 import biz.dss.ticketbookingsystem.models.Station;
+import biz.dss.ticketbookingsystem.models.User;
+import biz.dss.ticketbookingsystem.service.AuthenticationService;
 import biz.dss.ticketbookingsystem.service.StationService;
 import biz.dss.ticketbookingsystem.utils.Response;
+import biz.dss.ticketbookingsystem.valueobjects.AuthenticatedUser;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import static biz.dss.ticketbookingsystem.enums.UserType.ADMIN;
 import static biz.dss.ticketbookingsystem.utils.ResponseStatus.FAILURE;
 import static biz.dss.ticketbookingsystem.utils.ResponseStatus.SUCCESS;
 
 public class StationServiceImpl implements StationService{
 
 
+    private final AuthenticationService authenticationService;
     private Response response;
     private final StationDao stationDao;
 
-    public StationServiceImpl(StationDao stationDao) {
+    public StationServiceImpl(AuthenticationService authenticationService, StationDao stationDao) {
+        this.authenticationService = authenticationService;
         this.stationDao = stationDao;
     }
 
     @Override
-    public Response addStation(Station station) {
+    public Response addStation(AuthenticatedUser authenticatedUser, Station station) {
+        response = authenticationService.getAuthenticatedUser(authenticatedUser);
+        if(!response.isSuccess()) return response;
+        User user = (User)(response.getData());
+        if (Boolean.FALSE.equals(user.getIsLoggedIn()) && Boolean.FALSE.equals(user.getUserType().equals(ADMIN))){
+            return response = new Response(FAILURE, "only admins can use this feature.");
+        }
 
         if(Objects.isNull(station)){
             response = new Response(FAILURE, "Station cannot be null.");
@@ -39,7 +51,13 @@ public class StationServiceImpl implements StationService{
     }
 
     @Override
-    public Response removeStation(Integer id) {
+    public Response removeStation(AuthenticatedUser authenticatedUser, Integer id) {
+        response = authenticationService.getAuthenticatedUser(authenticatedUser);
+        if(!response.isSuccess()) return response;
+        User user = (User)(response.getData());
+        if (Boolean.FALSE.equals(user.getIsLoggedIn()) && Boolean.FALSE.equals(user.getUserType().equals(ADMIN))){
+            return response = new Response(FAILURE, "only admins can use this feature.");
+        }
         Optional<Station> station = stationDao.getStationById(id);
         if(station.isPresent()){
             Optional<Station> removedStation = stationDao.deleteStation(station.get());
@@ -51,9 +69,13 @@ public class StationServiceImpl implements StationService{
     }
 
     @Override
-    public Response updateStation(Station station) {
-
-//        Station updatedStation = stations.put(station.getShortName(), station);
+    public Response updateStation(AuthenticatedUser authenticatedUser, Station station) {
+        response = authenticationService.getAuthenticatedUser(authenticatedUser);
+        if(!response.isSuccess()) return response;
+        User user = (User)(response.getData());
+        if (Boolean.FALSE.equals(user.getIsLoggedIn()) && Boolean.FALSE.equals(user.getUserType().equals(ADMIN))){
+            return response = new Response(FAILURE, "only admins can use this feature.");
+        }
         Optional<Station> updatedStation = stationDao.updateStation(station);
         if (updatedStation.isPresent()) {
             response = new Response(FAILURE, "Updating Station was failed.");

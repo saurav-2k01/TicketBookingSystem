@@ -28,6 +28,11 @@ public class UserJdbcDaoImpl implements UserDao {
     }
 
     @Override
+    public Optional<User> updateUser(User user) {
+        return Optional.empty();
+    }
+
+    @Override
     public Optional<User> deleteUser(String username) {
         return Optional.empty();
     }

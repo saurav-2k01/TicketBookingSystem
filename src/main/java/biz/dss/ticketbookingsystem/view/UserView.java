@@ -24,7 +24,7 @@ public class UserView{
     
     public void registerUser() {
         String name = inputView.getName("Name: ");
-        Integer age = inputView.getAge("Age: ", 18, 100);
+        Integer age = inputView.getAge("Age: ", 100, 18);
         Gender gender = inputView.getGender("Gender: ");
         String userName = inputView.getName("Username: ");
         String email = inputView.getEmail("Email: ");
@@ -47,25 +47,5 @@ public class UserView{
     }
 
 
-    public void deleteUser() {
-        String userName = inputView.getName("Username: ");
-        response = userController.deleteUser(userName);
-        System.out.println(response.getMessage());
-    }
 
-    
-    public void getUsers() {
-        Response usersResponse = userController.getUsers();
-        if(usersResponse.isSuccess()){
-            Formatter.tableTemplate((List<User>)(usersResponse.getData()));
-        }
-    }
-
-    
-    public void displayAllAdmins() {
-        Response allAdminsResponse = userController.getAllAdmins();
-        if(allAdminsResponse.isSuccess()){
-            Formatter.tableTemplate((List<User>)(allAdminsResponse.getData()));
-        }
-    }
 }

@@ -24,10 +24,10 @@ public class Main {
         System.out.println(userDao);
 
         AuthenticationService authenticationService = new AuthenticationServiceImpl(userDao);
-        BookingService bookingService = new BookingServiceImpl(transactionDao, trainBookingDao);
-        StationService stationService = new StationServiceImpl(stationDao);
-        TrainService trainService = new TrainServiceImpl(trainDao);
-        UserService userService = new UserServiceImplNew(userDao);
+        BookingService bookingService = new BookingServiceImpl(authenticationService, transactionDao, trainBookingDao);
+        StationService stationService = new StationServiceImpl(authenticationService, stationDao);
+        TrainService trainService = new TrainServiceImpl(authenticationService, trainDao);
+        UserService userService = new UserServiceImplNew(authenticationService,userDao);
 
         AuthenticationController authenticationController = new AuthenticationController(authenticationService);
         BookingController bookingController = new BookingController(bookingService);
@@ -38,7 +38,7 @@ public class Main {
         InputView inputView = new InputView(userController, stationController);
         BookingView bookingView = new BookingView(inputView, authenticationController, trainController, bookingController, userController);
         StationView stationView = new StationView(inputView, stationController);
-        TrainView trainView = new TrainView(inputView, trainController, stationController);
+        TrainView trainView = new TrainView(inputView, trainController, stationController, bookingView);
         UserView userView = new UserView(inputView, userController);
 
         UserUI userUI = new UserUI(authenticationController,inputView, userView, bookingView, trainView, stationView);

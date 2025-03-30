@@ -4,6 +4,7 @@ package biz.dss.ticketbookingsystem.controller;
 import biz.dss.ticketbookingsystem.models.User;
 import biz.dss.ticketbookingsystem.service.UserService;
 import biz.dss.ticketbookingsystem.utils.Response;
+import biz.dss.ticketbookingsystem.valueobjects.AuthenticatedUser;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -28,15 +29,15 @@ public class UserController{
         return userService.getUserByUserName(username);
     }
 
-    public Response deleteUser(String username) {
-        return userService.deleteUser(username);
+    public Response deleteUser(AuthenticatedUser authenticatedUser, String username) {
+        return userService.deleteUser(authenticatedUser, username);
     }
 
-    public Response getUsers() {
-        return userService.getUsers();
+    public Response getUsers(AuthenticatedUser authenticatedUser) {
+        return userService.getUsers(authenticatedUser);
     }
 
-    public Response getAllAdmins() {
-        return userService.getAllAdmins();
+    public Response getAllAdmins(AuthenticatedUser authenticatedUser) {
+        return userService.getAllAdmins(authenticatedUser);
     }
 }

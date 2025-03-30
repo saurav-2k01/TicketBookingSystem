@@ -9,19 +9,12 @@ import biz.dss.ticketbookingsystem.view.UserView;
 import biz.dss.ticketbookingsystem.view.InputView;
 
 public class UserUI extends AbstractUI {
-
-    private final UserView userView;
-    private final TrainView trainView;
-    private final StationView stationView;
     private final BookingView bookingView;
     private AuthenticatedUser authenticatedUser;
 
 
     public UserUI(AuthenticationController authenticationController, InputView inputView, UserView userView, BookingView bookingView, TrainView trainView,  StationView stationView) {
-        super(authenticationController, inputView);
-        this.userView = userView;
-        this.trainView = trainView;
-        this.stationView = stationView;
+        super(authenticationController, inputView, userView, trainView);
         this.bookingView = bookingView;
     }
 
@@ -39,7 +32,7 @@ public class UserUI extends AbstractUI {
                 case 3 -> bookingView.displayTickets(this.authenticatedUser);
                 case 4 -> bookingView.displayTicket(this.authenticatedUser);
                 case 5 -> bookingView.cancelTicket(this.authenticatedUser);
-                case 6 -> System.out.println(authenticationController.logout(this.authenticatedUser).getMessage());
+                case 6 -> super.logout();
                 default -> System.out.println("Invalid Options.");
             }
         }

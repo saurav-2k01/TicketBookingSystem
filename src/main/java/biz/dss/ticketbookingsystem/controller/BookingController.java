@@ -4,6 +4,7 @@ import biz.dss.ticketbookingsystem.models.Train;
 import biz.dss.ticketbookingsystem.models.User;
 import biz.dss.ticketbookingsystem.service.BookingService;
 import biz.dss.ticketbookingsystem.utils.Response;
+import biz.dss.ticketbookingsystem.valueobjects.AuthenticatedUser;
 import biz.dss.ticketbookingsystem.valueobjects.BookingDetail;
 import lombok.RequiredArgsConstructor;
 
@@ -15,13 +16,13 @@ public class BookingController{
     private final BookingService bookingService;
 
     
-    public Response bookTicket(User user, BookingDetail bookingDetail) {
-        return bookingService.bookTicket(user, bookingDetail);
+    public Response bookTicket(AuthenticatedUser authenticatedUser, BookingDetail bookingDetail) {
+        return bookingService.bookTicket(authenticatedUser, bookingDetail);
     }
 
     
-    public Response getTransaction(int pnr) {
-        return bookingService.getTransaction(pnr);
+    public Response getTransaction(AuthenticatedUser authenticatedUser, int pnr) {
+        return bookingService.getTransaction(authenticatedUser, pnr);
     }
 
     
@@ -30,13 +31,13 @@ public class BookingController{
     }
 
     
-    public Response getTickets(User user) {
-        return bookingService.getTickets(user);
+    public Response getTickets(AuthenticatedUser authenticatedUser) {
+        return bookingService.getTickets(authenticatedUser);
     }
 
     
-    public Response cancelTicket(int pnr) {
-        return bookingService.cancelTicket(pnr);
+    public Response cancelTicket(AuthenticatedUser authenticatedUser, int pnr) {
+        return bookingService.cancelTicket(authenticatedUser, pnr);
     }
 
 

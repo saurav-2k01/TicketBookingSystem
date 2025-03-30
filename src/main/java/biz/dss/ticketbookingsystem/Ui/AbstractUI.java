@@ -4,20 +4,26 @@ import biz.dss.ticketbookingsystem.controller.AuthenticationController;
 import biz.dss.ticketbookingsystem.utils.Response;
 import biz.dss.ticketbookingsystem.valueobjects.AuthenticatedUser;
 import biz.dss.ticketbookingsystem.view.InputView;
+import biz.dss.ticketbookingsystem.view.TrainView;
+import biz.dss.ticketbookingsystem.view.UserView;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 abstract public class AbstractUI {
     protected final AuthenticationController authenticationController;
     protected final InputView inputView;
+    protected  final UserView userView;
+    protected final TrainView trainView;
+    protected AuthenticatedUser authenticatedUser;
     private Response response;
+
 
     public void login(){
         String userName = inputView.getStringInput("Username: ");
         String password = inputView.getStringInput("Password: ");
         response = authenticationController.authenticateUser(userName, password);
         if(Boolean.TRUE.equals(response.isSuccess())){
-            AuthenticatedUser authenticatedUser = (AuthenticatedUser) (response.getData());
+            authenticatedUser = (AuthenticatedUser) (response.getData());
             switch (authenticatedUser.getUserType()){
                 case ADMIN -> adminUI(authenticatedUser);
                 case REGISTERED_USER -> userUI(authenticatedUser);
@@ -27,17 +33,28 @@ abstract public class AbstractUI {
         }
     }
 
+    public void logout(){
+        response = authenticationController.logout(authenticatedUser);
+        System.out.println(response.getMessage());
+        if(response.isSuccess()){
+            authenticatedUser = (AuthenticatedUser) (response.getData());
+            home();
+        }
+    }
+
     public void adminUI(AuthenticatedUser authenticatedUser){}
 
     public void userUI(AuthenticatedUser authenticatedUser){}
 
     public void home(){
         while(1>0){
-            System.out.println("1. Login");
+
+            System.out.println("[1] Login\n[2] Register User\n[3] Search Trains\n");
             Integer choice = inputView.getChoice("Choice: ");
             switch (choice){
                 case 1 -> login();
-
+                case 2 -> userView.registerUser();
+                case 3 -> trainView.searchTrain();
             }
         }
 

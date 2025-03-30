@@ -10,6 +10,7 @@ import biz.dss.ticketbookingsystem.utils.Formatter;
 import biz.dss.ticketbookingsystem.utils.Response;
 import biz.dss.ticketbookingsystem.utils.UtilClass;
 import biz.dss.ticketbookingsystem.utils.Validator;
+import biz.dss.ticketbookingsystem.valueobjects.TrainSearchDetail;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -230,9 +231,7 @@ public class InputView {
     }
 
     public List<User> getPassengersList() {
-        System.out.println("Enter number of passengers");
-        int numberOfPassenger = input.nextInt();
-        input.nextLine();
+        int numberOfPassenger = getIntegerInput("Enter number of passengers");
         List<User> passengersList = new ArrayList<>();
         for (int i = 0; i < numberOfPassenger; i++) {
             System.out.printf("============Passenger-%d============%n", i+1);
@@ -266,5 +265,38 @@ public class InputView {
         }
     }
 
+    public TrainSearchDetail getTrainSearchInput(boolean isDateOptional) {
+        Station source = getStation("Enter Source: ");
+        Station destination = getStation("Enter destination: ");
+        while (true) {
+            if (source.equals(destination)) {
+                System.out.println("source and destination cannot be same.");
+                destination = getStation("Enter destination: ");
+            }else{
+                break;
+            }
+        }
+        LocalDate date;
+
+        if (isDateOptional) {
+            System.out.println("Do you want to search train for specific date? (Y/N): ");
+            String choice = getStringInput("Choice: ");
+            while (true) {
+                if (choice.equalsIgnoreCase("Y")) {
+                    date = getDate("Enter Date: ");
+                    break;
+                } else if (!choice.equalsIgnoreCase("N")) {
+                    System.out.println("Enter a valid input.");
+                    choice = getStringInput("Choice: ");
+                }else{
+                    date = null;
+                    break;
+                }
+            }
+        } else {
+            date = getDate("Enter Date: ");
+        }
+        return new TrainSearchDetail(source, destination, date);
+    }
 
 }
