@@ -16,7 +16,7 @@ public class PopulateData {
     public  static List<Train> loadTrainsData(){
         List<Station> stations = loadStations();
         List<Train> trains = new ArrayList<>();
-        Train t = new Train(12312, "Indian Rail");
+        Train t = Train.builder().trainNumber(12312).trainName("Indian Rail").build();
 
         t.getRoute().add(stations.stream().filter(station -> station.getShortName().equals("MUM")).findFirst().get());
         t.getRoute().add(stations.stream().filter(station -> station.getShortName().equals("BAN")).findFirst().get());

@@ -3,15 +3,15 @@ package biz.dss.ticketbookingsystem.doaimpl.collectiondao;
 import biz.dss.ticketbookingsystem.dao.TrainDao;
 import biz.dss.ticketbookingsystem.models.Train;
 import biz.dss.ticketbookingsystem.utils.PopulateData;
+import lombok.NoArgsConstructor;
+
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+@NoArgsConstructor
 public class TrainDaoCollectionImpl implements TrainDao {
     private final List<Train> trains = PopulateData.loadTrainsData();
-
-    public TrainDaoCollectionImpl(){
-    }
 
     public Optional<Train> addTrain(Train train){
         if(Objects.isNull(train)){
@@ -31,7 +31,7 @@ public class TrainDaoCollectionImpl implements TrainDao {
         if(Objects.isNull(id)){
             throw new NullPointerException();
         }
-        return trains.stream().filter(train -> train.getId().equals(id)).findFirst();
+        return trains.stream().filter(train -> train.getTrainNumber().equals(id)).findFirst();
     }
 
     public Optional<Train> getTrainByTrainNumber(Integer trainNumber){
@@ -52,8 +52,8 @@ public class TrainDaoCollectionImpl implements TrainDao {
         if(Objects.isNull(train)){
             throw new NullPointerException();
         }
-        Integer id = train.getId();
-        Optional<Train> trainResult = trains.stream().filter(t -> t.getId().equals(id)).findFirst();
+        Integer id = train.getTrainNumber();
+        Optional<Train> trainResult = trains.stream().filter(t -> t.getTrainNumber().equals(id)).findFirst();
         if(trainResult.isPresent()){
             int index = trains.indexOf(trainResult.get());
             trains.set(index, train);

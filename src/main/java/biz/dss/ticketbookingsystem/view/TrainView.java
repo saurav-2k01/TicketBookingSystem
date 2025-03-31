@@ -37,7 +37,7 @@ public class TrainView {
         Integer trainNumber = inputview.getIntegerInput("Enter Train Number: ");
         String trainName = inputview.getName("Enter Train Name: ");
 
-        Train train = new Train(trainNumber, trainName);
+        Train train = Train.builder().trainName(trainName).trainNumber(trainNumber).build();
         Response response = trainController.addTrain(authenticatedUser, train);
         System.out.println(response.getMessage());
 

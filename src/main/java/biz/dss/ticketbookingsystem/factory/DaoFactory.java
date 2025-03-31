@@ -41,6 +41,8 @@ public class DaoFactory {
                         trainDao = (TrainDao) implementationClass.getConstructor().newInstance();
                     } catch (NoSuchMethodException | InvocationTargetException |InstantiationException | IllegalAccessException | ClassCastException e) {
                         System.out.println(e.getLocalizedMessage());
+                        System.out.println(e.getCause());
+                        e.printStackTrace();
                     }
                 }
             }

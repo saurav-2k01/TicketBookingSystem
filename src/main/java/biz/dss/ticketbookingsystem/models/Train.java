@@ -10,14 +10,14 @@ import java.util.*;
 @Data
 @Builder
 public class Train implements Formatable {
-    private Integer id;
     private Integer trainNumber;
     private String trainName;
     private Station source;
     private Station destination;
-    private List<Coach> coachList;
-    private List<Station> route;
-    private Set<DayOfWeek> runningDays;
+    @Builder.Default
+    private List<Coach> coachList = new ArrayList<>();
+    private final List<Station> route = new ArrayList<>();
+    private final Set<DayOfWeek> runningDays = new HashSet<>();
 
     @Override
     public List<String> fieldsToDisplay() {
@@ -33,5 +33,8 @@ public class Train implements Formatable {
     @Override
     public String getDisplayableTitle() {
         return "Trains";
+    }
+
+    public void setRoute(List<Station> route) {
     }
 }

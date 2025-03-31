@@ -16,6 +16,7 @@ import biz.dss.ticketbookingsystem.view.*;
 public class Main {
     public static void main(String[] args) {
 
+        System.out.println(TrainDaoCollectionImpl.class);
         TrainDao trainDao = DaoFactory.getInstanceOfTrainDao((TrainDaoCollectionImpl.class));
 //        UserDao userDao = DaoFactory.getInstanceOfUserDao(UserCollectionDaoImpl.class);
         UserDao userDao = DaoFactory.getInstanceOfUserDao(UserJdbcDaoImpl.class);
