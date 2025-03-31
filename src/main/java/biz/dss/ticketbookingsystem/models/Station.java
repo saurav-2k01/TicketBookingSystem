@@ -14,7 +14,8 @@ public class Station implements Formatable {
     private String name;
     private String shortName;
 
-    public Station(String name, String shortName) {
+    public Station(Integer id, String name, String shortName) {
+        this.id = id;
         this.name = name;
         this.shortName = shortName;
     }

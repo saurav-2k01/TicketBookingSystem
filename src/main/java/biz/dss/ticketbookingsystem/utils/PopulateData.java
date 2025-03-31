@@ -53,26 +53,26 @@ public class PopulateData {
 
     public static List<Station> loadStations(){
         List<Station> stations = new ArrayList<>();
-        Station Mumbai = new Station("Mumbai", "MUM");
-        Station Delhi = new Station("Delhi", "DEL");
-        Station Chennai = new Station("Chennai", "CHE");
-        Station Kolkata = new Station("Kolkata", "KOL");
-        Station Bangalore = new Station("Bangalore", "BAN");
-        Station Hyderabad = new Station("Hyderabad", "HYD");
-        Station Ahmedabad = new Station("Ahmedabad", "AMD");
-        Station Pune = new Station("Pune", "PNE");
-        Station Lucknow = new Station("Lucknow", "LKO");
-        Station Jaipur = new Station("Jaipur", "JAI");
-        Station Kochi = new Station("Kochi", "COK");
-        Station Chandigarh = new Station("Chandigarh", "CHD");
-        Station Indore = new Station("Indore", "IND");
-        Station Patna = new Station("Patna", "PAT");
-        Station Bhopal = new Station("Bhopal", "BPL");
-        Station Surat = new Station("Surat", "SUR");
-        Station Nagpur = new Station("Nagpur", "NGP");
-        Station Visakhapatnam = new Station("Visakhapatnam", "VIZ");
-        Station Goa = new Station("Goa", "GOA");
-        Station Vadodara = new Station("Vadodara", "VAD");
+        Station Mumbai = new Station(1432,"Mumbai", "MUM");
+        Station Delhi = new Station(545234,"Delhi", "DEL");
+        Station Chennai = new Station(234252,"Chennai", "CHE");
+        Station Kolkata = new Station(23452,"Kolkata", "KOL");
+        Station Bangalore = new Station(5234,"Bangalore", "BAN");
+        Station Hyderabad = new Station(63423,"Hyderabad", "HYD");
+        Station Ahmedabad = new Station(345345,"Ahmedabad", "AMD");
+        Station Pune = new Station(342346546,"Pune", "PNE");
+        Station Lucknow = new Station(73234,"Lucknow", "LKO");
+        Station Jaipur = new Station(2632234,"Jaipur", "JAI");
+        Station Kochi = new Station(234634,"Kochi", "COK");
+        Station Chandigarh = new Station(635234,"Chandigarh", "CHD");
+        Station Indore = new Station(63452,"Indore", "IND");
+        Station Patna = new Station(62568322,"Patna", "PAT");
+        Station Bhopal = new Station(74563,"Bhopal", "BPL");
+        Station Surat = new Station(9567856,"Surat", "SUR");
+        Station Nagpur = new Station(23922,"Nagpur", "NGP");
+        Station Visakhapatnam = new Station(783091,"Visakhapatnam", "VIZ");
+        Station Goa = new Station(6729782,"Goa", "GOA");
+        Station Vadodara = new Station(23424,"Vadodara", "VAD");
 
         stations.add(Mumbai);
         stations.add(Delhi);

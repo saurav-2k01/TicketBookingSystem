@@ -12,6 +12,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -73,6 +74,30 @@ public class UserJdbcDaoImpl implements UserDao {
 
     @Override
     public Optional<User> getUserByEmail(String email) {
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(SqlQueries.getUserByEmail);
+            preparedStatement.setString(1, email);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while(resultSet.next()){
+                int id = resultSet.getInt("id");
+                String name = resultSet.getString("name");
+                String userName = resultSet.getString("username");
+                int age = resultSet.getInt("age");
+                String gender = resultSet.getString("gender");
+                String email_ = resultSet.getString("email");
+                String password = resultSet.getString("password");
+                String seatNumber = resultSet.getString("seat_number");
+                String userType = resultSet.getString("user_type");
+                boolean isLoggedIn = resultSet.getBoolean("is_logged_in");
+                User user = User.builder().id(id).name(name).userName(userName)
+                        .age(age).gender(Gender.valueOf(gender.toUpperCase()))
+                        .password(password).email(email_).userType(UserType.valueOf(userType.toUpperCase()))
+                        .seatNumber(seatNumber).isLoggedIn(isLoggedIn).build();
+                return Optional.of(user);
+            }
+        } catch (SQLException | NullPointerException e) {
+            throw new RuntimeException(e);
+        }
         return Optional.empty();
     }
 
@@ -93,7 +118,7 @@ public class UserJdbcDaoImpl implements UserDao {
                 String seatNumber = resultSet.getString("seat_number");
                 String userType = resultSet.getString("user_type");
                 boolean isLoggedIn = resultSet.getBoolean("is_logged_in");
-                User user = User.builder().id(id).name(name).userName(username)
+                User user = User.builder().id(id).name(name).userName(userName)
                         .age(age).gender(Gender.valueOf(gender.toUpperCase()))
                         .password(password).email(email).userType(UserType.valueOf(userType.toUpperCase()))
                         .seatNumber(seatNumber).isLoggedIn(isLoggedIn).build();
@@ -132,11 +157,48 @@ public class UserJdbcDaoImpl implements UserDao {
 
     @Override
     public Optional<User> deleteUser(String username) {
+        Optional<User> userOpt = getUserByUserName(username);
+        if(userOpt.isEmpty()) return Optional.empty();
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(SqlQueries.deleteUserbyUserName);
+            preparedStatement.setString(1, username);
+            int affectedRows = preparedStatement.executeUpdate();
+            if(affectedRows>0){
+                return userOpt;
+            }
+        } catch (SQLException | NullPointerException e) {
+            throw new RuntimeException(e);
+        }
         return Optional.empty();
     }
 
     @Override
     public List<User> getUsers() {
-        return List.of();
+        List<User> users = new ArrayList<>();
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(SqlQueries.getAllUsers);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while(resultSet.next()){
+                int id = resultSet.getInt("id");
+                String name = resultSet.getString("name");
+                String userName = resultSet.getString("username");
+                int age = resultSet.getInt("age");
+                String gender = resultSet.getString("gender");
+                String email = resultSet.getString("email");
+                String password = resultSet.getString("password");
+                String seatNumber = resultSet.getString("seat_number");
+                String userType = resultSet.getString("user_type");
+                boolean isLoggedIn = resultSet.getBoolean("is_logged_in");
+                User user = User.builder().id(id).name(name).userName(userName)
+                        .age(age).gender(Gender.valueOf(gender.toUpperCase()))
+                        .password(password).email(email).userType(UserType.valueOf(userType.toUpperCase()))
+                        .seatNumber(seatNumber).isLoggedIn(isLoggedIn).build();
+                users.add(user);
+            }
+        } catch (SQLException | NullPointerException e) {
+            throw new RuntimeException(e);
+        }
+
+        return users;
     }
 }
