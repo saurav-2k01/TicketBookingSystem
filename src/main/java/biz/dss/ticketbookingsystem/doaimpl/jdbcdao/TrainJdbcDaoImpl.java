@@ -172,8 +172,23 @@ public class TrainJdbcDaoImpl implements TrainDao {
 //        } catch (SQLException e) {
 //            throw new RuntimeException(e);
 //        }
-        return List.of();
-
+        try {
+            List<Integer> trainNumbers = new ArrayList<>();
+            PreparedStatement preparedStatement = connection.prepareStatement("select train_number from train;");
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()){
+                int trainNumber = resultSet.getInt("train_number");
+                trainNumbers.add(trainNumber);
+            }
+            List<Train> trains = new ArrayList<>();
+            for(int train_number : trainNumbers){
+                Optional<Train> trainByTrainNumber = getTrainByTrainNumber(train_number);
+                trainByTrainNumber.ifPresent(trains::add);
+            }
+            return trains;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private static Coach getCoachFromResultSet(ResultSet resultSet) throws SQLException {
