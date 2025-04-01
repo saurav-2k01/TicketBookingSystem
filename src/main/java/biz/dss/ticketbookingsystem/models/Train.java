@@ -16,7 +16,9 @@ public class Train implements Formatable {
     private Station destination;
     @Builder.Default
     private List<Coach> coachList = new ArrayList<>();
+    @Builder.Default
     private final List<Station> route = new ArrayList<>();
+    @Builder.Default
     private final Set<DayOfWeek> runningDays = new HashSet<>();
 
     @Override

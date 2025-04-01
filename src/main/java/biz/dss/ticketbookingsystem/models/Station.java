@@ -9,10 +9,11 @@ import java.util.List;
 import java.util.Objects;
 
 @Data
-public class Station implements Formatable {
+public class Station  implements Formatable, Comparable {
     private Integer id;
     private String name;
     private String shortName;
+    private Integer sequence_num;
 
     public Station(Integer id, String name, String shortName) {
         this.id = id;
@@ -33,5 +34,12 @@ public class Station implements Formatable {
     @Override
     public String getDisplayableTitle() {
         return "Stations";
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        if(Objects.isNull(o)) return 10000;
+        Station other = (Station)(o);
+        return sequence_num-other.sequence_num;
     }
 }

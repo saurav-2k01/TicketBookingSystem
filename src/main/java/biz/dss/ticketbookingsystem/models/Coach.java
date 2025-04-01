@@ -12,8 +12,8 @@ public class Coach {
     private Integer availableSeats;
     private Double fareFactor;
 
-    public Coach(TravellingClass travellingClass, String coachName, Integer totalSeats,Double fareFactor) {
-        this.id = (int)(Math.random()*1000);
+    public Coach(Integer id, TravellingClass travellingClass, String coachName, Integer totalSeats,Double fareFactor) {
+        this.id = id;
         this.travellingClass = travellingClass;
         this.coachName = coachName;
         this.totalSeats = totalSeats;

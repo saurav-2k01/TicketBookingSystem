@@ -21,7 +21,7 @@ public class StationView {
     public void addStation(AuthenticatedUser authenticatedUser, Station station){
         String name = inputView.getName("Station Name: ");
         String shortName = inputView.getName("Shortname: ");
-        Response response = stationController.addStation(authenticatedUser, new Station(name, shortName));
+        Response response = stationController.addStation(authenticatedUser, new Station(UtilClass.random.nextInt(10_000_000), name, shortName));
         System.out.println(response.getMessage());
     }
 

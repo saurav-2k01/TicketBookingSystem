@@ -8,8 +8,8 @@ target/
 .idea/jarRepositories.xml
 .idea/compiler.xml
 .idea/libraries/
-
 .idea/workspace.xml
+src/main/java/biz/dss/ticketbookingsystem/utils/Rough.java
 *.iws
 *.iml
 *.ipr

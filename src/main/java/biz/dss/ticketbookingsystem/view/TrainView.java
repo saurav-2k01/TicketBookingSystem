@@ -63,7 +63,7 @@ public class TrainView {
 
         for (int i = 0; i < qty; i++) {
             String name = inputview.getName("Enter Coach Name for coach " + i + 1 + ": ");
-            Coach coach = new Coach(travellingClass, name, totalSeats, fareFactor);
+            Coach coach = new Coach(234124,travellingClass, name, totalSeats, fareFactor);
             Response response = trainController.addCoach(authenticatedUser, coach);
             System.out.println(response.getMessage());
         }
