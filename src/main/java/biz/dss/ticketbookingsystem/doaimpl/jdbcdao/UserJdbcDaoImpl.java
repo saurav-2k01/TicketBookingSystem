@@ -6,6 +6,7 @@ import biz.dss.ticketbookingsystem.enums.UserType;
 import biz.dss.ticketbookingsystem.models.User;
 import biz.dss.ticketbookingsystem.utils.DbConnection;
 import biz.dss.ticketbookingsystem.utils.SqlQueries;
+import biz.dss.ticketbookingsystem.utils.UtilClass;
 
 import javax.swing.text.html.Option;
 import java.sql.Connection;
@@ -23,7 +24,7 @@ public class UserJdbcDaoImpl implements UserDao {
     public Optional<User> addUser(User user) {
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(SqlQueries.addUserQuery);
-            preparedStatement.setInt(1, user.getId());
+            preparedStatement.setInt(1, UtilClass.random.nextInt(100_000));
             preparedStatement.setString(2, user.getName());
             preparedStatement.setString(3, user.getUserName());
             preparedStatement.setInt(4, user.getAge());

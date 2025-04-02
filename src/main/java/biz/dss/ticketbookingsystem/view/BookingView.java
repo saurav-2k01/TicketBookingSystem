@@ -69,7 +69,7 @@ public class BookingView {
             BookingDetail bookingDetails = BookingDetail.builder().train(train.get()).travellingClass(travellingClass)
                     .from(trainSearchInput.getSource()).to(trainSearchInput.getDestination())
                     .dateOfJourney(trainSearchInput.getDate()).totalFare(totalFare).passengerList(passengers).build();
-
+            //TODO Insert passengers in the database and map them into db with pnr number.
             Response bookingResponse = bookingController.bookTicket(authenticatedUser, bookingDetails);
             if (Boolean.TRUE.equals(bookingResponse.isSuccess())) {
                 Formatter.formatTicket((Transaction) bookingResponse.getData());

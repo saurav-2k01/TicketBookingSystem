@@ -5,8 +5,7 @@ import biz.dss.ticketbookingsystem.Ui.UserUI;
 import biz.dss.ticketbookingsystem.controller.*;
 import biz.dss.ticketbookingsystem.dao.*;
 import biz.dss.ticketbookingsystem.doaimpl.collectiondao.*;
-import biz.dss.ticketbookingsystem.doaimpl.jdbcdao.TrainJdbcDaoImpl;
-import biz.dss.ticketbookingsystem.doaimpl.jdbcdao.UserJdbcDaoImpl;
+import biz.dss.ticketbookingsystem.doaimpl.jdbcdao.*;
 import biz.dss.ticketbookingsystem.factory.DaoFactory;
 import biz.dss.ticketbookingsystem.service.*;
 import biz.dss.ticketbookingsystem.serviceimpl.*;
@@ -17,15 +16,13 @@ import biz.dss.ticketbookingsystem.view.*;
 public class Main {
     public static void main(String[] args) {
 
-        System.out.println(TrainDaoCollectionImpl.class);
         TrainDao trainDao = DaoFactory.getInstanceOfTrainDao((TrainJdbcDaoImpl.class));
 //        UserDao userDao = DaoFactory.getInstanceOfUserDao(UserCollectionDaoImpl.class);
         UserDao userDao = DaoFactory.getInstanceOfUserDao(UserJdbcDaoImpl.class);
-        StationDao stationDao = DaoFactory.getInstanceOfStationDao(StationDaoCollectionImpl.class);
-        TransactionDao transactionDao = DaoFactory.getInstanceOfTransaction(TransactionCollectionDaoImpl.class);
-        TrainBookingDao trainBookingDao = DaoFactory.getInstanceOfTrainBookingDao(TrainBookingCollectionDaoImpl.class);
+        StationDao stationDao = DaoFactory.getInstanceOfStationDao(StationJdbcDaoImpl.class);
+        TransactionDao transactionDao = DaoFactory.getInstanceOfTransaction(TransactionJdbcDaoImpl.class);
+        TrainBookingDao trainBookingDao = DaoFactory.getInstanceOfTrainBookingDao(TrainBookingJdbcImpl.class);
 
-        System.out.println(userDao);
 
         AuthenticationService authenticationService = new AuthenticationServiceImpl(userDao);
         BookingService bookingService = new BookingServiceImpl(authenticationService, transactionDao, trainBookingDao);

@@ -48,6 +48,15 @@ public class SqlQueries {
             "inner join station on station.id = route.station_id\n" +
             "inner join train_coach on train.train_number = train_coach.train_number\n" +
             "inner join coach on coach.id = train_coach.coach_id where train.train_number=?;";
+
+    public static String addTrainBooking = "insert into \"train_bookings\"(train_number, coach_id, available_seats, running_date)\n" +
+            "values(?, ?,?,?);" ;
+    public static  String getTrainBooking = "select * from train_bookings inner join coach on train_bookings.coach_id = coach.id where id = ?;";
+    public static  String getAllTrainBooking = "select * from train_bookings inner join coach on train_bookings.coach_id = coach.id ;";
+
+    public static String addTransaction = "insert into transaction (pnr, date_of_journey, total_fare, is_cancelled, user_id, train_number, source, destination)\n" +
+            "values (?,?,?,?,?,?,?,?);";
+    public static String updateTrainBooking = "update train_bookings set available_seats = ? where train_number=? and coach_id=? and running_date=?;";
 }
 
 

@@ -14,13 +14,10 @@ public class TrainBooking {
     private Integer availableSeats;
     private LocalDate runningDate;
 
-    public TrainBooking(int trainNumber, Coach coach, LocalDate runningDate) {
-        this.id = UtilClass.random.nextInt(10_000, 100_000);
+    public TrainBooking(Integer trainNumber, Coach coach, LocalDate runningDate) {
         this.trainNumber = trainNumber;
         this.coach = coach;
         this.availableSeats = coach.getTotalSeats();
         this.runningDate = runningDate;
     }
-
-
 }

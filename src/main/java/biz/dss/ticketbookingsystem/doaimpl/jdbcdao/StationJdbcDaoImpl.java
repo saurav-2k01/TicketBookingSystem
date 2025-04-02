@@ -133,7 +133,7 @@ public class StationJdbcDaoImpl implements StationDao {
             while(resultSet.next()){
                 int id = resultSet.getInt("id");
                 String name = resultSet.getString("name");
-                String shortName = resultSet.getString("shortname");
+                String shortName = resultSet.getString("short_name");
                 Station station = new Station(id, name, shortName);
                 stations.add(station);
             }

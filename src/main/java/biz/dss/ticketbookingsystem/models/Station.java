@@ -2,6 +2,7 @@ package biz.dss.ticketbookingsystem.models;
 
 import biz.dss.ticketbookingsystem.intefaces.Formatable;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,6 +10,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Data
+@EqualsAndHashCode(exclude = "sequence_num")
 public class Station  implements Formatable, Comparable {
     private Integer id;
     private String name;

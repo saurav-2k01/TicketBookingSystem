@@ -12,6 +12,7 @@ import biz.dss.ticketbookingsystem.utils.Response;
 import biz.dss.ticketbookingsystem.valueobjects.AuthenticatedUser;
 import biz.dss.ticketbookingsystem.valueobjects.BookingDetail;
 
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -45,40 +46,57 @@ public class BookingServiceImpl implements BookingService {
             trainBookings = filterTrainBooking(train.getTrainNumber(), travellingClass, dateOfJourney);
         }
 
+
+
         for (User passenger : passengerList) {
             passenger.setSeatNumber(bookSeat(trainBookings));
         }
 
         Transaction transaction = new Transaction(train, bookingDetail.getFrom(), bookingDetail.getTo(), bookingDetail.getDateOfJourney(), passengerList, user, bookingDetail.getTotalFare());
 
-        int pnr = transaction.getPnr();
-        user.getPnrList().add(pnr);
-        System.out.println(user.getPnrList());
-        transactionDao.addTransaction(transaction);
+//        user.getPnrList().add(pnr);
+//        System.out.println(user.getPnrList());
+        try {
+            transactionDao.addTransaction(transaction);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
         return new Response(transaction, SUCCESS, "you ticket was booked successfully.");
 
     }
 
     private List<TrainBooking> filterTrainBooking(int trainNumber, TravellingClass travellingClass, LocalDate date) {
-        return trainBookingDao.getTrainBookings().stream()
-                .filter(x -> x.getTrainNumber() == trainNumber)
-                .filter(x -> x.getCoach().getTravellingClass().equals(travellingClass))
-                .filter(x -> x.getRunningDate().equals(date))
-                .toList();
+        try {
+            return trainBookingDao.getTrainBookings().stream()
+                    .filter(x -> x.getTrainNumber() == trainNumber)
+                    .filter(x -> x.getCoach().getTravellingClass().equals(travellingClass))
+                    .filter(x -> x.getRunningDate().equals(date))
+                    .toList();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private List<TrainBooking> filterTrainBooking(int trainNumber, LocalDate date) {
-        return trainBookingDao.getTrainBookings().stream()
-                .filter(x -> x.getTrainNumber() == trainNumber)
-                .filter(x -> x.getRunningDate().equals(date))
-                .toList();
+        try {
+            return trainBookingDao.getTrainBookings().stream()
+                    .filter(x -> x.getTrainNumber() == trainNumber)
+                    .filter(x -> x.getRunningDate().equals(date))
+                    .toList();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private void updateTrainBookingData(Train train, LocalDate date) {
         for (Coach coach : train.getCoachList()) {
             TrainBooking trainBooking = new TrainBooking(train.getTrainNumber(), coach, date);
             trainBooking.setAvailableSeats(coach.getTotalSeats());
-            trainBookingDao.addTrainBooking(trainBooking);
+            try {
+                trainBookingDao.addTrainBooking(trainBooking);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 
@@ -108,7 +126,11 @@ public class BookingServiceImpl implements BookingService {
             if (trainBooking.getAvailableSeats() >= 1) {
                 int temp = trainBooking.getCoach().getTotalSeats() - trainBooking.getAvailableSeats() + 1;
                 trainBooking.setAvailableSeats(trainBooking.getAvailableSeats() - 1);
-                trainBookingDao.addTrainBooking(trainBooking);
+                try {
+                    trainBookingDao.updateTrainBooking(trainBooking);
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
                 return trainBooking.getCoach().getCoachName() + "-" + temp;
             }
         }

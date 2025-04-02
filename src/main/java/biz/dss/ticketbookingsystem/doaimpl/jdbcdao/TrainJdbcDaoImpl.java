@@ -185,6 +185,7 @@ public class TrainJdbcDaoImpl implements TrainDao {
                 Optional<Train> trainByTrainNumber = getTrainByTrainNumber(train_number);
                 trainByTrainNumber.ifPresent(trains::add);
             }
+            System.out.println(trains);
             return trains;
         } catch (SQLException e) {
             throw new RuntimeException(e);

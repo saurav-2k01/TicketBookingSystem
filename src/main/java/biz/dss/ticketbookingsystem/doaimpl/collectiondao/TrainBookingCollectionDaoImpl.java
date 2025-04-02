@@ -3,6 +3,7 @@ package biz.dss.ticketbookingsystem.doaimpl.collectiondao;
 import biz.dss.ticketbookingsystem.dao.TrainBookingDao;
 import biz.dss.ticketbookingsystem.models.TrainBooking;
 
+import java.sql.SQLException;
 import java.util.*;
 
 
@@ -13,7 +14,7 @@ public class TrainBookingCollectionDaoImpl implements TrainBookingDao {
         return trainBookings;
     }
 
-    public Optional<TrainBooking> addTrainBooking(TrainBooking trainBooking){
+    public Optional<TrainBooking> addTrainBooking(TrainBooking trainBooking) {
         if(Objects.isNull(trainBooking)){
             throw new NullPointerException();
         }
@@ -26,5 +27,20 @@ public class TrainBookingCollectionDaoImpl implements TrainBookingDao {
             isAdded = trainBookings.add(trainBooking);
         }
         return isAdded? Optional.of(trainBooking) : Optional.empty();
+    }
+
+    public Optional<TrainBooking> updateTrainBooking(TrainBooking trainBooking){
+        if(Objects.isNull(trainBooking)){
+            throw new NullPointerException();
+        }
+        Integer id = trainBooking.getId();
+        Optional<TrainBooking> trainBookingResult = trainBookings.stream().filter(tb -> tb.getId() == id).findFirst();
+        if(trainBookingResult.isPresent()){
+            int index = trainBookings.indexOf(trainBookingResult.get());
+            trainBookings.set(index, trainBooking);
+            return Optional.of(trainBooking);
+        }else{
+            return Optional.empty();
+        }
     }
 }

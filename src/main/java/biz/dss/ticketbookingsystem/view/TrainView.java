@@ -213,19 +213,14 @@ public class TrainView {
     }
 
     public void searchTrain() {
-//        Response trainsResponse = trainController.getTrains();
-//        if (!trainsResponse.isSuccess()) {
-//            System.out.println(trainsResponse.getMessage());
-//            return;
-//        }
-//        List<Train> trains = (List<Train>) (trainsResponse.getData());
         TrainSearchDetail trainSearchInput = inputview.getTrainSearchInput(true);
         Response filteredTrainResponse = trainController.searchTrains(trainSearchInput);
 
-        if (!filteredTrainResponse.isSuccess()) {
+        if (Boolean.FALSE.equals(filteredTrainResponse.isSuccess())) {
             System.out.println(filteredTrainResponse.getMessage());
             return;
         }
+        trainController.getTrains().getData();
         List<Train> filteredTrains = (List<Train>) (filteredTrainResponse.getData());
         Formatter.tableTemplate(filteredTrains);
         if(Objects.isNull(trainSearchInput.getDate())){
