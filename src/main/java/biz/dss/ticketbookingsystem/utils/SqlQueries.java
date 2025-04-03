@@ -57,6 +57,34 @@ public class SqlQueries {
     public static String addTransaction = "insert into transaction (pnr, date_of_journey, total_fare, is_cancelled, user_id, train_number, source, destination)\n" +
             "values (?,?,?,?,?,?,?,?);";
     public static String updateTrainBooking = "update train_bookings set available_seats = ? where train_number=? and coach_id=? and running_date=?;";
+    public static String addPassenger = "insert into \"user\" (id, name, gender, age,seat_number,  user_type) values (?,?,?,?,?,?)";
+    public static String mapPassengerTransaction = "insert into transaction_passengers(pnr, passenger)\n" +
+            "values(?,?);";
+    public static String mapUserTransaction = "insert into \"user_transaction\" (user_id, pnr)\n" +
+            "values (?,?);";
+
+    public static String getTransaction = "select transaction.pnr, train_number, source, destination, total_fare, is_cancelled, \n" +
+            "\"user\".id as \"user_id\", \n" +
+            "\"user\".username as \"username\", \n" +
+            "\"user\".age as \"user_age\", \n" +
+            "\"user\".gender as \"user_gender\",\n" +
+            "\"user\".email as \"user_email\", \n" +
+            "\"user\".password as \"password\", \n" +
+            "\"user\".seat_number as \"seat_number\", \n" +
+            "\"user\".user_type as \"user_user_type\",\n" +
+            "\"user\".is_logged_in as \"is_logged_in\",\n" +
+            "u.id as \"passenger_id\", \n" +
+            "u.name as \"passenger_name\", \n" +
+            "u.age as \"passenger_age\", \n" +
+            "u.gender as \"passenger_gender\", \n" +
+            "u.seat_number as \"passenger_seat_number\", \n" +
+            "u.user_type as \"passenger_user_type\"\n" +
+            "from \"user\"\n" +
+            "inner join user_transaction on \"user\".id = user_transaction.user_id\n" +
+            "inner join \"transaction\" on user_transaction.pnr = \"transaction\".pnr\n" +
+            "inner join transaction_passengers on \"transaction\".pnr = transaction_passengers.pnr\n" +
+            "inner join \"user\" as u on transaction_passengers.passenger = u.id\n" +
+            "where \"user\".id = 9713090;";
 }
 
 

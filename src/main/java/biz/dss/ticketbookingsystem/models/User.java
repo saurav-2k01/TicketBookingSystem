@@ -18,7 +18,8 @@ import static biz.dss.ticketbookingsystem.enums.UserType.REGISTERED_USER;
 @Data
 @Builder
 public class User implements Formatable {
-    private Integer id;
+    @Builder.Default
+    private Integer id = UtilClass.random.nextInt(1000, 1_000_000);
     private String name;
     private String userName;
     private Integer age;
@@ -27,7 +28,9 @@ public class User implements Formatable {
     private String password;
     private String seatNumber;
     private UserType userType;
+    @Builder.Default
     private Boolean isLoggedIn = false;
+    @Builder.Default
     private final List<Integer> pnrList = new ArrayList<>();
 
 

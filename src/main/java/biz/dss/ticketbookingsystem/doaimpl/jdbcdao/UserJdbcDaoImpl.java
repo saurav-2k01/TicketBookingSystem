@@ -24,7 +24,7 @@ public class UserJdbcDaoImpl implements UserDao {
     public Optional<User> addUser(User user) {
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(SqlQueries.addUserQuery);
-            preparedStatement.setInt(1, UtilClass.random.nextInt(100_000));
+            preparedStatement.setInt(1,user.getId());
             preparedStatement.setString(2, user.getName());
             preparedStatement.setString(3, user.getUserName());
             preparedStatement.setInt(4, user.getAge());

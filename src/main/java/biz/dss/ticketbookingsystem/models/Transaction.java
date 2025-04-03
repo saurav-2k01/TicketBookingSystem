@@ -11,7 +11,7 @@ import java.util.List;
 @Getter
 public class Transaction implements Formatable {
     @Setter
-    private Integer pnr;
+    private Integer pnr = UtilClass.random.nextInt(100_000_000, 1_000_000_000);
     private final Train train;
     private final Station source;
     private final Station destination;
