@@ -85,6 +85,8 @@ public class SqlQueries {
             "inner join transaction_passengers on \"transaction\".pnr = transaction_passengers.pnr\n" +
             "inner join \"user\" as u on transaction_passengers.passenger = u.id\n" +
             "where \"user\".id = 9713090;";
+
+    //todo implement method for getting train , source and destination from transaction seperately.
 }
 
 
