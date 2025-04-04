@@ -24,7 +24,6 @@ public class SqlQueries {
     public static String getAllStations = "select * from \"station\";";
 
 
-
     /**
      *  Train dao related queries.
      */
@@ -63,9 +62,11 @@ public class SqlQueries {
     public static String mapUserTransaction = "insert into \"user_transaction\" (user_id, pnr)\n" +
             "values (?,?);";
 
-    public static String getTransaction = "select transaction.pnr, train_number, source, destination, total_fare, is_cancelled, \n" +
+    public static String cancelTicket = "update \"transaction\" set is_cancelled=true where pnr = ?;";
+    public static String getTransaction = "select transaction.pnr, train_number, source, destination, total_fare, is_cancelled, date_of_journey, \n" +
             "\"user\".id as \"user_id\", \n" +
-            "\"user\".username as \"username\", \n" +
+            "\"user\".username as \"user_name\", \n" +
+            "\"user\".username as \"user_username\", \n" +
             "\"user\".age as \"user_age\", \n" +
             "\"user\".gender as \"user_gender\",\n" +
             "\"user\".email as \"user_email\", \n" +
@@ -84,7 +85,7 @@ public class SqlQueries {
             "inner join \"transaction\" on user_transaction.pnr = \"transaction\".pnr\n" +
             "inner join transaction_passengers on \"transaction\".pnr = transaction_passengers.pnr\n" +
             "inner join \"user\" as u on transaction_passengers.passenger = u.id\n" +
-            "where \"user\".id = 9713090;";
+            "where \"user\".id = ?;";
 
     //todo implement method for getting train , source and destination from transaction seperately.
 }

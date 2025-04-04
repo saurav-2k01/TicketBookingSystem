@@ -25,7 +25,7 @@ public class TransactionCollectionDaoImpl implements TransactionDao {
         return isAdded? Optional.of(transaction) : Optional.empty();
     }
 
-    public Optional<Transaction> deleteTransaction(Transaction transaction){
+    public Optional<Transaction> cancelTransaction(Transaction transaction){
         if(Objects.isNull(transaction)){
             throw new NullPointerException();
         }

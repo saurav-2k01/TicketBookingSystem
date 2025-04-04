@@ -10,9 +10,9 @@ import java.util.Optional;
 public interface TransactionDao {
     Optional<Transaction> addTransaction(Transaction transaction) throws SQLException;
 
-    Optional<Transaction> deleteTransaction(Transaction transaction);
+    Optional<Transaction> cancelTransaction(Transaction transaction) throws SQLException;
 
-    Optional<Transaction> getTransactionByPnr(Integer pnr);
+    Optional<Transaction> getTransactionByPnr(Integer pnr) throws SQLException;
 
     Optional<Transaction> updateTransaction(Transaction transaction);
 
