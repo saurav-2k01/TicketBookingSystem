@@ -142,7 +142,12 @@ public class BookingServiceImpl implements BookingService {
         response = authenticationService.getAuthenticatedUser(authenticatedUser);
         if(!response.isSuccess()) return response;
         User user = (User)(response.getData());
-        Optional<Transaction> transaction = transactionDao.getTransactionByPnr(pnr);
+        Optional<Transaction> transaction = null;
+        try {
+            transaction = transactionDao.getTransactionByPnr(pnr);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
         response = transaction.map(value -> new Response(value, SUCCESS, "Transaction found."))
                 .orElseGet(() -> new Response(FAILURE, "No transaction found with specified PNR"));
         return response;
