@@ -115,7 +115,7 @@ public class TrainServiceImpl implements TrainService {
     public Response getTrain(Integer trainNumber) {
         Optional<Train> train = trainDao.getTrainByTrainNumber(trainNumber);
         if (train.isPresent()) {
-            response = new Response(train, SUCCESS, "Train found.");
+            response = new Response(train.get(), SUCCESS, "Train found.");
         } else {
             response = new Response(FAILURE, String.format("No train found with train number %d.", trainNumber));
             // @TODO string.format usuage

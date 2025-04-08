@@ -2,9 +2,11 @@ package biz.dss.ticketbookingsystem.view;
 
 import biz.dss.ticketbookingsystem.controller.UserController;
 import biz.dss.ticketbookingsystem.enums.Gender;
+import biz.dss.ticketbookingsystem.enums.UserType;
 import biz.dss.ticketbookingsystem.models.User;
 import biz.dss.ticketbookingsystem.utils.Formatter;
 import biz.dss.ticketbookingsystem.utils.Response;
+import biz.dss.ticketbookingsystem.valueobjects.AuthenticatedUser;
 
 import java.util.List;
 
@@ -34,9 +36,42 @@ public class UserView{
         System.out.println(response.getMessage());
     }
 
-    public void registerAdmin() {
+    public void displayAllUsers(AuthenticatedUser authenticatedUser){
+        response = userController.getUsers(authenticatedUser);
+//        if(usersResponse instanceof List) {
+//            List<User> users = (List<User>) usersResponse.getData();
+//            Formatter.tableTemplate(users);
+//        }
+        if(response.isSuccess()){
+            List<User> users = (List<User>) response.getData();
+            Formatter.tableTemplate(users);
+        }
+
+    }
+
+
+//    admins
+    public boolean displayAllAdmins(AuthenticatedUser authenticatedUser){
+        response = userController.getAllAdmins(authenticatedUser);
+        if(response.isSuccess()){
+            List<User> admins = (List<User>) response.getData();
+            Formatter.tableTemplate(admins);
+            return true;
+        }
+        return false;
+    }
+
+    public void registerAdmin(AuthenticatedUser authenticatedUser) {
+        if(Boolean.FALSE.equals(authenticatedUser.getIsLoggedIn())){
+            System.out.println("User must be logged in to use this feature.");
+        }
+
+        if(Boolean.FALSE.equals(authenticatedUser.getUserType().equals(ADMIN))){
+            System.out.println("This feature is only for admins.");
+        }
+
         String name = inputView.getName("Name: ");
-        Integer age = inputView.getAge("Age: ", 18, 100);
+        Integer age = inputView.getAge("Age: ", 100, 18);
         Gender gender = inputView.getGender("Gender: ");
         String userName = inputView.getName("Username: ");
         String email = inputView.getEmail("Email: ");
@@ -44,6 +79,15 @@ public class UserView{
         User newUser = User.builder().name(name).age(age).gender(gender).userName(userName).email(email).password(password).userType(ADMIN).build();
         response = userController.registerUser(newUser);
         System.out.println(response.getMessage());
+    }
+
+    public void removeAdmin(AuthenticatedUser authenticatedUser){
+        boolean displayed = displayAllAdmins(authenticatedUser);
+        if(displayed){
+            String userName = inputView.getStringInput("Enter username: ");
+            response = userController.deleteUser(authenticatedUser, userName);
+            System.out.println(response.getMessage());
+        }
     }
 
 

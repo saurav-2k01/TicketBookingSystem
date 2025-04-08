@@ -13,7 +13,7 @@ public class Formatter {
     public static void formatTicket(Transaction transaction) {
         System.out.println("\n============================================================================================\n");
         System.out.printf("Train Number: %d          Train Name: %s%n", transaction.getTrain().getTrainNumber(), transaction.getTrain().getTrainName());
-        System.out.printf("PNR: %d          Total Fare: %.2f%n", transaction.getPnr(), transaction.getTotalFare());
+        System.out.printf("PNR: %d               Total Fare: %.2f%n", transaction.getPnr(), transaction.getTotalFare());
         System.out.printf("Date of Journey: %s%n", transaction.getDateOfJourney());
         System.out.printf("Booked By: %s%n", transaction.getUser().getUserName());
         System.out.printf("Source: %s          Destination: %s%n", transaction.getSource().getName(), transaction.getDestination().getName());

@@ -12,6 +12,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 import static biz.dss.ticketbookingsystem.enums.UserType.ADMIN;
+import static biz.dss.ticketbookingsystem.enums.UserType.REGISTERED_USER;
 import static biz.dss.ticketbookingsystem.utils.ResponseStatus.FAILURE;
 import static biz.dss.ticketbookingsystem.utils.ResponseStatus.SUCCESS;
 
@@ -92,7 +93,7 @@ public class UserServiceImplNew implements UserService {
         if (Boolean.FALSE.equals(user.getIsLoggedIn()) && Boolean.FALSE.equals(user.getUserType().equals(ADMIN))){
             return response = new Response(FAILURE, "only admins can use this feature.");
         }
-        List<User> users = userDao.getUsers();
+        List<User> users = userDao.getUsers().stream().filter(u->u.getUserType().equals(REGISTERED_USER)).toList();
         if (Objects.isNull(users)) {
             response = new Response(FAILURE, "no users found.");
         } else {

@@ -90,8 +90,8 @@ public class TrainView {
             System.out.println(trainsResponse.getMessage());
             return;
         }
-        Map<Integer, Train> trains = (Map<Integer, Train>) (trainsResponse.getData());
-        Formatter.tableTemplate(trains.values().stream().toList());
+        List<Train> trains = (List<Train>) (trainsResponse.getData());
+        Formatter.tableTemplate(trains);
     }
 
     public void addRoute(AuthenticatedUser authenticatedUser) {

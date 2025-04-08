@@ -56,54 +56,79 @@ public class TransactionJdbcDaoImpl implements TransactionDao {
         try (PreparedStatement preparedStatement = connection.prepareStatement(SqlQueries.getTransaction)) {
             preparedStatement.setInt(1, pnr);
             ResultSet resultSet = preparedStatement.executeQuery();
-            int pnr1=0;
-            int trainNumber=0;
-            int sourceId=0;
-            int destinationId=0;
+            int pnr1 = 0;
+            int trainNumber = 0;
+            int sourceId = 0;
+            int destinationId = 0;
             double totalFare = 0.0;
             Date dateOfJourney = null;
-            boolean isCancelled= false;
-            User user=null;
+            boolean isCancelled = false;
+            User user = null;
             Train train = null;
             Station source = null;
             Station destination = null;
             List<User> passengers = new ArrayList<>();
             while (resultSet.next()) {
 //                transaction
-                if(pnr1==0   && trainNumber==0 && sourceId==0 && destinationId==0 ){
+                if (pnr1 == 0 && trainNumber == 0 && sourceId == 0 && destinationId == 0) {
                     pnr1 = resultSet.getInt("pnr");
                     trainNumber = resultSet.getInt("train_number");
                     sourceId = resultSet.getInt("source");
                     destinationId = resultSet.getInt("destination");
                 }
-                if(totalFare==0.0 && dateOfJourney.equals(null) && isCancelled==false){
+                if (totalFare == 0.0 && Objects.isNull(dateOfJourney) && isCancelled == false) {
                     dateOfJourney = resultSet.getDate("date_of_journey");
                     totalFare = resultSet.getDouble("total_fare");
                     isCancelled = resultSet.getBoolean("is_cancelled");
                 }
 //                user
-                if (Objects.isNull(user)){
+                if (Objects.isNull(user)) {
                     user = getUserFromResultSet(resultSet);
                 }
 //                passenger
                 User passenger = getPassengerFromResultSet(resultSet);
                 passengers.add(passenger);
-                if(Objects.isNull(train)){
+                if (Objects.isNull(train)) {
                     Optional<Train> trainByTrainNumber = getTrainByTrainNumber(trainNumber);
                     if (trainByTrainNumber.isEmpty()) return Optional.empty();
                     train = trainByTrainNumber.get();
-                    if(Objects.isNull(source) && Objects.isNull(destination)){
+                    if (Objects.isNull(source) && Objects.isNull(destination)) {
                         int finalSourceId = sourceId;
                         source = train.getRoute().stream().filter(s -> s.getId() == finalSourceId).findFirst().get();
                         int finalDestinationId = destinationId;
                         destination = train.getRoute().stream().filter(d -> d.getId() == finalDestinationId).findFirst().get();
                     }
                 }
-                Transaction transaction = new Transaction(train, source, destination, dateOfJourney.toLocalDate(), passengers, user, totalFare);
-                return Optional.of(transaction);
             }
+            Transaction transaction = new Transaction(train, source, destination, dateOfJourney.toLocalDate(), passengers, user, totalFare);
+            transaction.setPnr(pnr1);
+            transaction.setCancelled(isCancelled);
+            return Optional.of(transaction);
         }
-        return Optional.empty();
+    }
+
+    @Override
+    public List<Transaction> getTransactionByUserId(Integer userId) throws SQLException {
+        PreparedStatement preparedStatement = connection.prepareStatement("select pnr from transaction where user_id =?");
+        preparedStatement.setInt(1, userId);
+        ResultSet resultSet = preparedStatement.executeQuery();
+        List<Integer> pnrList = new ArrayList<>();
+        while (resultSet.next()) {
+            int pnr = resultSet.getInt("pnr");
+            pnrList.add(pnr);
+        }
+        List<Transaction> transactions = new ArrayList<>();
+        pnrList.forEach(
+                p -> {
+                    try {
+                        Optional<Transaction> transactionByPnr = getTransactionByPnr(p);
+                        transactionByPnr.ifPresent(transactions::add);
+                    } catch (SQLException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+        );
+        return transactions;
     }
 
     @Override
@@ -112,8 +137,26 @@ public class TransactionJdbcDaoImpl implements TransactionDao {
     }
 
     @Override
-    public List<Transaction> getTransactions() {
-        return List.of();
+    public List<Transaction> getTransactions() throws SQLException {
+        PreparedStatement preparedStatement = connection.prepareStatement("select pnr from transaction;");
+        ResultSet resultSet = preparedStatement.executeQuery();
+        List<Integer> pnrList = new ArrayList<>();
+        while (resultSet.next()) {
+            int pnr = resultSet.getInt("pnr");
+            pnrList.add(pnr);
+        }
+        List<Transaction> transactions = new ArrayList<>();
+        pnrList.forEach(
+                p -> {
+                    try {
+                        Optional<Transaction> transactionByPnr = getTransactionByPnr(p);
+                        transactionByPnr.ifPresent(transactions::add);
+                    } catch (SQLException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+        );
+        return transactions;
     }
 
     private boolean addPassengers(List<User> passengers) throws SQLException {
@@ -260,7 +303,7 @@ public class TransactionJdbcDaoImpl implements TransactionDao {
         int userAge = resultSet.getInt("user_age");
         String userGender = resultSet.getString("user_gender");
         String userEmail = resultSet.getString("user_email");
-        String userPassword = resultSet.getString("user_password");
+        String userPassword = resultSet.getString("password");
         String seatNumber = resultSet.getString("seat_number");
         String userUserType = resultSet.getString("user_user_type");
         String isLoggedIn = resultSet.getString("is_logged_in");

@@ -27,7 +27,7 @@ public class SqlQueries {
     /**
      *  Train dao related queries.
      */
-    public static String addTrain = "insert into \"train\" (train_number, train_name,source, destination) values(?,?,?,?);";
+    public static String addTrain = "insert into \"train\" (train_number, train_name) values(?,?);";
 //    public static String getTrainByTrainNumber = "select * from \"train\" where train_number = ?;";
     public static String deleteTrain = "delete from \"train\" where train_number = ?";
     public static String updateTrain = "update \"train\" set train_number=?, train_name=?, source = ?, destination = ?;";
@@ -36,17 +36,19 @@ public class SqlQueries {
     public static String updateTrainRunningDays = "update train_coach set train_number=?, coach_id=?;";
     public static String getAllTrains = "select * from train;";
     public static String getTrainCoachList = "select coach* from;";
-    public static String getTrainByTrainNumber = "select train.train_number,train.train_name, \n" +
-            "coach.id as coach_id, coach.travelling_class,coach.coach_name, coach.total_seats, coach.available_seats, coach.fare_factor,\n" +
-            "station.id as station_id, station.name as station_name, station.short_name, route.sequence_num,\n" +
-            "running_days.name as running_day\n" +
-            "from train\n" +
-            "inner join train_running_days on train.train_number = train_running_days.train_number\n" +
-            "inner join running_days on running_days.id = train_running_days.running_day\n" +
-            "inner join route on train.train_number = route.train_number\n" +
-            "inner join station on station.id = route.station_id\n" +
-            "inner join train_coach on train.train_number = train_coach.train_number\n" +
-            "inner join coach on coach.id = train_coach.coach_id where train.train_number=?;";
+    public static String getTrainByTrainNumber = """
+            select train.train_number,train.train_name,
+            coach.id as coach_id, coach.travelling_class,coach.coach_name, coach.total_seats, coach.available_seats, coach.fare_factor,
+            station.id as station_id, station.name as station_name, station.short_name, route.sequence_num,
+            running_days.name as running_day
+            from train
+            inner join train_running_days on train.train_number = train_running_days.train_number
+            inner join running_days on running_days.id = train_running_days.running_day
+            inner join route on train.train_number = route.train_number
+            inner join station on station.id = route.station_id
+            inner join train_coach on train.train_number = train_coach.train_number
+            inner join coach on coach.id = train_coach.coach_id where train.train_number=?;
+            """;
 
     public static String addTrainBooking = "insert into \"train_bookings\"(train_number, coach_id, available_seats, running_date)\n" +
             "values(?, ?,?,?);" ;
@@ -63,29 +65,59 @@ public class SqlQueries {
             "values (?,?);";
 
     public static String cancelTicket = "update \"transaction\" set is_cancelled=true where pnr = ?;";
-    public static String getTransaction = "select transaction.pnr, train_number, source, destination, total_fare, is_cancelled, date_of_journey, \n" +
-            "\"user\".id as \"user_id\", \n" +
-            "\"user\".username as \"user_name\", \n" +
-            "\"user\".username as \"user_username\", \n" +
-            "\"user\".age as \"user_age\", \n" +
-            "\"user\".gender as \"user_gender\",\n" +
-            "\"user\".email as \"user_email\", \n" +
-            "\"user\".password as \"password\", \n" +
-            "\"user\".seat_number as \"seat_number\", \n" +
-            "\"user\".user_type as \"user_user_type\",\n" +
-            "\"user\".is_logged_in as \"is_logged_in\",\n" +
-            "u.id as \"passenger_id\", \n" +
-            "u.name as \"passenger_name\", \n" +
-            "u.age as \"passenger_age\", \n" +
-            "u.gender as \"passenger_gender\", \n" +
-            "u.seat_number as \"passenger_seat_number\", \n" +
-            "u.user_type as \"passenger_user_type\"\n" +
-            "from \"user\"\n" +
-            "inner join user_transaction on \"user\".id = user_transaction.user_id\n" +
-            "inner join \"transaction\" on user_transaction.pnr = \"transaction\".pnr\n" +
-            "inner join transaction_passengers on \"transaction\".pnr = transaction_passengers.pnr\n" +
-            "inner join \"user\" as u on transaction_passengers.passenger = u.id\n" +
-            "where \"user\".id = ?;";
+    public static String getTransaction = """
+            select transaction.pnr, train_number, source, destination, total_fare, is_cancelled, date_of_journey,\s
+            "user".id as "user_id",\s
+            "user".username as "user_name",\s
+            "user".username as "user_username",\s
+            "user".age as "user_age",\s
+            "user".gender as "user_gender",
+            "user".email as "user_email",\s
+            "user".password as "password",\s
+            "user".seat_number as "seat_number",\s
+            "user".user_type as "user_user_type",
+            "user".is_logged_in as "is_logged_in",
+            u.id as "passenger_id",\s
+            u.name as "passenger_name",\s
+            u.age as "passenger_age",\s
+            u.gender as "passenger_gender",\s
+            u.seat_number as "passenger_seat_number",\s
+            u.user_type as "passenger_user_type"
+            from "user"
+            inner join user_transaction on "user".id = user_transaction.user_id
+            inner join "transaction" on user_transaction.pnr = "transaction".pnr
+            inner join transaction_passengers on "transaction".pnr = transaction_passengers.pnr
+            inner join "user" as u on transaction_passengers.passenger = u.id
+            where transaction.pnr = ?;
+            """;
+
+    public static String getTransactions = """
+            select transaction.pnr, train_number, source, destination, total_fare, is_cancelled, date_of_journey,
+            "user".id as "user_id",
+            "user".username as "user_name",
+            "user".username as "user_username",
+            "user".age as "user_age",
+            "user".gender as "user_gender",
+            "user".email as "user_email",
+            "user".password as "password",
+            "user".seat_number as "seat_number",
+            "user".user_type as "user_user_type",
+            "user".is_logged_in as "is_logged_in",
+            u.id as "passenger_id",
+            u.name as "passenger_name",
+            u.age as "passenger_age",
+            u.gender as "passenger_gender",
+            u.seat_number as "passenger_seat_number",
+            u.user_type as "passenger_user_type"
+            from "user"
+            inner join user_transaction on "user".id = user_transaction.user_id
+            inner join "transaction" on user_transaction.pnr = "transaction".pnr
+            inner join transaction_passengers on "transaction".pnr = transaction_passengers.pnr
+            inner join "user" as u on transaction_passengers.passenger = u.id
+            where "user".id=?;
+            """;
+
+
 
     //todo implement method for getting train , source and destination from transaction seperately.
 }

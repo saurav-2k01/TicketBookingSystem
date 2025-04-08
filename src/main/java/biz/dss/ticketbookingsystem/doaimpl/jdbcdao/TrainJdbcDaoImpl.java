@@ -27,8 +27,8 @@ public class TrainJdbcDaoImpl implements TrainDao {
             PreparedStatement preparedStatement = connection.prepareStatement(SqlQueries.addTrain);
             preparedStatement.setInt(1, train.getTrainNumber());
             preparedStatement.setString(2, train.getTrainName());
-            preparedStatement.setInt(3, train.getSource().getId());
-            preparedStatement.setInt(4, train.getDestination().getId());
+//            preparedStatement.setInt(3, null);
+//            preparedStatement.setInt(4, train.getDestination().getId());
             int affectedRow = preparedStatement.executeUpdate();
             if (affectedRow > 0) {
                 return Optional.of(train);
@@ -86,8 +86,15 @@ public class TrainJdbcDaoImpl implements TrainDao {
                 runningDays.add(getRunningDayFromResultSet(resultSet));
             }
             List<Station> stationList = route.stream().sorted().collect(Collectors.toList());
-            Train train = Train.builder().trainNumber(trainNumber).trainName(trainName).source(stationList.getFirst()).destination(stationList.getLast())
-                    .coachList(new ArrayList<>(coaches)).runningDays(runningDays).route(new ArrayList<>(route)).build();
+            Train train;
+            if(stationList.isEmpty()){
+                train = Train.builder().trainNumber(trainNumber).trainName(trainName).source(null).destination(null)
+                        .coachList(new ArrayList<>(coaches)).runningDays(runningDays).route(new ArrayList<>(route)).build();
+            }else{
+                train = Train.builder().trainNumber(trainNumber).trainName(trainName).source(stationList.getFirst()).destination(stationList.getLast())
+                        .coachList(new ArrayList<>(coaches)).runningDays(runningDays).route(new ArrayList<>(route)).build();
+            }
+
             return Optional.of(train);
         } catch (SQLException e) {
             throw new RuntimeException(e);

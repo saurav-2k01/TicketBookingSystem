@@ -159,18 +159,24 @@ public class BookingServiceImpl implements BookingService {
         response = authenticationService.getAuthenticatedUser(authenticatedUser);
         if(!response.isSuccess()) return response;
         User user = (User)(response.getData());
-        List<Transaction> etickets = user.getPnrList().stream().map(pnr->getTransaction(authenticatedUser, pnr)).filter(Response::isSuccess).map(r -> (Transaction) (r.getData())).toList();
-        if(etickets.isEmpty()){
-            response = new Response(FAILURE, "No e-tickets were found.");
-        }else{
-            response = new Response(etickets, SUCCESS, "Here are your e-tickets.");
+//        List<Transaction> etickets = user.getPnrList().stream().map(pnr->getTransaction(authenticatedUser, pnr)).filter(Response::isSuccess).map(r -> (Transaction) (r.getData())).toList();
+        try {
+            List<Transaction> etickets = transactionDao.getTransactionByUserId(authenticatedUser.getId());
+            if(etickets.isEmpty()){
+                response = new Response(FAILURE, "No e-tickets were found.");
+            }else{
+                response = new Response(etickets, SUCCESS, "Here are your e-tickets.");
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
+
         return response;
     }
 
         public Response cancelTicket(AuthenticatedUser authenticatedUser, int pnr) {
             response = authenticationService.getAuthenticatedUser(authenticatedUser);
-            if(!response.isSuccess()) return response;
+            if (!response.isSuccess()) return response;
             User user = (User)(response.getData());
 
         Response transactionResponse = getTransaction(authenticatedUser, pnr);
@@ -182,6 +188,11 @@ public class BookingServiceImpl implements BookingService {
             response = new Response(pnr, FAILURE, "Ticket is already cancelled.");
         } else {
             transaction.setCancelled(true);
+            try {
+               transactionDao.cancelTransaction(transaction);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
             response = new Response(pnr, SUCCESS, "Cancellation of ticket was successful.");
         }
         return response;

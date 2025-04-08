@@ -3,6 +3,7 @@ package biz.dss.ticketbookingsystem.doaimpl.collectiondao;
 import biz.dss.ticketbookingsystem.dao.TransactionDao;
 import biz.dss.ticketbookingsystem.models.Transaction;
 
+import java.sql.SQLException;
 import java.util.*;
 
 public class TransactionCollectionDaoImpl implements TransactionDao {
@@ -38,6 +39,11 @@ public class TransactionCollectionDaoImpl implements TransactionDao {
             throw new NullPointerException();
         }
         return transactions.stream().filter(train -> train.getPnr().equals(pnr)).findFirst();
+    }
+
+    @Override
+    public List<Transaction> getTransactionByUserId(Integer userId){
+        return List.of();
     }
 
     public Optional<Transaction> updateTransaction(Transaction transaction){

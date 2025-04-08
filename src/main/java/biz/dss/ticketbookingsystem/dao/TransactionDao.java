@@ -13,8 +13,9 @@ public interface TransactionDao {
     Optional<Transaction> cancelTransaction(Transaction transaction) throws SQLException;
 
     Optional<Transaction> getTransactionByPnr(Integer pnr) throws SQLException;
+    List<Transaction> getTransactionByUserId(Integer userId) throws SQLException;
 
     Optional<Transaction> updateTransaction(Transaction transaction);
 
-    List<Transaction> getTransactions();
+    List<Transaction> getTransactions() throws SQLException;
 }

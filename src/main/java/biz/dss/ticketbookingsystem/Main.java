@@ -1,6 +1,8 @@
 package biz.dss.ticketbookingsystem;
 
 
+import biz.dss.ticketbookingsystem.Ui.AbstractUI;
+import biz.dss.ticketbookingsystem.Ui.AdminUI;
 import biz.dss.ticketbookingsystem.Ui.UserUI;
 import biz.dss.ticketbookingsystem.controller.*;
 import biz.dss.ticketbookingsystem.dao.*;
@@ -42,10 +44,9 @@ public class Main {
         TrainView trainView = new TrainView(inputView, trainController, stationController, bookingView);
         UserView userView = new UserView(inputView, userController);
 
-        UserUI userUI = new UserUI(authenticationController,inputView, userView, bookingView, trainView, stationView);
+        AbstractUI adminUI = new AdminUI(authenticationController, inputView, userView, trainView, bookingView, stationView);
 
-        userUI.home();
-
+        adminUI.home();
 
     }
 

@@ -3,9 +3,7 @@ package biz.dss.ticketbookingsystem.Ui;
 import biz.dss.ticketbookingsystem.controller.AuthenticationController;
 import biz.dss.ticketbookingsystem.utils.Response;
 import biz.dss.ticketbookingsystem.valueobjects.AuthenticatedUser;
-import biz.dss.ticketbookingsystem.view.InputView;
-import biz.dss.ticketbookingsystem.view.TrainView;
-import biz.dss.ticketbookingsystem.view.UserView;
+import biz.dss.ticketbookingsystem.view.*;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -14,8 +12,12 @@ abstract public class AbstractUI {
     protected final InputView inputView;
     protected  final UserView userView;
     protected final TrainView trainView;
+    protected final BookingView bookingView;
+    protected final StationView stationView;
     protected AuthenticatedUser authenticatedUser;
+    private AbstractUI ui;
     private Response response;
+
 
 
     public void login(){
@@ -25,9 +27,10 @@ abstract public class AbstractUI {
         if(Boolean.TRUE.equals(response.isSuccess())){
             authenticatedUser = (AuthenticatedUser) (response.getData());
             switch (authenticatedUser.getUserType()){
-                case ADMIN -> adminUI(authenticatedUser);
-                case REGISTERED_USER -> userUI(authenticatedUser);
+                case ADMIN -> ui = new AdminUI(authenticationController, inputView, userView, trainView, bookingView, stationView);
+                case REGISTERED_USER -> ui = new UserUI(authenticationController, inputView, userView, bookingView, trainView, stationView);
             }
+            ui.displayUi(authenticatedUser);
         }else{
             System.out.println(response.getMessage());
         }
@@ -42,9 +45,7 @@ abstract public class AbstractUI {
         }
     }
 
-    public void adminUI(AuthenticatedUser authenticatedUser){}
-
-    public void userUI(AuthenticatedUser authenticatedUser){}
+    public abstract void displayUi(AuthenticatedUser authenticatedUser);
 
     public void home(){
         while(1>0){
@@ -59,4 +60,6 @@ abstract public class AbstractUI {
         }
 
     }
+
+
 }

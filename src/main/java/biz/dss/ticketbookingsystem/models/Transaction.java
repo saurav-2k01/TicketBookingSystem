@@ -40,7 +40,7 @@ public class Transaction implements Formatable {
 
     @Override
     public List<String> getFieldValues() throws NullPointerException{
-        return List.of(String.valueOf(this.pnr), String.valueOf(train.getTrainNumber()),train.getTrainName() ,this.source.getName(), this.destination.getName(), this.user.getName(),String.valueOf(totalFare), String.valueOf(isCancelled));
+        return List.of(String.valueOf(this.pnr), String.valueOf(train.getTrainNumber()),train.getTrainName() ,this.source.getName(), this.destination.getName(), this.user.getName(),String.valueOf(totalFare), isCancelled?"Yes":"No");
     }
 
     @Override
