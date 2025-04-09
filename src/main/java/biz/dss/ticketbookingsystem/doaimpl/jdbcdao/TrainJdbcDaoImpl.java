@@ -2,12 +2,14 @@ package biz.dss.ticketbookingsystem.doaimpl.jdbcdao;
 
 import biz.dss.ticketbookingsystem.dao.StationDao;
 import biz.dss.ticketbookingsystem.dao.TrainDao;
+import biz.dss.ticketbookingsystem.enums.Day;
 import biz.dss.ticketbookingsystem.enums.TravellingClass;
 import biz.dss.ticketbookingsystem.models.Coach;
 import biz.dss.ticketbookingsystem.models.Station;
 import biz.dss.ticketbookingsystem.models.Train;
 import biz.dss.ticketbookingsystem.utils.DbConnection;
 import biz.dss.ticketbookingsystem.utils.SqlQueries;
+import biz.dss.ticketbookingsystem.utils.UtilClass;
 
 import javax.swing.text.html.Option;
 import java.sql.Connection;
@@ -68,29 +70,38 @@ public class TrainJdbcDaoImpl implements TrainDao {
             PreparedStatement preparedStatement = connection.prepareStatement(SqlQueries.getTrainByTrainNumber);
             preparedStatement.setInt(1, trainNumber);
             ResultSet resultSet = preparedStatement.executeQuery();
-            int trainNumber_=0;
-            String trainName=null;
+            int trainNumber_ = 0;
+            String trainName = null;
             Set<Coach> coaches = new HashSet<>();
             Set<Station> route = new HashSet<>();
             Set<DayOfWeek> runningDays = new HashSet<>();
 
-            while(resultSet.next()){
-                if(trainNumber_==0){
+            while (resultSet.next()) {
+                if (trainNumber_ == 0) {
                     trainNumber_ = resultSet.getInt("train_number");
                 }
-                if(Objects.isNull(trainName)){
+                if (Objects.isNull(trainName)) {
                     trainName = resultSet.getString("train_name");
                 }
-                coaches.add(getCoachFromResultSet(resultSet));
-                route.add(getStationFromResultSet(resultSet));
-                runningDays.add(getRunningDayFromResultSet(resultSet));
+                Coach coachFromResultSet = getCoachFromResultSet(resultSet);
+                if (Boolean.FALSE.equals(Objects.isNull(coachFromResultSet))) {
+                    coaches.add(coachFromResultSet);
+                }
+                Station stationFromResultSet = getStationFromResultSet(resultSet);
+                if (Boolean.FALSE.equals(Objects.isNull(stationFromResultSet))) {
+                    route.add(stationFromResultSet);
+                }
+                DayOfWeek runningDayFromResultSet = getRunningDayFromResultSet(resultSet);
+                if (Boolean.FALSE.equals(Objects.isNull(runningDayFromResultSet))) {
+                    runningDays.add(runningDayFromResultSet);
+                }
             }
             List<Station> stationList = route.stream().sorted().collect(Collectors.toList());
             Train train;
-            if(stationList.isEmpty()){
+            if (stationList.isEmpty()) {
                 train = Train.builder().trainNumber(trainNumber).trainName(trainName).source(null).destination(null)
                         .coachList(new ArrayList<>(coaches)).runningDays(runningDays).route(new ArrayList<>(route)).build();
-            }else{
+            } else {
                 train = Train.builder().trainNumber(trainNumber).trainName(trainName).source(stationList.getFirst()).destination(stationList.getLast())
                         .coachList(new ArrayList<>(coaches)).runningDays(runningDays).route(new ArrayList<>(route)).build();
             }
@@ -124,7 +135,7 @@ public class TrainJdbcDaoImpl implements TrainDao {
     }
 
     @Override
-    public Optional<Train> updateTrain(Train train) {
+    public Optional<Train> updateTrain(Train train) throws SQLException {
 //        try {
 //            PreparedStatement preparedStatement = connection.prepareStatement(SqlQueries.updateTrain);
 //            preparedStatement.setInt(1, train.getTrainNumber());
@@ -142,6 +153,26 @@ public class TrainJdbcDaoImpl implements TrainDao {
 //        } catch (SQLException e) {
 //            throw new RuntimeException(e);
 //        }
+        try (PreparedStatement preparedStatement = connection.prepareStatement(SqlQueries.updateTrain)) {
+            boolean isRouteAdded = updateRoute(train.getTrainNumber(), train.getRoute());
+            preparedStatement.setInt(1, train.getTrainNumber());
+            preparedStatement.setString(2, train.getTrainName());
+            if(isRouteAdded){
+                preparedStatement.setInt(3, train.getRoute().getFirst().getId());
+                preparedStatement.setInt(4, train.getRoute().getLast().getId());
+            }else{
+                preparedStatement.setInt(3, 0);
+                preparedStatement.setInt(4, 0);
+            }
+            preparedStatement.setInt(5, train.getTrainNumber());
+            int rowAffected = preparedStatement.executeUpdate();
+            boolean isRunningDaysAdded = updateRunningDays(train.getTrainNumber(), train.getRunningDays().stream().toList());
+            boolean isCoachesUpdated = updateCoaches(train.getTrainNumber(), train.getCoachList());
+            if(isCoachesUpdated || isRunningDaysAdded || isRouteAdded){
+                return Optional.of(train);
+            }
+        }
+
         return Optional.empty();
     }
 
@@ -149,9 +180,9 @@ public class TrainJdbcDaoImpl implements TrainDao {
     public Optional<Train> deleteTrain(Train train) {
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(SqlQueries.deleteTrain);
-            preparedStatement.setInt(1,train.getTrainNumber());
+            preparedStatement.setInt(1, train.getTrainNumber());
             int affectedRows = preparedStatement.executeUpdate();
-            if(affectedRows>0){
+            if (affectedRows > 0) {
                 return Optional.of(train);
             }
         } catch (SQLException e) {
@@ -183,44 +214,154 @@ public class TrainJdbcDaoImpl implements TrainDao {
             List<Integer> trainNumbers = new ArrayList<>();
             PreparedStatement preparedStatement = connection.prepareStatement("select train_number from train;");
             ResultSet resultSet = preparedStatement.executeQuery();
-            while (resultSet.next()){
+            while (resultSet.next()) {
                 int trainNumber = resultSet.getInt("train_number");
                 trainNumbers.add(trainNumber);
             }
             List<Train> trains = new ArrayList<>();
-            for(int train_number : trainNumbers){
+            for (int train_number : trainNumbers) {
                 Optional<Train> trainByTrainNumber = getTrainByTrainNumber(train_number);
                 trainByTrainNumber.ifPresent(trains::add);
             }
-            System.out.println(trains);
             return trains;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private static Coach getCoachFromResultSet(ResultSet resultSet) throws SQLException {
+    private Coach getCoachFromResultSet(ResultSet resultSet) throws SQLException {
         int coachId = resultSet.getInt("coach_id");
+        if (coachId == 0) return null;
         String travellingClass = resultSet.getString("travelling_class");
         String coachName = resultSet.getString("coach_name");
         int totalSeats = resultSet.getInt("total_seats");
-        int availableSeats = resultSet.getInt("available_seats");
         double fareFactor = resultSet.getDouble("fare_factor");
-        return new Coach(coachId, TravellingClass.valueOf(travellingClass),coachName, totalSeats, fareFactor);
+
+        Coach coach = new Coach(TravellingClass.valueOf(travellingClass), coachName, totalSeats, fareFactor);
+        coach.setId(coachId);
+        return coach;
     }
 
-    private static Station getStationFromResultSet(ResultSet resultSet) throws SQLException {
+    private Station getStationFromResultSet(ResultSet resultSet) throws SQLException {
         int id = resultSet.getInt("station_id");
+        if (id == 0) return null;
         String stationName = resultSet.getString("station_name");
         String shortName = resultSet.getString("short_name");
         int sequenceNum = resultSet.getInt("sequence_num");
-        Station station = new Station(id, stationName,shortName);
+        Station station = new Station(id, stationName, shortName);
         station.setSequence_num(sequenceNum);
         return station;
     }
 
-    private static DayOfWeek getRunningDayFromResultSet(ResultSet resultSet) throws SQLException {
+    private DayOfWeek getRunningDayFromResultSet(ResultSet resultSet) throws SQLException {
         String runningDay = resultSet.getString("running_day");
+        if (Objects.isNull(runningDay)) return null;
         return DayOfWeek.valueOf(runningDay);
+    }
+
+    private boolean updateRoute(int trainNumber, List<Station> route) throws SQLException {
+        if(route.isEmpty()) return false;
+        try (PreparedStatement preparedStatement = connection.prepareStatement(SqlQueries.updateTrainRoute)) {
+            preparedStatement.setInt(1, trainNumber);
+            for (int sequence = 1; sequence <= route.size(); sequence++) {
+                preparedStatement.setInt(2, route.get(sequence - 1).getId());
+                preparedStatement.setInt(3, sequence);
+                preparedStatement.addBatch();
+            }
+            int[] rowsAffected = preparedStatement.executeBatch();
+            boolean status = true;
+            for (int i: rowsAffected){
+                if (i==0){
+                    status= false;
+                    break;
+                }
+            }
+            if(status){
+                return true;
+            }else{
+                connection.rollback();
+                return false;
+            }
+        }
+    }
+
+    private boolean updateCoaches(int trainNumber, List<Coach> coaches) throws SQLException {
+        if(coaches.isEmpty()) return false;
+        try (PreparedStatement preparedStatement = connection.prepareStatement(SqlQueries.updateTrainCoach)) {
+        preparedStatement.setInt(1, trainNumber);
+            boolean isCoachesAdded = addCoaches(coaches);
+            if(Boolean.FALSE.equals(isCoachesAdded)) return false;
+
+            for(Coach coach : coaches){
+                preparedStatement.setInt(2, coach.getId());
+                preparedStatement.addBatch();
+            }
+
+            int[] rowAffected = preparedStatement.executeBatch();
+            boolean status = true;
+            for(int i: rowAffected){
+                if(i==0){
+                    status = false;
+                    break;
+                }
+            }
+            if(status){
+                return true;
+            }else{
+                connection.rollback();
+                return  false;
+            }
+        }
+    }
+    private boolean addCoaches(List<Coach> coaches) throws SQLException {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(SqlQueries.addCoach)) {
+            for (Coach coach: coaches){
+                preparedStatement.setInt(1, coach.getId());
+                preparedStatement.setString(2, coach.getTravellingClass().toString());
+                preparedStatement.setString(3, coach.getCoachName());
+                preparedStatement.setInt(4, coach.getTotalSeats());
+                preparedStatement.setDouble(5, coach.getFareFactor());
+                preparedStatement.addBatch();
+            }
+            int[] rowAffected = preparedStatement.executeBatch();
+            boolean status = true;
+            for(int i: rowAffected){
+                if(i==0){
+                    status = false;
+                    break;
+                }
+            }
+            if(status){
+                return true;
+            }else{
+                connection.rollback();
+                return false;
+            }
+        }
+    }
+
+    private boolean updateRunningDays(int trainNumber, List<DayOfWeek> runningDays) throws SQLException {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(SqlQueries.updateTrainRunningDays)) {
+            preparedStatement.setInt(1, trainNumber);
+            for (DayOfWeek day: runningDays){
+                preparedStatement.setInt(2, day.ordinal());
+                preparedStatement.addBatch();
+            }
+            int[] rowAffected = preparedStatement.executeBatch();
+            boolean status = true;
+            for(int i: rowAffected){
+                if(i==0){
+                    status = false;
+                    break;
+                }
+            }
+            if(status){
+                return true;
+            }else{
+                connection.rollback();
+                return false;
+            }
+
+        }
     }
 }

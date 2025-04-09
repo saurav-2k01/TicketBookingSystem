@@ -25,14 +25,14 @@ public class PopulateData {
 
         t.setRoute(t.getRoute());
 
-        Coach A = new Coach(67817838, TravellingClass.FIRST_AC,"A", 80,  125.0);
-        Coach B = new Coach(1314341,TravellingClass.FIRST_AC, "B",80,  125.0);
-        Coach C = new Coach(6342423,TravellingClass.SECOND_AC, "C",80,  98.0);
-        Coach D = new Coach(45234542,TravellingClass.SECOND_AC, "D", 80,  98.0);
-        Coach E = new Coach(2346234,TravellingClass.THIRD_AC,"E", 80,  80.0);
-        Coach F = new Coach(234252,TravellingClass.THIRD_AC, "F",80,  80.0);
-        Coach SL1 = new Coach(2242362,TravellingClass.SLEEPER, "SL1",80,50.0);
-        Coach SL2 = new Coach(634234,TravellingClass.SLEEPER, "SL2",80,  50.0);
+        Coach A = new Coach(TravellingClass.FIRST_AC,"A", 80,  125.0);
+        Coach B = new Coach(TravellingClass.FIRST_AC, "B",80,  125.0);
+        Coach C = new Coach(TravellingClass.SECOND_AC, "C",80,  98.0);
+        Coach D = new Coach(TravellingClass.SECOND_AC, "D", 80,  98.0);
+        Coach E = new Coach(TravellingClass.THIRD_AC,"E", 80,  80.0);
+        Coach F = new Coach(TravellingClass.THIRD_AC, "F",80,  80.0);
+        Coach SL1 = new Coach(TravellingClass.SLEEPER, "SL1",80,50.0);
+        Coach SL2 = new Coach(TravellingClass.SLEEPER, "SL2",80,  50.0);
 
 
         t.getCoachList().add(A);

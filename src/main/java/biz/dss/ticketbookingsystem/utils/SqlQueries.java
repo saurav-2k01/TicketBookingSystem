@@ -30,24 +30,46 @@ public class SqlQueries {
     public static String addTrain = "insert into \"train\" (train_number, train_name) values(?,?);";
 //    public static String getTrainByTrainNumber = "select * from \"train\" where train_number = ?;";
     public static String deleteTrain = "delete from \"train\" where train_number = ?";
-    public static String updateTrain = "update \"train\" set train_number=?, train_name=?, source = ?, destination = ?;";
-    public static String updateTrainRoute = "update route set train_number=?, station_id=?, sequence_num=?";
-    public static String updateTrainCoach = "update train_coach set train_number=?, coach_id=?;";
-    public static String updateTrainRunningDays = "update train_coach set train_number=?, coach_id=?;";
+    public static String updateTrain = "update \"train\" set train_number=?, train_name=?, source = ?, destination = ? where train_number = ?;";
+    public static String updateTrainRoute = """
+            insert into route(train_number, station_id, sequence_num) values(?,?,?)
+            on conflict update set train_number =?, station_id=?,sequence_num=?;
+            """;
+    public static String updateTrainCoach = "insert into train_coach(train_number, coach_id) values (?,?);";//todo work on insert and update on conflict
+    public static String updateTrainRunningDays = "insert into train_running_days(train_number, running_day) values(?,?);";
     public static String getAllTrains = "select * from train;";
     public static String getTrainCoachList = "select coach* from;";
+    public static String addCoach = """
+            insert into coach(id, travelling_class, coach_name, total_seats
+            , fare_factor)
+            values(?,?,?,?,?);""";
+//    public static String getTrainByTrainNumber = """
+//            select train.train_number,train.train_name,
+//            coach.id as coach_id, coach.travelling_class,coach.coach_name, coach.total_seats, coach.available_seats, coach.fare_factor,
+//            station.id as station_id, station.name as station_name, station.short_name, route.sequence_num,
+//            running_days.name as running_day
+//            from train
+//            inner join train_running_days on train.train_number = train_running_days.train_number
+//            inner join running_days on running_days.id = train_running_days.running_day
+//            inner join route on train.train_number = route.train_number
+//            inner join station on station.id = route.station_id
+//            inner join train_coach on train.train_number = train_coach.train_number
+//            inner join coach on coach.id = train_coach.coach_id where train.train_number=?;
+//            """;
+
     public static String getTrainByTrainNumber = """
             select train.train_number,train.train_name,
-            coach.id as coach_id, coach.travelling_class,coach.coach_name, coach.total_seats, coach.available_seats, coach.fare_factor,
-            station.id as station_id, station.name as station_name, station.short_name, route.sequence_num,
-            running_days.name as running_day
-            from train
-            inner join train_running_days on train.train_number = train_running_days.train_number
-            inner join running_days on running_days.id = train_running_days.running_day
-            inner join route on train.train_number = route.train_number
-            inner join station on station.id = route.station_id
-            inner join train_coach on train.train_number = train_coach.train_number
-            inner join coach on coach.id = train_coach.coach_id where train.train_number=?;
+                        coach.id as coach_id, coach.travelling_class,coach.coach_name, coach.total_seats,coach.fare_factor,
+                        station.id as station_id, station.name as station_name, station.short_name, route.sequence_num,
+                        running_days.name as running_day
+                        from train
+                        left join train_running_days on train.train_number = train_running_days.train_number
+                        left join running_days on running_days.id = train_running_days.running_day
+                        left join route on train.train_number = route.train_number
+                        left join station on station.id = route.station_id
+                        left join train_coach on train.train_number = train_coach.train_number
+                        left join coach on coach.id = train_coach.coach_id where train.train_number=?
+            ;
             """;
 
     public static String addTrainBooking = "insert into \"train_bookings\"(train_number, coach_id, available_seats, running_date)\n" +

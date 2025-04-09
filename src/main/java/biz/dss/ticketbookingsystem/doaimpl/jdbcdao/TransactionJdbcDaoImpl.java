@@ -278,7 +278,9 @@ public class TransactionJdbcDaoImpl implements TransactionDao {
         int totalSeats = resultSet.getInt("total_seats");
 //        int availableSeats = resultSet.getInt("available_seats");
         double fareFactor = resultSet.getDouble("fare_factor");
-        return new Coach(coachId, TravellingClass.valueOf(travellingClass), coachName, totalSeats, fareFactor);
+        Coach coach = new Coach( TravellingClass.valueOf(travellingClass), coachName, totalSeats, fareFactor);
+        coach.setId(coachId);
+        return coach;
     }
 
     private Station getStationFromResultSet(ResultSet resultSet) throws SQLException {

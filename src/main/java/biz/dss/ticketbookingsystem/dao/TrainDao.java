@@ -3,6 +3,7 @@ package biz.dss.ticketbookingsystem.dao;
 import biz.dss.ticketbookingsystem.models.Station;
 import biz.dss.ticketbookingsystem.models.Train;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -17,7 +18,7 @@ public interface TrainDao {
 
     public Optional<Train> getTrainByTrainName(String trainName);
 
-    public Optional<Train> updateTrain(Train train);
+    public Optional<Train> updateTrain(Train train) throws SQLException;
 
     public Optional<Train> deleteTrain(Train train);
 

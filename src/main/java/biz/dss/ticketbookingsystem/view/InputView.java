@@ -250,7 +250,7 @@ public class InputView {
 
         while (1 > 0) {
             try {
-//                travellingClasses.forEach(t-> System.out.printf("[%d] %s%n", t.ordinal()+1, t));
+                travellingClasses.forEach(t-> System.out.printf("[%d] %s%n", t.ordinal()+1, t));
 
                 Integer travellingClassChoice = getIntegerInput(inputMsg);
                 if ((travellingClassChoice > 0 && (travellingClassChoice - 1) < travellingClasses.size())) {

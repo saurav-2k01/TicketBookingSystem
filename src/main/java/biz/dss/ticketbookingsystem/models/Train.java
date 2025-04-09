@@ -1,14 +1,15 @@
 package biz.dss.ticketbookingsystem.models;
 
 import biz.dss.ticketbookingsystem.intefaces.Formatable;
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 
 import java.time.DayOfWeek;
 import java.util.*;
 
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Train implements Formatable {
     private Integer trainNumber;
     private String trainName;
@@ -28,8 +29,7 @@ public class Train implements Formatable {
 
     @Override
     public List<String> getFieldValues() throws NullPointerException {
-        return List.of(trainNumber.toString(), trainName, source.getName(), destination.getName(), Arrays.toString(runningDays.toArray()));
-
+        return List.of(trainNumber.toString(), trainName, Objects.isNull(source)?"N/A":source.getName(), Objects.isNull(destination)?"N/A":destination.getName(), runningDays.isEmpty()?"N/A":Arrays.toString(runningDays.toArray()));
     }
 
     @Override
@@ -38,6 +38,17 @@ public class Train implements Formatable {
     }
 
     public void setRoute(List<Station> route) {
+        this.route.clear();
+        this.route.addAll(route);
+    }
 
+    public void setCoaches(List<Coach> coaches) {
+        this.coachList.clear();
+        this.coachList.addAll(coaches);
+    }
+
+    public void setRunningDays(List<DayOfWeek> runningDays) {
+        this.runningDays.clear();
+        this.runningDays.addAll(runningDays);
     }
 }

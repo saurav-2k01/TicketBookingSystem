@@ -6,7 +6,6 @@ import biz.dss.ticketbookingsystem.enums.TravellingClass;
 import biz.dss.ticketbookingsystem.models.Coach;
 import biz.dss.ticketbookingsystem.models.Station;
 import biz.dss.ticketbookingsystem.models.Train;
-import biz.dss.ticketbookingsystem.utils.FilterTrain;
 import biz.dss.ticketbookingsystem.utils.Formatter;
 import biz.dss.ticketbookingsystem.utils.Response;
 import biz.dss.ticketbookingsystem.valueobjects.AuthenticatedUser;
@@ -14,7 +13,6 @@ import biz.dss.ticketbookingsystem.valueobjects.AvailableSeats;
 import biz.dss.ticketbookingsystem.valueobjects.TrainSearchDetail;
 
 import java.time.DayOfWeek;
-import java.time.LocalDate;
 import java.util.*;
 
 import static biz.dss.ticketbookingsystem.utils.ResponseStatus.FAILURE;
@@ -51,22 +49,21 @@ public class TrainView {
     }
 
     public void addCoach(AuthenticatedUser authenticatedUser) {
+        List<Coach> coaches = new ArrayList<>();
         List<TravellingClass> travellingClasses = Arrays.stream(TravellingClass.values()).toList();
-        travellingClasses.forEach(System.out::println);//todo show index
+//        travellingClasses.forEach(System.out::println);//todo show index
         TravellingClass travellingClass = inputview.getTravellingClass("Select Travelling CLass: ", travellingClasses);
-        System.out.println("Enter enter total number of seats: ");
         Integer totalSeats = inputview.getIntegerInput("Enter total number of seats: ");
-        System.out.println("Enter fare factor [input should be number with decimal]: ");
         Double fareFactor = inputview.getDoubleInput("Enter fare factor [input should be number with decimal]: ");
-        System.out.println("Enter number of coaches you want to add : ");
         int qty = inputview.getIntegerInput("Enter number of coaches you want to add : ");
 
         for (int i = 0; i < qty; i++) {
             String name = inputview.getName("Enter Coach Name for coach " + i + 1 + ": ");
-            Coach coach = new Coach(234124,travellingClass, name, totalSeats, fareFactor);
-            Response response = trainController.addCoach(authenticatedUser, coach);
-            System.out.println(response.getMessage());
+            Coach coach = new Coach(travellingClass, name, totalSeats, fareFactor);
+            coaches.add(coach);
         }
+        Response response = trainController.addCoach(authenticatedUser, coaches);
+        System.out.println(response.getMessage());
     }
 
     public void removeCoach(AuthenticatedUser authenticatedUser) {
@@ -101,12 +98,12 @@ public class TrainView {
             System.out.println(stationsResponse.getMessage());
             return;
         }
-        Map<String, Station> stations = (Map<String, Station>) (stationsResponse.getData());
+        List<Station> stations = (List<Station>) (stationsResponse.getData());
         boolean flag = true;
         while (flag) {
-            Formatter.tableTemplate(stations.values().stream().toList());
-            String stationName = inputview.getName("enter name or short name of the station, q to stop");
-            if (stationName.equals("q")) {
+            Formatter.tableTemplate(stations);
+            String stationName = inputview.getStringInput("enter name or short name of the station, q to stop");
+            if (stationName.equalsIgnoreCase("q")) {
                 flag = false;
             } else {
                 Response stationByNameResponse = this.stationController.getStationByName(stationName);
@@ -118,6 +115,7 @@ public class TrainView {
                 route.add(station);
             }
         }
+        System.out.println(route);
         Response response = trainController.addRoute(authenticatedUser, route);
         System.out.println(response.getMessage());
     }
@@ -135,7 +133,6 @@ public class TrainView {
     }
 
     public void manageSpecificTrain() {
-        System.out.println("Enter train number: ");
         Integer trainNumber = inputview.getIntegerInput("Enter Train Number: ");
         Response trainResponse = trainController.getTrain(trainNumber);
         if (trainResponse.getStatus().equals(FAILURE)) {
@@ -159,8 +156,18 @@ public class TrainView {
     }
 
     public void addRunningDay(AuthenticatedUser authenticatedUser) {
-        DayOfWeek runningDay = inputview.getRunningDay("Enter Day: ");
-        Response response = trainController.addRunningDay(authenticatedUser, runningDay);
+        List<DayOfWeek> runningDays = new ArrayList<>();
+        while(true){
+            DayOfWeek runningDay = inputview.getRunningDay("Enter Day: ");
+            runningDays.add(runningDay);
+            String choice = inputview.getStringInput("Do you want to add more running days? (y/n)");
+            if(choice.equalsIgnoreCase("N")){
+                break;
+            }else if (!choice.equalsIgnoreCase("y")){
+                System.out.println("Enter a valid input.");
+            }
+        }
+        Response response = trainController.addRunningDay(authenticatedUser, runningDays);
         System.out.println(response.getMessage());
     }
 

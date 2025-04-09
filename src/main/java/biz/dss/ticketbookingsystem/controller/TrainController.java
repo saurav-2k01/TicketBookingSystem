@@ -43,8 +43,8 @@ public class TrainController {
         return trainService.getTrains();
     }
 
-    public Response addCoach(AuthenticatedUser authenticatedUser, Coach coach) {
-        return trainService.addCoach(authenticatedUser,coach);
+    public Response addCoach(AuthenticatedUser authenticatedUser, List<Coach> coaches) {
+        return trainService.addCoach(authenticatedUser,coaches);
     }
 
     public Response removeCoach(AuthenticatedUser authenticatedUser, Coach coach) {
@@ -67,8 +67,8 @@ public class TrainController {
         return trainService.getRoute();
     }
 
-    public Response addRunningDay(AuthenticatedUser authenticatedUser, DayOfWeek day) {
-        return trainService.addRunningDay(authenticatedUser, day);
+    public Response addRunningDay(AuthenticatedUser authenticatedUser, List<DayOfWeek> days) {
+        return trainService.addRunningDays(authenticatedUser, days);
     }
 
     public Response removeRunningDay(AuthenticatedUser authenticatedUser, DayOfWeek day) {

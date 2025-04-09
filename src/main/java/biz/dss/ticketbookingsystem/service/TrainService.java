@@ -27,7 +27,7 @@ public interface TrainService {
 
     Response getTrains();
 
-    Response addCoach(AuthenticatedUser authenticatedUser, Coach coach);
+    Response addCoach(AuthenticatedUser authenticatedUser, List<Coach> coaches);
 
     Response removeCoach(AuthenticatedUser authenticatedUser, Coach coach);
 
@@ -39,7 +39,7 @@ public interface TrainService {
 
     Response getRoute();
 
-    Response addRunningDay(AuthenticatedUser authenticatedUser, DayOfWeek day);
+    Response addRunningDays(AuthenticatedUser authenticatedUser, List<DayOfWeek> days);
 
     Response removeRunningDay(AuthenticatedUser authenticatedUser, DayOfWeek day);
 

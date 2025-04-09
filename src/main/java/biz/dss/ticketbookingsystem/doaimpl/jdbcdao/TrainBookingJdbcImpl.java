@@ -36,7 +36,8 @@ public class TrainBookingJdbcImpl implements TrainBookingDao {
             String coachName = resultSet.getString("coach_name");
             int totalSeats = resultSet.getInt("total_seats");
             double fareFactor = resultSet.getDouble("fare_factor");
-            Coach coach = new Coach(coachId, TravellingClass.valueOf(travellingClass), coachName, totalSeats, fareFactor);
+            Coach coach = new Coach(TravellingClass.valueOf(travellingClass), coachName, totalSeats, fareFactor);
+            coach.setId(coachId);
 
             TrainBooking trainBooking1 = new TrainBooking(trainNumber, coach, runningDate);
             trainBooking1.setAvailableSeats(availableSeats);
@@ -89,8 +90,8 @@ public class TrainBookingJdbcImpl implements TrainBookingDao {
                 String coachName = resultSet.getString("coach_name");
                 int totalSeats = resultSet.getInt("total_seats");
                 double fareFactor = resultSet.getDouble("fare_factor");
-                Coach coach = new Coach(coachId, TravellingClass.valueOf(travellingClass), coachName, totalSeats, fareFactor);
-
+                Coach coach = new Coach( TravellingClass.valueOf(travellingClass), coachName, totalSeats, fareFactor);
+                coach.setId(coachId);
                 TrainBooking trainBooking1 = new TrainBooking(trainNumber, coach, runningDate);
                 trainBooking1.setId(id);
                 trainBooking1.setAvailableSeats(availableSeats);

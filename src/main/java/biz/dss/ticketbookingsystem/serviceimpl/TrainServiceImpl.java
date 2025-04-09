@@ -12,6 +12,7 @@ import biz.dss.ticketbookingsystem.utils.Response;
 import biz.dss.ticketbookingsystem.valueobjects.AuthenticatedUser;
 import biz.dss.ticketbookingsystem.valueobjects.TrainSearchDetail;
 
+import java.sql.SQLException;
 import java.time.DayOfWeek;
 import java.util.*;
 
@@ -66,7 +67,7 @@ public class TrainServiceImpl implements TrainService {
     }
 
     @Override
-    public Response addCoach(AuthenticatedUser authenticatedUser, Coach coach) {
+    public Response addCoach(AuthenticatedUser authenticatedUser, List<Coach> coaches) {
         response = authenticationService.getAuthenticatedUser(authenticatedUser);
         if(!response.isSuccess()) return response;
         User user = (User)(response.getData());
@@ -74,13 +75,19 @@ public class TrainServiceImpl implements TrainService {
             return response = new Response(FAILURE, "only admins can use this feature.");
         }
 
-        boolean addedCoach = currentTrain.getCoachList().add(coach);
-        if (addedCoach) {
-            response = new Response(FAILURE, "Unable to add coach");
-        } else {
-            response = new Response(coach, SUCCESS, "Coach added successfully.");
+        currentTrain.setCoaches(coaches);
+        try {
+            Optional<Train> train = trainDao.updateTrain(currentTrain);
+            if (train.isEmpty()) {
+                response = new Response(FAILURE, "Unable to add coach");
+            } else {
+                response = new Response(coaches, SUCCESS, "Coach added successfully.");
+            }
+            return response;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
-        return response;
+
     }
 
     @Override
@@ -143,6 +150,16 @@ public class TrainServiceImpl implements TrainService {
             return response = new Response(FAILURE, "only admins can use this feature.");
         }
         currentTrain.setRoute(route);
+        try {
+            Optional<Train> train = trainDao.updateTrain(currentTrain);
+            if(train.isPresent()){
+                System.out.println("present");
+            }else{
+                System.out.println("not present");
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
         response = new Response(SUCCESS, "Added route.");
         return response;
     }
@@ -162,6 +179,10 @@ public class TrainServiceImpl implements TrainService {
 
     @Override
     public Response setCurrentTrain(Train train) {
+        System.out.println(train);
+        if(Objects.isNull(train)) {
+            return response = new Response(FAILURE, "train cannot be null.");
+        }
         currentTrain = train;
         response = new Response(SUCCESS, "current train has been set.");
         return response;
@@ -190,19 +211,26 @@ public class TrainServiceImpl implements TrainService {
         return response;
     }
 
+
     @Override
-    public Response addRunningDay(AuthenticatedUser authenticatedUser, DayOfWeek day) {
+    public Response addRunningDays(AuthenticatedUser authenticatedUser, List<DayOfWeek> days) {
         response = authenticationService.getAuthenticatedUser(authenticatedUser);
         if(!response.isSuccess()) return response;
         User user = (User)(response.getData());
         if (Boolean.FALSE.equals(user.getIsLoggedIn()) && Boolean.FALSE.equals(user.getUserType().equals(ADMIN))){
             return response = new Response(FAILURE, "only admins can use this feature.");
         }
-        boolean addedDay = currentTrain.getRunningDays().add(day);
-        if (addedDay) {
+        currentTrain.setRunningDays(days);
+        Optional<Train> train = null;
+        try {
+            train = trainDao.updateTrain(currentTrain);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        if (train.isEmpty()) {
             response = new Response(FAILURE, "Unable to add running day");
         } else {
-            response = new Response(day, SUCCESS, "Added a running day.");
+            response = new Response(days, SUCCESS, "Added a running day.");
         }
         return response;
     }
