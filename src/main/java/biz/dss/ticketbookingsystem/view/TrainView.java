@@ -58,7 +58,7 @@ public class TrainView {
         int qty = inputview.getIntegerInput("Enter number of coaches you want to add : ");
 
         for (int i = 0; i < qty; i++) {
-            String name = inputview.getName("Enter Coach Name for coach " + i + 1 + ": ");
+            String name = inputview.getStringInput("Enter Coach Name for coach " + i + 1 + ": ");
             Coach coach = new Coach(travellingClass, name, totalSeats, fareFactor);
             coaches.add(coach);
         }
@@ -121,14 +121,15 @@ public class TrainView {
     }
 
     public void removeRoute(AuthenticatedUser authenticatedUser) {
-        Integer trainNumber = inputview.getIntegerInput("Enter Train Number: ");
-        Response trainResponse = trainController.getTrain(trainNumber);
+        Response trainResponse = trainController.getCurrentTrain();
         if (trainResponse.getStatus().equals(FAILURE)) {
             System.out.println(trainResponse.getMessage());
             return;
         }
         Train train = (Train) (trainResponse.getData());
-        Response response = this.trainController.removeRoute(authenticatedUser, train);
+        Formatter.tableTemplate(train.getRoute().stream().sorted().toList());
+        Station station = inputview.getStation("Select Station: ");
+        Response response = this.trainController.removeRoute(authenticatedUser,List.of(station));
         System.out.println(response.getMessage());
     }
 
@@ -152,7 +153,7 @@ public class TrainView {
             return;
         }
         List<Station> route = (List<Station>) (routeResponse.getData());
-        route.forEach(System.out::println);
+        Formatter.tableTemplate(route.stream().sorted().toList());
     }
 
     public void addRunningDay(AuthenticatedUser authenticatedUser) {
@@ -184,7 +185,7 @@ public class TrainView {
             return;
         }
         List<DayOfWeek> runningDays = (List<DayOfWeek>) (runningDaysResponse.getData());
-        runningDays.forEach(System.out::println);
+        runningDays.stream().sorted().forEach(System.out::println);
     }
 
     public void getCoach() {
@@ -201,7 +202,7 @@ public class TrainView {
         }
         Train currentTrain = (Train) (currentTrainResponse.getData());
         List<Coach> coachList = currentTrain.getCoachList();
-        coachList.forEach(System.out::println);
+        Formatter.tableTemplate(coachList);
     }
 
     public void displayTrainDetail() {
@@ -216,6 +217,7 @@ public class TrainView {
         System.out.println(train.getSource());
         System.out.println(train.getDestination());
         System.out.println(train.getRunningDays());
+        System.out.println(train.getRoute());
         System.out.println(train.getCoachList());
     }
 

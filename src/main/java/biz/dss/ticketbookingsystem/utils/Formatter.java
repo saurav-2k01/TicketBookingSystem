@@ -6,6 +6,7 @@ import biz.dss.ticketbookingsystem.models.Transaction;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Pattern;
 
 public class Formatter {
@@ -23,11 +24,11 @@ public class Formatter {
     public static <T extends Formatable> void tableTemplate(List<T> list) {
         if (list.isEmpty()) return;
         T firstObject = list.getFirst(); // @TODO handle exception
-        String fields = "";
+        StringBuilder fields = new StringBuilder();
         String title = firstObject.getDisplayableTitle();
 
         for (String field : firstObject.fieldsToDisplay()) {
-            fields += field + multiplyChar(Formatable.MAX_CHAR_LIMIT - field.length(), ' ');
+            fields.append(field).append(multiplyChar(Formatable.MAX_CHAR_LIMIT - field.length(), ' '));
         }
 
         int halfSide = (((fields.length() - title.length()) / 2) + 1) - (Formatable.MAX_CHAR_LIMIT / 2);
@@ -46,7 +47,6 @@ public class Formatter {
             }
 
         }
-
         String finisher = multiplyChar(titleBar.length() - Formatable.EXTRA_CHAR, '=') + "\n";
         System.out.println(finisher);
     }
@@ -57,6 +57,7 @@ public class Formatter {
         for (int i = 0; i < x + Formatable.EXTRA_CHAR; i++) { // @TODO replace with intstream
             temp += ch;
         }
+
 
         return temp;
     }

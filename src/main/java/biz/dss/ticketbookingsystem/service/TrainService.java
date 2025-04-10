@@ -35,8 +35,7 @@ public interface TrainService {
 
     Response addRoute(AuthenticatedUser authenticatedUser, List<Station> route);
 
-    Response removeRoute(AuthenticatedUser authenticatedUser, Train train);
-
+    Response removeRoute(AuthenticatedUser authenticatedUser, List<Station> route);
     Response getRoute();
 
     Response addRunningDays(AuthenticatedUser authenticatedUser, List<DayOfWeek> days);

@@ -1,10 +1,14 @@
 package biz.dss.ticketbookingsystem.doaimpl.collectiondao;
 
 import biz.dss.ticketbookingsystem.dao.TrainDao;
+import biz.dss.ticketbookingsystem.models.Coach;
+import biz.dss.ticketbookingsystem.models.Station;
 import biz.dss.ticketbookingsystem.models.Train;
 import biz.dss.ticketbookingsystem.utils.PopulateData;
 import lombok.NoArgsConstructor;
 
+import java.sql.SQLException;
+import java.time.DayOfWeek;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -73,5 +77,20 @@ public class TrainDaoCollectionImpl implements TrainDao {
 
     public List<Train> getTrains() {
         return trains;
+    }
+
+    @Override
+    public boolean removeRunningDay(Train train, List<DayOfWeek> runningDays) {
+        return false;
+    }
+
+    @Override
+    public boolean removeCoach(Train train, List<Coach> runningDays) throws SQLException {
+        return false;
+    }
+
+    @Override
+    public boolean removeRoute(Train train, List<Station> route) throws SQLException {
+        return false;
     }
 }

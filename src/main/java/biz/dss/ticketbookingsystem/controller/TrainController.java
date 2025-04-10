@@ -59,8 +59,8 @@ public class TrainController {
         return trainService.addRoute(authenticatedUser, route);
     }
 
-    public Response removeRoute(AuthenticatedUser authenticatedUser, Train train) {
-        return trainService.removeRoute(authenticatedUser, train);
+    public Response removeRoute(AuthenticatedUser authenticatedUser, List<Station> route) {
+        return trainService.removeRoute(authenticatedUser,route);
     }
 
     public Response getRoute() {

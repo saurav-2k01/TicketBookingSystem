@@ -11,6 +11,7 @@ import biz.dss.ticketbookingsystem.utils.FilterTrain;
 import biz.dss.ticketbookingsystem.utils.Response;
 import biz.dss.ticketbookingsystem.valueobjects.AuthenticatedUser;
 import biz.dss.ticketbookingsystem.valueobjects.TrainSearchDetail;
+import com.sun.net.httpserver.Authenticator;
 
 import java.sql.SQLException;
 import java.time.DayOfWeek;
@@ -99,12 +100,18 @@ public class TrainServiceImpl implements TrainService {
             return response = new Response(FAILURE, "only admins can use this feature.");
         }
         boolean removeTrain = currentTrain.getCoachList().remove(coach);
-        if (removeTrain) {
-            response = new Response(FAILURE, "Unable to add coach");
-        } else {
-            response = new Response(coach, SUCCESS, "Coach added successfully.");
+        try {
+            boolean isRemoved = trainDao.removeCoach(currentTrain, List.of(coach));
+            if (!isRemoved) {
+                response = new Response(FAILURE, "Unable to add coach");
+            } else {
+                response = new Response(coach, SUCCESS, "Coach added successfully.");
+            }
+            return response;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
-        return response;
+
     }
 
     @Override
@@ -165,16 +172,25 @@ public class TrainServiceImpl implements TrainService {
     }
 
     @Override
-    public Response removeRoute(AuthenticatedUser authenticatedUser, Train train) {
+    public Response removeRoute(AuthenticatedUser authenticatedUser, List<Station> route) {
         response = authenticationService.getAuthenticatedUser(authenticatedUser);
         if(!response.isSuccess()) return response;
         User user = (User)(response.getData());
         if (Boolean.FALSE.equals(user.getIsLoggedIn()) && Boolean.FALSE.equals(user.getUserType().equals(ADMIN))){
             return response = new Response(FAILURE, "only admins can use this feature.");
         }
-        train.getRoute().clear();
-        response = new Response(SUCCESS, "Removed route from the train.");
-        return response;
+        currentTrain.getRoute().removeAll(route);
+        try {
+            boolean isRemoved = trainDao.removeRoute(currentTrain, route);
+            if(!isRemoved){
+                response = new Response(FAILURE, "unable to remove.");
+            }else{
+                response = new Response(SUCCESS, "Removed route from the train.");
+            }
+            return response;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -244,12 +260,18 @@ public class TrainServiceImpl implements TrainService {
             return response = new Response(FAILURE, "only admins can use this feature.");
         }
         boolean removedDay = currentTrain.getRunningDays().remove(day);
-        if (removedDay) {
-            response = new Response(FAILURE, "unable to remove running day.");
-        } else {
-            response = new Response(day, SUCCESS, "Removed running day successfully.");
+        try {
+            boolean isRemoved = trainDao.removeRunningDay(currentTrain, List.of(day));
+            if (!isRemoved) {
+                response = new Response(FAILURE, "unable to remove running day.");
+            } else {
+                response = new Response(day, SUCCESS, "Removed running day successfully.");
+            }
+            return response;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
-        return response;
+
     }
 
     @Override
@@ -258,7 +280,7 @@ public class TrainServiceImpl implements TrainService {
         if (Objects.isNull(runningDays)) {
             response = new Response(FAILURE, "Running days not found.");
         } else {
-            response = new Response(runningDays, SUCCESS, "Removed running day successfully.");
+            response = new Response(new ArrayList<>(runningDays), SUCCESS, "Removed running day successfully.");
         }
         return response;
     }
