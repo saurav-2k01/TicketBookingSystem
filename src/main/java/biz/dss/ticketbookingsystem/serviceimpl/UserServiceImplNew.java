@@ -6,7 +6,10 @@ import biz.dss.ticketbookingsystem.service.AuthenticationService;
 import biz.dss.ticketbookingsystem.service.UserService;
 import biz.dss.ticketbookingsystem.utils.Response;
 import biz.dss.ticketbookingsystem.valueobjects.AuthenticatedUser;
+import lombok.extern.slf4j.Slf4j;
 
+import javax.swing.text.html.Option;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -16,6 +19,7 @@ import static biz.dss.ticketbookingsystem.enums.UserType.REGISTERED_USER;
 import static biz.dss.ticketbookingsystem.utils.ResponseStatus.FAILURE;
 import static biz.dss.ticketbookingsystem.utils.ResponseStatus.SUCCESS;
 
+@Slf4j
 public class UserServiceImplNew implements UserService {
     private final UserDao userDao;
     private final AuthenticationService authenticationService;
@@ -30,7 +34,12 @@ public class UserServiceImplNew implements UserService {
         if (Objects.isNull(user)) {
             return new Response(FAILURE, "User cannot be null.");
         }
-        Optional<User> addedUser = userDao.addUser(user);
+        Optional<User> addedUser = Optional.empty();
+        try {
+            addedUser = userDao.addUser(user);
+        } catch (SQLException e) {
+            log.error("Error occurred while adding user.");
+        }
         if (addedUser.isPresent()) {
             return response = new Response(user, SUCCESS, String.format("%s has been as registered user.", user.getName()));
         }
@@ -42,7 +51,12 @@ public class UserServiceImplNew implements UserService {
         if (Objects.isNull(id)) {
             return new Response(FAILURE, "Id cannot be null.");
         }
-        Optional<User> foundUser = userDao.getUserById(id);
+        Optional<User> foundUser = Optional.empty();
+        try {
+            foundUser = userDao.getUserById(id);
+        } catch (SQLException e) {
+            log.error("Error occurred while getting user", e);
+        }
         return foundUser.map(user -> response = new Response(user, SUCCESS, String.format("user found with name '%s'.", user.getName())))
                 .orElseGet(() -> response = new Response(FAILURE, String.format("No user found for id '%d'.", id)));
     }
@@ -52,7 +66,12 @@ public class UserServiceImplNew implements UserService {
         if (Objects.isNull(email)) {
             return new Response(FAILURE, "Email cannot be null.");
         }
-        Optional<User> foundUser = userDao.getUserByEmail(email);
+        Optional<User> foundUser = Optional.empty();
+        try {
+            foundUser = userDao.getUserByEmail(email);
+        } catch (SQLException e) {
+            log.error("Error occurred while getting user", e);
+        }
         return foundUser.map(user -> response = new Response(user, SUCCESS, String.format("user found with name '%s'.", user.getName())))
                 .orElseGet(() -> response = new Response(FAILURE, String.format("No user found for email '%s'.", email)));
     }
@@ -62,7 +81,13 @@ public class UserServiceImplNew implements UserService {
         if (Objects.isNull(username)) {
             return new Response(FAILURE, "Username cannot be null.");
         }
-        Optional<User> foundUser = userDao.getUserByUserName(username);
+        Optional<User> foundUser = Optional.empty();
+        System.out.println(foundUser.get());
+        try {
+            foundUser = userDao.getUserByUserName(username);
+        } catch (SQLException e) {
+            log.error("Error occurred while getting user.", e);
+        }
         return foundUser.map(user -> response = new Response(user, SUCCESS, String.format("user found with name '%s'.", user.getUserName())))
                 .orElseGet(() -> response = new Response(FAILURE, String.format("No user found for username '%s'.", username)));
     }
@@ -72,7 +97,7 @@ public class UserServiceImplNew implements UserService {
 
     public Response deleteUser(AuthenticatedUser authenticatedUser, String username) {
         response = authenticationService.getAuthenticatedUser(authenticatedUser);
-        if(!response.isSuccess()) return response;
+        if(Boolean.FALSE.equals(response.isSuccess())) return response;
         User user = (User)(response.getData());
         if (Boolean.FALSE.equals(user.getIsLoggedIn()) && Boolean.FALSE.equals(user.getUserType().equals(ADMIN))){
             return response = new Response(FAILURE, "only admins can use this feature.");
@@ -80,20 +105,35 @@ public class UserServiceImplNew implements UserService {
         if (Objects.isNull(username)) {
             return new Response(FAILURE, "Email cannot be null.");
         }
-        Optional<User> deletedUser = userDao.deleteUser(username);
-        return deletedUser.map(userValue -> response = new Response(userValue, SUCCESS, String.format("user '%s' was deleted.", user.getName())))
-                .orElseGet(() -> response = new Response(FAILURE, String.format("No user found for username '%s'.", username)));
+
+        try {
+         Optional<User> deletedUser = userDao.deleteUser(username);
+            if(deletedUser.isPresent()){
+                response = new Response(deletedUser, SUCCESS, String.format("user '%s' was deleted.", deletedUser.get().getName()));
+            }else{
+                response = new Response(FAILURE, String.format("No user found for username '%s'.", username));
+            }
+        } catch (SQLException e) {
+            log.error("Error occurred while deleting user.", e);
+            response = new Response(FAILURE, String.format("No user found for username '%s'.", username));
+        }
+        return response;
     }
 
 
     public Response getUsers(AuthenticatedUser authenticatedUser) {
         response = authenticationService.getAuthenticatedUser(authenticatedUser);
-        if(!response.isSuccess()) return response;
+        if(Boolean.FALSE.equals(response.isSuccess())) return response;
         User user = (User)(response.getData());
         if (Boolean.FALSE.equals(user.getIsLoggedIn()) && Boolean.FALSE.equals(user.getUserType().equals(ADMIN))){
             return response = new Response(FAILURE, "only admins can use this feature.");
         }
-        List<User> users = userDao.getUsers().stream().filter(u->u.getUserType().equals(REGISTERED_USER)).toList();
+        List<User> users = null;
+        try {
+            users = userDao.getUsers().stream().filter(u->u.getUserType().equals(REGISTERED_USER)).toList();
+        } catch (SQLException e) {
+            log.error("Error occurred while getting users", e);
+        }
         if (Objects.isNull(users)) {
             response = new Response(FAILURE, "no users found.");
         } else {
@@ -104,17 +144,24 @@ public class UserServiceImplNew implements UserService {
 
     public Response getAllAdmins(AuthenticatedUser authenticatedUser) {
         response = authenticationService.getAuthenticatedUser(authenticatedUser);
-        if(!response.isSuccess()) return response;
+        if(Boolean.FALSE.equals(response.isSuccess())) return response;
         User user = (User)(response.getData());
         if (Boolean.FALSE.equals(user.getIsLoggedIn()) && Boolean.FALSE.equals(user.getUserType().equals(ADMIN))){
             return response = new Response(FAILURE, "only admins can use this feature.");
         }
-        List<User> admins = userDao.getUsers().stream().filter(u -> u.getUserType().equals(ADMIN)).toList();
-        if (admins.isEmpty()) {
-            response = new Response(admins, SUCCESS, "No admins found.");
-        } else {
-            response = new Response(admins, SUCCESS, String.format("%d admins found.", admins.size()));
+        List<User> admins;
+        try {
+            admins = userDao.getUsers().stream().filter(u -> u.getUserType().equals(ADMIN)).toList();
+            if (admins.isEmpty()) {
+                response = new Response(admins, SUCCESS, "No admins found.");
+            } else {
+                response = new Response(admins, SUCCESS, String.format("%d admins found.", admins.size()));
+            }
+        } catch (SQLException e) {
+            log.error("Error occurred while getting users.", e);
+            response = new Response(FAILURE, "no admins found");
         }
+
         return response;
 }
 }

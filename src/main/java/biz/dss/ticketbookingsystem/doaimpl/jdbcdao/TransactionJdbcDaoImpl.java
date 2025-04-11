@@ -9,6 +9,7 @@ import biz.dss.ticketbookingsystem.models.*;
 import biz.dss.ticketbookingsystem.utils.DbConnection;
 import biz.dss.ticketbookingsystem.utils.SqlQueries;
 import biz.dss.ticketbookingsystem.utils.UtilClass;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.swing.text.html.Option;
 import java.sql.*;
@@ -17,6 +18,7 @@ import java.time.DayOfWeek;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Slf4j
 public class TransactionJdbcDaoImpl implements TransactionDao {
     Connection connection = DbConnection.getConnection();
 
@@ -76,31 +78,37 @@ public class TransactionJdbcDaoImpl implements TransactionDao {
                     sourceId = resultSet.getInt("source");
                     destinationId = resultSet.getInt("destination");
                 }
-                if (totalFare == 0.0 && Objects.isNull(dateOfJourney) && isCancelled == false) {
+                if (totalFare == 0.0 && Objects.isNull(dateOfJourney) && Boolean.FALSE.equals(isCancelled)) {
                     dateOfJourney = resultSet.getDate("date_of_journey");
                     totalFare = resultSet.getDouble("total_fare");
                     isCancelled = resultSet.getBoolean("is_cancelled");
                 }
 //                user
-                if (Objects.isNull(user)) {
-                    user = getUserFromResultSet(resultSet);
-                }
-//                passenger
-                User passenger = getPassengerFromResultSet(resultSet);
-                passengers.add(passenger);
-                if (Objects.isNull(train)) {
-                    Optional<Train> trainByTrainNumber = getTrainByTrainNumber(trainNumber);
-                    if (trainByTrainNumber.isEmpty()) return Optional.empty();
-                    train = trainByTrainNumber.get();
-                    if (Objects.isNull(source) && Objects.isNull(destination)) {
-                        int finalSourceId = sourceId;
-                        source = train.getRoute().stream().filter(s -> s.getId() == finalSourceId).findFirst().get();
-                        int finalDestinationId = destinationId;
-                        destination = train.getRoute().stream().filter(d -> d.getId() == finalDestinationId).findFirst().get();
-                    }
+                User userFromResultSet = getUserFromResultSet(resultSet);
+                if (Objects.isNull(user) && Boolean.FALSE.equals(Objects.isNull(userFromResultSet))) {
+                    user = userFromResultSet;
                 }
             }
-            Transaction transaction = new Transaction(train, source, destination, dateOfJourney.toLocalDate(), passengers, user, totalFare);
+//                passenger
+            User passenger = getPassengerFromResultSet(resultSet);
+            if (Boolean.FALSE.equals(Objects.isNull(passenger))) {
+                passengers.add(passenger);
+            }
+            if (Objects.isNull(train)) {
+                Optional<Train> trainByTrainNumber = getTrainByTrainNumber(trainNumber);
+                if (trainByTrainNumber.isEmpty()) return Optional.empty();
+
+                train = trainByTrainNumber.get();
+                if (Objects.isNull(source) && Objects.isNull(destination)) {
+                    int finalSourceId = sourceId;
+                    source = train.getRoute().stream().filter(s -> s.getId() == finalSourceId).findFirst().get();
+                    int finalDestinationId = destinationId;
+                    destination = train.getRoute().stream().filter(d -> d.getId() == finalDestinationId).findFirst().get();
+                }
+            }
+
+
+            Transaction transaction = new Transaction(train, source, destination, Objects.isNull(dateOfJourney) ? null : dateOfJourney.toLocalDate(), passengers, user, totalFare);
             transaction.setPnr(pnr1);
             transaction.setCancelled(isCancelled);
             return Optional.of(transaction);
@@ -109,26 +117,26 @@ public class TransactionJdbcDaoImpl implements TransactionDao {
 
     @Override
     public List<Transaction> getTransactionByUserId(Integer userId) throws SQLException {
-        PreparedStatement preparedStatement = connection.prepareStatement("select pnr from transaction where user_id =?");
-        preparedStatement.setInt(1, userId);
-        ResultSet resultSet = preparedStatement.executeQuery();
-        List<Integer> pnrList = new ArrayList<>();
-        while (resultSet.next()) {
-            int pnr = resultSet.getInt("pnr");
-            pnrList.add(pnr);
-        }
-        List<Transaction> transactions = new ArrayList<>();
-        pnrList.forEach(
-                p -> {
-                    try {
-                        Optional<Transaction> transactionByPnr = getTransactionByPnr(p);
-                        transactionByPnr.ifPresent(transactions::add);
-                    } catch (SQLException e) {
-                        throw new RuntimeException(e);
-                    }
+        ResultSet resultSet;
+        try (PreparedStatement preparedStatement = connection.prepareStatement("select pnr from transaction where user_id =?")) {
+            preparedStatement.setInt(1, userId);
+            resultSet = preparedStatement.executeQuery();
+            List<Integer> pnrList = new ArrayList<>();
+            while (resultSet.next()) {
+                int pnr = resultSet.getInt("pnr");
+                pnrList.add(pnr);
+            }
+            List<Transaction> transactions = new ArrayList<>();
+            pnrList.forEach(p -> {
+                try {
+                    Optional<Transaction> transactionByPnr = getTransactionByPnr(p);
+                    transactionByPnr.ifPresent(transactions::add);
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
                 }
-        );
-        return transactions;
+            });
+            return transactions;
+        }
     }
 
     @Override
@@ -138,25 +146,25 @@ public class TransactionJdbcDaoImpl implements TransactionDao {
 
     @Override
     public List<Transaction> getTransactions() throws SQLException {
-        PreparedStatement preparedStatement = connection.prepareStatement("select pnr from transaction;");
-        ResultSet resultSet = preparedStatement.executeQuery();
-        List<Integer> pnrList = new ArrayList<>();
-        while (resultSet.next()) {
-            int pnr = resultSet.getInt("pnr");
-            pnrList.add(pnr);
-        }
-        List<Transaction> transactions = new ArrayList<>();
-        pnrList.forEach(
-                p -> {
-                    try {
-                        Optional<Transaction> transactionByPnr = getTransactionByPnr(p);
-                        transactionByPnr.ifPresent(transactions::add);
-                    } catch (SQLException e) {
-                        throw new RuntimeException(e);
-                    }
+        ResultSet resultSet;
+        try (PreparedStatement preparedStatement = connection.prepareStatement("select pnr from transaction;")) {
+            resultSet = preparedStatement.executeQuery();
+            List<Integer> pnrList = new ArrayList<>();
+            while (resultSet.next()) {
+                int pnr = resultSet.getInt("pnr");
+                pnrList.add(pnr);
+            }
+            List<Transaction> transactions = new ArrayList<>();
+            pnrList.forEach(p -> {
+                try {
+                    Optional<Transaction> transactionByPnr = getTransactionByPnr(p);
+                    transactionByPnr.ifPresent(transactions::add);
+                } catch (SQLException e) {
+                    log.error("Error occurred while getting transaction.", e);
                 }
-        );
-        return transactions;
+            });
+            return transactions;
+        }
     }
 
     private boolean addPassengers(List<User> passengers) throws SQLException {
@@ -176,12 +184,12 @@ public class TransactionJdbcDaoImpl implements TransactionDao {
                 if (i == 0) status = false;
                 break;
             }
-        }
-        if (status) {
-            return true;
-        } else {
-            connection.rollback();
-            return false;
+            if (status) {
+                return true;
+            } else {
+                connection.rollback();
+                return false;
+            }
         }
     }
 
@@ -217,12 +225,12 @@ public class TransactionJdbcDaoImpl implements TransactionDao {
                 if (i == 0) status = false;
                 break;
             }
-        }
-        if (status) {
-            return true;
-        } else {
-            connection.rollback();
-            return false;
+            if (status) {
+                return true;
+            } else {
+                connection.rollback();
+                return false;
+            }
         }
     }
 
@@ -240,11 +248,11 @@ public class TransactionJdbcDaoImpl implements TransactionDao {
         }
     }
 
-    private Optional<Train> getTrainByTrainNumber(Integer trainNumber) {
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement(SqlQueries.getTrainByTrainNumber);
+    private Optional<Train> getTrainByTrainNumber(Integer trainNumber) throws SQLException {
+        ResultSet resultSet;
+        try (PreparedStatement preparedStatement = connection.prepareStatement(SqlQueries.getTrainByTrainNumber)) {
             preparedStatement.setInt(1, trainNumber);
-            ResultSet resultSet = preparedStatement.executeQuery();
+            resultSet = preparedStatement.executeQuery();
             int trainNumber_ = 0;
             String trainName = null;
             Set<Coach> coaches = new HashSet<>();
@@ -258,33 +266,37 @@ public class TransactionJdbcDaoImpl implements TransactionDao {
                 if (Objects.isNull(trainName)) {
                     trainName = resultSet.getString("train_name");
                 }
-                coaches.add(getCoachFromResultSet(resultSet));
+                Coach coachFromResultSet = getCoachFromResultSet(resultSet);
+                if (Objects.isNull(coachFromResultSet)) {
+                    coaches.add(coachFromResultSet);
+                }
                 route.add(getStationFromResultSet(resultSet));
                 runningDays.add(getRunningDayFromResultSet(resultSet));
             }
-            List<Station> stationList = route.stream().sorted().collect(Collectors.toList());
-            Train train = Train.builder().trainNumber(trainNumber).trainName(trainName).source(stationList.getFirst()).destination(stationList.getLast())
-                    .coachList(new ArrayList<>(coaches)).runningDays(runningDays).route(new ArrayList<>(route)).build();
+            if (Objects.isNull(trainName)) {
+                return Optional.empty();
+            }
+            List<Station> stationList = route.stream().sorted().toList();
+            Train train = Train.builder().trainNumber(trainNumber).trainName(trainName).source(stationList.getFirst()).destination(stationList.getLast()).coachList(new ArrayList<>(coaches)).runningDays(runningDays).route(new ArrayList<>(route)).build();
             return Optional.of(train);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
         }
     }
 
     private Coach getCoachFromResultSet(ResultSet resultSet) throws SQLException {
         int coachId = resultSet.getInt("coach_id");
+        if (coachId == 0) return null;
         String travellingClass = resultSet.getString("travelling_class");
         String coachName = resultSet.getString("coach_name");
         int totalSeats = resultSet.getInt("total_seats");
-//        int availableSeats = resultSet.getInt("available_seats");
         double fareFactor = resultSet.getDouble("fare_factor");
-        Coach coach = new Coach( TravellingClass.valueOf(travellingClass), coachName, totalSeats, fareFactor);
+        Coach coach = new Coach(TravellingClass.valueOf(travellingClass), coachName, totalSeats, fareFactor);
         coach.setId(coachId);
         return coach;
     }
 
     private Station getStationFromResultSet(ResultSet resultSet) throws SQLException {
         int id = resultSet.getInt("station_id");
+        if (id == 0) return null;
         String stationName = resultSet.getString("station_name");
         String shortName = resultSet.getString("short_name");
         int sequenceNum = resultSet.getInt("sequence_num");
@@ -295,11 +307,13 @@ public class TransactionJdbcDaoImpl implements TransactionDao {
 
     private DayOfWeek getRunningDayFromResultSet(ResultSet resultSet) throws SQLException {
         String runningDay = resultSet.getString("running_day");
+        if (Objects.isNull(runningDay)) return null;
         return DayOfWeek.valueOf(runningDay);
     }
 
     private User getUserFromResultSet(ResultSet resultSet) throws SQLException {
         int id = resultSet.getInt("user_id");
+        if (id == 0) return null;
         String name = resultSet.getString("user_name");
         String userUsername = resultSet.getString("user_username");
         int userAge = resultSet.getInt("user_age");
@@ -310,21 +324,17 @@ public class TransactionJdbcDaoImpl implements TransactionDao {
         String userUserType = resultSet.getString("user_user_type");
         String isLoggedIn = resultSet.getString("is_logged_in");
 
-        return User.builder().id(id).name(name).userName(userUsername).age(userAge)
-                .gender(Gender.valueOf(userGender)).email(userEmail).password(userPassword)
-                .seatNumber(seatNumber).userType(UserType.valueOf(userUserType))
-                .isLoggedIn(Boolean.valueOf(isLoggedIn)).build();
+        return User.builder().id(id).name(name).userName(userUsername).age(userAge).gender(Gender.valueOf(userGender)).email(userEmail).password(userPassword).seatNumber(seatNumber).userType(UserType.valueOf(userUserType)).isLoggedIn(Boolean.valueOf(isLoggedIn)).build();
     }
 
     private User getPassengerFromResultSet(ResultSet resultSet) throws SQLException {
         int id = resultSet.getInt("passenger_id");
+        if (id == 0) return null;
         String passengerName = resultSet.getString("passenger_name");
         int passengerAge = resultSet.getInt("passenger_age");
         String passengerGender = resultSet.getString("passenger_gender");
         String seatNumber = resultSet.getString("passenger_seat_number");
         String passengerUserType = resultSet.getString("passenger_user_type");
-        return User.builder().id(id).name(passengerName).age(passengerAge)
-                .gender(Gender.valueOf(passengerGender)).seatNumber(seatNumber)
-                .userType(UserType.valueOf(passengerUserType)).build();
+        return User.builder().id(id).name(passengerName).age(passengerAge).gender(Gender.valueOf(passengerGender)).seatNumber(seatNumber).userType(UserType.valueOf(passengerUserType)).build();
     }
 }

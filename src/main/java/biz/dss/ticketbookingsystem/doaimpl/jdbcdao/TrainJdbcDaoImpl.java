@@ -21,52 +21,31 @@ public class TrainJdbcDaoImpl implements TrainDao {
     Connection connection = DbConnection.getConnection();
 
     @Override
-    public Optional<Train> addTrain(Train train) {
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement(SqlQueries.addTrain);
+    public Optional<Train> addTrain(Train train) throws SQLException {
+
+        int affectedRow;
+        try (PreparedStatement preparedStatement = connection.prepareStatement(SqlQueries.addTrain)) {
             preparedStatement.setInt(1, train.getTrainNumber());
             preparedStatement.setString(2, train.getTrainName());
-//            preparedStatement.setInt(3, null);
-//            preparedStatement.setInt(4, train.getDestination().getId());
-            int affectedRow = preparedStatement.executeUpdate();
+            affectedRow = preparedStatement.executeUpdate();
             if (affectedRow > 0) {
                 return Optional.of(train);
             }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+            return Optional.empty();
         }
-        return Optional.empty();
     }
 
     @Override
     public Optional<Train> getTrainById(Integer id) {
-//        try {
-//            PreparedStatement preparedStatement = connection.prepareStatement(SqlQueries.getTrainByTrainNumber);
-//            preparedStatement.setInt(1, id);
-//            ResultSet resultSet = preparedStatement.executeQuery();
-//            while (resultSet.next()) {
-//                int trainNumber = resultSet.getInt("train_number");
-//                String trainName = resultSet.getString("train_name");
-//                int sourceId = resultSet.getInt("source");
-//                int destinationId = resultSet.getInt("destination");
-//                Optional<Station> sourceOpt = getStationById(sourceId);
-//                Optional<Station> destinationOpt = getStationById(destinationId);
-//                Train train = Train.builder().trainNumber(trainNumber).trainName(trainName).source(sourceOpt.get()).destination(destinationOpt.get()).build();
-//                return Optional.of(train);
-//            }
-//
-//        } catch (SQLException e) {
-//            throw new RuntimeException(e);
-//        }
         return Optional.empty();
     }
 
     @Override
-    public Optional<Train> getTrainByTrainNumber(Integer trainNumber) {
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement(SqlQueries.getTrainByTrainNumber);
+    public Optional<Train> getTrainByTrainNumber(Integer trainNumber) throws SQLException {
+        ResultSet resultSet;
+        try (PreparedStatement preparedStatement = connection.prepareStatement(SqlQueries.getTrainByTrainNumber)) {
             preparedStatement.setInt(1, trainNumber);
-            ResultSet resultSet = preparedStatement.executeQuery();
+            resultSet = preparedStatement.executeQuery();
             int trainNumber_ = 0;
             String trainName = null;
             Set<Coach> coaches = new HashSet<>();
@@ -93,7 +72,8 @@ public class TrainJdbcDaoImpl implements TrainDao {
                     runningDays.add(runningDayFromResultSet);
                 }
             }
-            List<Station> stationList = route.stream().sorted().collect(Collectors.toList());
+            if (Objects.isNull(trainName)) return Optional.empty();
+            List<Station> stationList = route.stream().sorted().toList();
             Train train;
             if (stationList.isEmpty()) {
                 train = Train.builder().trainNumber(trainNumber).trainName(trainName).source(null).destination(null)
@@ -104,60 +84,24 @@ public class TrainJdbcDaoImpl implements TrainDao {
             }
 
             return Optional.of(train);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
         }
     }
 
     @Override
     public Optional<Train> getTrainByTrainName(String trainName) {
-//        try {
-//            PreparedStatement preparedStatement = connection.prepareStatement(SqlQueries.getTrainByTrainNumber);
-//            preparedStatement.setString(1, trainName);
-//            ResultSet resultSet = preparedStatement.executeQuery();
-//            while (resultSet.next()) {
-//                int trainNumber = resultSet.getInt("train_number");
-//                String trainName_ = resultSet.getString("train_name");
-//                int sourceId = resultSet.getInt("source");
-//                int destinationId = resultSet.getInt("destination");
-//                Optional<Station> sourceOpt = getStationById(sourceId);
-//                Optional<Station> destinationOpt = getStationById(destinationId);
-//                Train train = Train.builder().trainNumber(trainNumber).trainName(trainName_).source(sourceOpt.get()).destination(destinationOpt.get()).build();
-//                return Optional.of(train);
-//            }
-//        } catch (SQLException e) {
-//            throw new RuntimeException(e);
-//        }
         return Optional.empty();
     }
 
     @Override
     public Optional<Train> updateTrain(Train train) throws SQLException {
-//        try {
-//            PreparedStatement preparedStatement = connection.prepareStatement(SqlQueries.updateTrain);
-//            preparedStatement.setInt(1, train.getTrainNumber());
-//            preparedStatement.setString(2, train.getTrainName());
-//            preparedStatement.setInt(3, train.getSource().getId());
-//            preparedStatement.setInt(4, train.getDestination().getId());
-//            preparedStatement.setInt(5, train.getTrainNumber());
-//            int affectedRows = preparedStatement.executeUpdate();
-//            if(affectedRows>0){
-//                return Optional.of(train);
-//            }
-//            updateTrainCoach(train.getTrainNumber(), train.getCoachList());
-//            updateTrainRoute(train.getTrainNumber(), train.getRoute());
-//            updateTrainRunningDay(train.getTrainNumber(), train.getRunningDays());
-//        } catch (SQLException e) {
-//            throw new RuntimeException(e);
-//        }
         try (PreparedStatement preparedStatement = connection.prepareStatement(SqlQueries.updateTrain)) {
             boolean isRouteAdded = updateRoute(train.getTrainNumber(), train.getRoute());
             preparedStatement.setInt(1, train.getTrainNumber());
             preparedStatement.setString(2, train.getTrainName());
-            if(isRouteAdded){
+            if (isRouteAdded) {
                 preparedStatement.setInt(3, train.getRoute().getFirst().getId());
                 preparedStatement.setInt(4, train.getRoute().getLast().getId());
-            }else{
+            } else {
                 preparedStatement.setNull(3, Types.INTEGER);
                 preparedStatement.setNull(4, Types.INTEGER);
             }
@@ -165,52 +109,32 @@ public class TrainJdbcDaoImpl implements TrainDao {
             int rowAffected = preparedStatement.executeUpdate();
             boolean isRunningDaysAdded = updateRunningDays(train.getTrainNumber(), train.getRunningDays().stream().toList());
             boolean isCoachesUpdated = updateCoaches(train.getTrainNumber(), train.getCoachList());
-            if(isCoachesUpdated || isRunningDaysAdded || isRouteAdded){
+            if (isCoachesUpdated || isRunningDaysAdded || isRouteAdded) {
                 return Optional.of(train);
             }
+            return Optional.empty();
         }
-
-        return Optional.empty();
     }
 
     @Override
-    public Optional<Train> deleteTrain(Train train) {
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement(SqlQueries.deleteTrain);
+    public Optional<Train> deleteTrain(Train train) throws SQLException {
+        int affectedRows;
+        try (PreparedStatement preparedStatement = connection.prepareStatement(SqlQueries.deleteTrain)) {
             preparedStatement.setInt(1, train.getTrainNumber());
-            int affectedRows = preparedStatement.executeUpdate();
+            affectedRows = preparedStatement.executeUpdate();
             if (affectedRows > 0) {
                 return Optional.of(train);
             }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+            return Optional.empty();
         }
-        return Optional.empty();
     }
 
     @Override
-    public List<Train> getTrains() {
-//        List<Train> trains = new ArrayList<>();
-//        try {
-//            PreparedStatement preparedStatement = connection.prepareStatement(SqlQueries.getAllTrains);
-//            ResultSet resultSet = preparedStatement.executeQuery();
-//            while (resultSet.next()) {
-//                int trainNumber_ = resultSet.getInt("train_number");
-//                String trainName = resultSet.getString("train_name");
-//                int sourceId = resultSet.getInt("source");
-//                int destinationId = resultSet.getInt("destination");
-//                Optional<Station> sourceOpt = getStationById(sourceId);
-//                Optional<Station> destinationOpt = getStationById(destinationId);
-//                Train train = Train.builder().trainNumber(trainNumber_).trainName(trainName).source(sourceOpt.get()).destination(destinationOpt.get()).build();
-//                trains.add(train);
-//            }
-//        } catch (SQLException e) {
-//            throw new RuntimeException(e);
-//        }
-        try {
-            List<Integer> trainNumbers = new ArrayList<>();
-            PreparedStatement preparedStatement = connection.prepareStatement("select train_number from train;");
-            ResultSet resultSet = preparedStatement.executeQuery();
+    public List<Train> getTrains() throws SQLException {
+        List<Integer> trainNumbers = new ArrayList<>();
+        ResultSet resultSet;
+        try (PreparedStatement preparedStatement = connection.prepareStatement("select train_number from train;")) {
+            resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
                 int trainNumber = resultSet.getInt("train_number");
                 trainNumbers.add(trainNumber);
@@ -221,8 +145,6 @@ public class TrainJdbcDaoImpl implements TrainDao {
                 trainByTrainNumber.ifPresent(trains::add);
             }
             return trains;
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
         }
     }
 
@@ -257,7 +179,7 @@ public class TrainJdbcDaoImpl implements TrainDao {
     }
 
     private boolean updateRoute(int trainNumber, List<Station> route) throws SQLException {
-        if(route.isEmpty()) return false;
+        if (route.isEmpty()) return false;
         try (PreparedStatement preparedStatement = connection.prepareStatement(SqlQueries.updateTrainRoute)) {
             preparedStatement.setInt(1, trainNumber);
             preparedStatement.setInt(4, trainNumber);
@@ -272,15 +194,15 @@ public class TrainJdbcDaoImpl implements TrainDao {
             }
             int[] rowsAffected = preparedStatement.executeBatch();
             boolean status = true;
-            for (int i: rowsAffected){
-                if (i==0){
-                    status= false;
+            for (int i : rowsAffected) {
+                if (i == 0) {
+                    status = false;
                     break;
                 }
             }
-            if(status){
+            if (status) {
                 return true;
-            }else{
+            } else {
                 connection.rollback();
                 return false;
             }
@@ -288,14 +210,14 @@ public class TrainJdbcDaoImpl implements TrainDao {
     }
 
     private boolean updateCoaches(int trainNumber, List<Coach> coaches) throws SQLException {
-        if(coaches.isEmpty()) return false;
+        if (coaches.isEmpty()) return false;
         try (PreparedStatement preparedStatement = connection.prepareStatement(SqlQueries.updateTrainCoach)) {
-        preparedStatement.setInt(1, trainNumber);
-        preparedStatement.setInt(3, trainNumber);
+            preparedStatement.setInt(1, trainNumber);
+            preparedStatement.setInt(3, trainNumber);
             boolean isCoachesAdded = addCoaches(coaches);
-            if(Boolean.FALSE.equals(isCoachesAdded)) return false;
+            if (Boolean.FALSE.equals(isCoachesAdded)) return false;
 
-            for(Coach coach : coaches){
+            for (Coach coach : coaches) {
                 preparedStatement.setInt(2, coach.getId());
                 preparedStatement.setInt(4, coach.getId());
                 preparedStatement.addBatch();
@@ -303,23 +225,24 @@ public class TrainJdbcDaoImpl implements TrainDao {
 
             int[] rowAffected = preparedStatement.executeBatch();
             boolean status = true;
-            for(int i: rowAffected){
-                if(i==0){
+            for (int i : rowAffected) {
+                if (i == 0) {
                     status = false;
                     break;
                 }
             }
-            if(status){
+            if (status) {
                 return true;
-            }else{
+            } else {
                 connection.rollback();
-                return  false;
+                return false;
             }
         }
     }
+
     private boolean addCoaches(List<Coach> coaches) throws SQLException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(SqlQueries.addCoach)) {
-            for (Coach coach: coaches){
+            for (Coach coach : coaches) {
 //                for insert
                 preparedStatement.setInt(1, coach.getId());
                 preparedStatement.setString(2, coach.getTravellingClass().toString());
@@ -336,15 +259,15 @@ public class TrainJdbcDaoImpl implements TrainDao {
             }
             int[] rowAffected = preparedStatement.executeBatch();
             boolean status = true;
-            for(int i: rowAffected){
-                if(i==0){
+            for (int i : rowAffected) {
+                if (i == 0) {
                     status = false;
                     break;
                 }
             }
-            if(status){
+            if (status) {
                 return true;
-            }else{
+            } else {
                 connection.rollback();
                 return false;
             }
@@ -356,23 +279,23 @@ public class TrainJdbcDaoImpl implements TrainDao {
             preparedStatement.setInt(1, trainNumber);
             preparedStatement.setInt(3, trainNumber);
 
-            for (DayOfWeek day: runningDays){
+            for (DayOfWeek day : runningDays) {
 
-                preparedStatement.setInt(2, day.ordinal()+1);
-                preparedStatement.setInt(4, day.ordinal()+1);
+                preparedStatement.setInt(2, day.ordinal() + 1);
+                preparedStatement.setInt(4, day.ordinal() + 1);
                 preparedStatement.addBatch();
             }
             int[] rowAffected = preparedStatement.executeBatch();
             boolean status = true;
-            for(int i: rowAffected){
-                if(i==0){
+            for (int i : rowAffected) {
+                if (i == 0) {
                     status = false;
                     break;
                 }
             }
-            if(status){
+            if (status) {
                 return true;
-            }else{
+            } else {
                 connection.rollback();
                 return false;
             }
@@ -380,24 +303,24 @@ public class TrainJdbcDaoImpl implements TrainDao {
         }
     }
 
-    public boolean  removeRunningDay(Train train, List<DayOfWeek> runningDays) throws SQLException {
+    public boolean removeRunningDay(Train train, List<DayOfWeek> runningDays) throws SQLException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(SqlQueries.removeRunningDays)) {
             preparedStatement.setInt(1, train.getTrainNumber());
-            for (DayOfWeek day: runningDays){
-                preparedStatement.setInt(2, day.ordinal()+1);
+            for (DayOfWeek day : runningDays) {
+                preparedStatement.setInt(2, day.ordinal() + 1);
                 preparedStatement.addBatch();
             }
             int[] rowsAffected = preparedStatement.executeBatch();
             boolean status = true;
-            for (int i: rowsAffected){
-                if(i==0){
+            for (int i : rowsAffected) {
+                if (i == 0) {
                     status = false;
                     break;
                 }
             }
-            if(status){
+            if (status) {
                 return true;
-            }else{
+            } else {
                 return false;
             }
 
@@ -405,24 +328,24 @@ public class TrainJdbcDaoImpl implements TrainDao {
 
     }
 
-    public boolean  removeCoach(Train train, List<Coach> coaches) throws SQLException {
+    public boolean removeCoach(Train train, List<Coach> coaches) throws SQLException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(SqlQueries.removeCoach)) {
             preparedStatement.setInt(1, train.getTrainNumber());
-            for (Coach coach: coaches){
+            for (Coach coach : coaches) {
                 preparedStatement.setInt(2, coach.getId());
                 preparedStatement.addBatch();
             }
             int[] rowsAffected = preparedStatement.executeBatch();
             boolean status = true;
-            for (int i: rowsAffected){
-                if(i==0){
+            for (int i : rowsAffected) {
+                if (i == 0) {
                     status = false;
                     break;
                 }
             }
-            if(status){
+            if (status) {
                 return true;
-            }else{
+            } else {
                 return false;
             }
 
@@ -430,26 +353,22 @@ public class TrainJdbcDaoImpl implements TrainDao {
 
     }
 
-    public boolean  removeRoute(Train train, List<Station> route) throws SQLException {
+    public boolean removeRoute(Train train, List<Station> route) throws SQLException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(SqlQueries.removeStation)) {
             preparedStatement.setInt(1, train.getTrainNumber());
-            for (Station station: route){
+            for (Station station : route) {
                 preparedStatement.setInt(2, station.getId());
                 preparedStatement.addBatch();
             }
             int[] rowsAffected = preparedStatement.executeBatch();
             boolean status = true;
-            for (int i: rowsAffected){
-                if(i==0){
+            for (int i : rowsAffected) {
+                if (i == 0) {
                     status = false;
                     break;
                 }
             }
-            if(status){
-                return true;
-            }else{
-                return false;
-            }
+            return status;
 
         }
 

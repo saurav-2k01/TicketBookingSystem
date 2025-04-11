@@ -1,3 +1,0 @@
-2025-03-23 22:25:33 [main] WARN  b.d.t.service.AuthenticationService - Invalid password for username: 'saurav2k01'
-2025-03-23 22:26:51 [main] WARN  b.d.t.service.AuthenticationService - User not found for username: 'Saurav@23'
-2025-03-23 22:27:18 [main] INFO  b.d.t.service.AuthenticationService - user 'saurav2k01' is successfully logged in.

@@ -5,7 +5,9 @@ import biz.dss.ticketbookingsystem.controller.BookingController;
 import biz.dss.ticketbookingsystem.controller.TrainController;
 import biz.dss.ticketbookingsystem.controller.UserController;
 import biz.dss.ticketbookingsystem.enums.TravellingClass;
-import biz.dss.ticketbookingsystem.models.*;
+import biz.dss.ticketbookingsystem.models.Train;
+import biz.dss.ticketbookingsystem.models.Transaction;
+import biz.dss.ticketbookingsystem.models.User;
 import biz.dss.ticketbookingsystem.utils.FareCalculator;
 import biz.dss.ticketbookingsystem.utils.Formatter;
 import biz.dss.ticketbookingsystem.utils.Response;
@@ -15,11 +17,7 @@ import biz.dss.ticketbookingsystem.valueobjects.AvailableSeats;
 import biz.dss.ticketbookingsystem.valueobjects.BookingDetail;
 import biz.dss.ticketbookingsystem.valueobjects.TrainSearchDetail;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import static biz.dss.ticketbookingsystem.utils.ResponseStatus.FAILURE;
 import static biz.dss.ticketbookingsystem.utils.ResponseStatus.SUCCESS;
@@ -40,10 +38,10 @@ public class BookingView {
     }
 
     public void bookTicket(AuthenticatedUser authenticatedUser) {
-        if(!authenticatedUser.getIsLoggedIn()) return;
+        if(Boolean.FALSE.equals(authenticatedUser.getIsLoggedIn())) return;
         TrainSearchDetail trainSearchInput = inputView.getTrainSearchInput(false);
         List<Train> trains = filterTrains(trainSearchInput);
-        if (trains.isEmpty()) {
+        if (Objects.isNull(trains) || trains.isEmpty()) {
             System.out.println("No train available.");return;
         }
         Formatter.tableTemplate(trains);
@@ -69,7 +67,6 @@ public class BookingView {
             BookingDetail bookingDetails = BookingDetail.builder().train(train.get()).travellingClass(travellingClass)
                     .from(trainSearchInput.getSource()).to(trainSearchInput.getDestination())
                     .dateOfJourney(trainSearchInput.getDate()).totalFare(totalFare).passengerList(passengers).build();
-            //TODO Insert passengers in the database and map them into db with pnr number.
             Response bookingResponse = bookingController.bookTicket(authenticatedUser, bookingDetails);
             if (Boolean.TRUE.equals(bookingResponse.isSuccess())) {
                 Formatter.formatTicket((Transaction) bookingResponse.getData());
@@ -125,7 +122,7 @@ public class BookingView {
 
     public void displayTickets(AuthenticatedUser authenticatedUser) {
         Response tickets = bookingController.getTickets(authenticatedUser);
-        if (tickets.isSuccess()) {
+        if (Boolean.TRUE.equals(tickets.isSuccess())) {
             List<Transaction> transactions = (List<Transaction>) (tickets.getData());
             Formatter.tableTemplate(transactions);
         } else {
@@ -135,8 +132,7 @@ public class BookingView {
 
 
     public void cancelTicket(AuthenticatedUser authenticatedUser) {
-        //todo don't move further without checking user login.
-        if(! authenticatedUser.getIsLoggedIn()) return;
+        if(Boolean.FALSE.equals( authenticatedUser.getIsLoggedIn())) return;
         displayTickets(authenticatedUser);
         Integer pnr = inputView.getIntegerInput("PNR: ");
         response = bookingController.cancelTicket(authenticatedUser, pnr);
@@ -144,7 +140,7 @@ public class BookingView {
     }
 
     private List<Train> filterTrains(TrainSearchDetail trainSearchDetail) {
-        Response response = trainController.searchTrains(trainSearchDetail);
+        response = trainController.searchTrains(trainSearchDetail);
 
         List<Train> filteredTrains = null;
         if (response.getStatus().equals(FAILURE)) {
@@ -159,7 +155,7 @@ public class BookingView {
 
     private boolean confirmBooking() {
         String choice = inputView.getStringInput("Choice: ");
-        while (1 > 0) {
+        while (true) {
             if (choice.equalsIgnoreCase("Y")) {
                 return true;
             } else if (!choice.equalsIgnoreCase("N")) {

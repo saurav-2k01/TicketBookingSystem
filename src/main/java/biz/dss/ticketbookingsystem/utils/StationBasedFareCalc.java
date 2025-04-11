@@ -12,6 +12,6 @@ public class StationBasedFareCalc  implements FareCalculator {
         int index1 = train.getRoute().indexOf(source);
         int index2 = train.getRoute().indexOf(destination);
         int distance = index2-index1;
-        return distance* coach.getFareFactor();
+        return distance * coach.getFareFactor();
     }
 }

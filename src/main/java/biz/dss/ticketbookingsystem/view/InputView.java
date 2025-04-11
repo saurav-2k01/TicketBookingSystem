@@ -28,20 +28,9 @@ public class InputView {
         this.userController = userController;
         this.stationController = stationController;
     }
-//    name
-//    username
-//    email
-//    password
-//    date
-//    station
-//    age
-//    choice
-//    totalseats
-//    farefactor
-//    running day
 
     public String getName(String inputMsg) {
-        while (1 > 0) {
+        while (true) {
             try {
                 System.out.print(inputMsg);
                 String name = input.nextLine();
@@ -57,7 +46,7 @@ public class InputView {
     }
 
     public Gender getGender(String inputMsg) {
-        while (1 > 0) {
+        while (true) {
             try {
                 Arrays.stream(Gender.values()).forEach(g -> System.out.printf("[%d] %s%n", g.ordinal() + 1, g));
 
@@ -158,12 +147,11 @@ public class InputView {
     }
 
     public DayOfWeek getRunningDay(String inputMsg) {
-        while(1>0){
+        while(true){
             try{
                 System.out.println(inputMsg);
                 String dayOfTheWeek = input.nextLine();
-                DayOfWeek day = DayOfWeek.valueOf(dayOfTheWeek.toUpperCase());
-                return day;
+                 return DayOfWeek.valueOf(dayOfTheWeek.toUpperCase());
             } catch (Exception e) {
                 System.out.println("Enter a valid input.");
             }
@@ -248,7 +236,7 @@ public class InputView {
 
     public TravellingClass getTravellingClass(String inputMsg, List<TravellingClass> travellingClasses){
 
-        while (1 > 0) {
+        while (true) {
             try {
                 travellingClasses.forEach(t-> System.out.printf("[%d] %s%n", t.ordinal()+1, t));
 

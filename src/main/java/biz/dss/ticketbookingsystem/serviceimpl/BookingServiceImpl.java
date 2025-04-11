@@ -6,18 +6,19 @@ import biz.dss.ticketbookingsystem.enums.TravellingClass;
 import biz.dss.ticketbookingsystem.models.*;
 import biz.dss.ticketbookingsystem.service.AuthenticationService;
 import biz.dss.ticketbookingsystem.service.BookingService;
-import biz.dss.ticketbookingsystem.service.TrainService;
-import biz.dss.ticketbookingsystem.utils.Formatter;
 import biz.dss.ticketbookingsystem.utils.Response;
 import biz.dss.ticketbookingsystem.valueobjects.AuthenticatedUser;
 import biz.dss.ticketbookingsystem.valueobjects.BookingDetail;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.*;
 
-import static biz.dss.ticketbookingsystem.utils.ResponseStatus.*;
+import static biz.dss.ticketbookingsystem.utils.ResponseStatus.FAILURE;
+import static biz.dss.ticketbookingsystem.utils.ResponseStatus.SUCCESS;
 
+@Slf4j
 public class BookingServiceImpl implements BookingService {
     private final TransactionDao transactionDao;
     private final TrainBookingDao trainBookingDao;
@@ -33,8 +34,8 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public Response bookTicket(AuthenticatedUser authenticatedUser, BookingDetail bookingDetail) {
         response = authenticationService.getAuthenticatedUser(authenticatedUser);
-        if(!response.isSuccess()) return response;
-        User user = (User)(response.getData());
+        if (Boolean.FALSE.equals(response.isSuccess())) return response;
+        User user = (User) (response.getData());
         List<User> passengerList = bookingDetail.getPassengerList();
         TravellingClass travellingClass = bookingDetail.getTravellingClass();
         LocalDate dateOfJourney = bookingDetail.getDateOfJourney();
@@ -47,62 +48,67 @@ public class BookingServiceImpl implements BookingService {
         }
 
 
-
         for (User passenger : passengerList) {
             passenger.setSeatNumber(bookSeat(trainBookings));
         }
 
         Transaction transaction = new Transaction(train, bookingDetail.getFrom(), bookingDetail.getTo(), bookingDetail.getDateOfJourney(), passengerList, user, bookingDetail.getTotalFare());
 
-//        user.getPnrList().add(pnr);
-//        System.out.println(user.getPnrList());
         try {
             transactionDao.addTransaction(transaction);
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            log.error("Error occurred while booking ticket for user {}", user.getId(), e);
+            new Response(FAILURE, "unable to book ticket.");
         }
         return new Response(transaction, SUCCESS, "you ticket was booked successfully.");
 
     }
 
     private List<TrainBooking> filterTrainBooking(int trainNumber, TravellingClass travellingClass, LocalDate date) {
+        List<TrainBooking> filteredTrainBooking;
         try {
-            return trainBookingDao.getTrainBookings().stream()
+            filteredTrainBooking = trainBookingDao.getTrainBookings().stream()
                     .filter(x -> x.getTrainNumber() == trainNumber)
                     .filter(x -> x.getCoach().getTravellingClass().equals(travellingClass))
                     .filter(x -> x.getRunningDate().equals(date))
                     .toList();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            filteredTrainBooking = new ArrayList<>();
+            log.error("Error occurred while filtering train booking data.", e);
         }
+        return filteredTrainBooking;
     }
 
     private List<TrainBooking> filterTrainBooking(int trainNumber, LocalDate date) {
+        List<TrainBooking> filteredTrainBooking;
         try {
-            return trainBookingDao.getTrainBookings().stream()
+            filteredTrainBooking = trainBookingDao.getTrainBookings().stream()
                     .filter(x -> x.getTrainNumber() == trainNumber)
                     .filter(x -> x.getRunningDate().equals(date))
                     .toList();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            filteredTrainBooking = new ArrayList<>();
+            log.error("Error occurred while filtering train booking data.", e);
         }
+        return filteredTrainBooking;
     }
 
     private void updateTrainBookingData(Train train, LocalDate date) {
+
         for (Coach coach : train.getCoachList()) {
             TrainBooking trainBooking = new TrainBooking(train.getTrainNumber(), coach, date);
             trainBooking.setAvailableSeats(coach.getTotalSeats());
             try {
                 trainBookingDao.addTrainBooking(trainBooking);
             } catch (SQLException e) {
-                throw new RuntimeException(e);
+                log.error("Error occurred while updating train booking data.", e);
             }
         }
     }
 
     public Response getAvailableSeats(Train train, LocalDate date) {
         List<TrainBooking> filteredBookings = filterTrainBooking(train.getTrainNumber(), date);
-        if(filteredBookings.isEmpty()){
+        if (filteredBookings.isEmpty()) {
             updateTrainBookingData(train, date);
             filteredBookings = filterTrainBooking(train.getTrainNumber(), date);
         }
@@ -128,10 +134,10 @@ public class BookingServiceImpl implements BookingService {
                 trainBooking.setAvailableSeats(trainBooking.getAvailableSeats() - 1);
                 try {
                     trainBookingDao.updateTrainBooking(trainBooking);
+                    return trainBooking.getCoach().getCoachName() + "-" + temp;
                 } catch (SQLException e) {
-                    throw new RuntimeException(e);
+                    log.error("Error occurred while booking seat.", e);
                 }
-                return trainBooking.getCoach().getCoachName() + "-" + temp;
             }
         }
         return null;
@@ -140,13 +146,13 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public Response getTransaction(AuthenticatedUser authenticatedUser, int pnr) {
         response = authenticationService.getAuthenticatedUser(authenticatedUser);
-        if(!response.isSuccess()) return response;
-        User user = (User)(response.getData());
-        Optional<Transaction> transaction = null;
+        if (Boolean.FALSE.equals(response.isSuccess())) return response;
+//        User user = (User) (response.getData());
+        Optional<Transaction> transaction = Optional.empty();
         try {
             transaction = transactionDao.getTransactionByPnr(pnr);
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            log.error("Error occurred while getting transaction.", e);
         }
         response = transaction.map(value -> new Response(value, SUCCESS, "Transaction found."))
                 .orElseGet(() -> new Response(FAILURE, "No transaction found with specified PNR"));
@@ -154,44 +160,42 @@ public class BookingServiceImpl implements BookingService {
     }
 
 
-
     public Response getTickets(AuthenticatedUser authenticatedUser) {
         response = authenticationService.getAuthenticatedUser(authenticatedUser);
-        if(!response.isSuccess()) return response;
-        User user = (User)(response.getData());
-//        List<Transaction> etickets = user.getPnrList().stream().map(pnr->getTransaction(authenticatedUser, pnr)).filter(Response::isSuccess).map(r -> (Transaction) (r.getData())).toList();
+        if (Boolean.FALSE.equals(response.isSuccess())) return response;
+//        User user = (User) (response.getData());
         try {
             List<Transaction> etickets = transactionDao.getTransactionByUserId(authenticatedUser.getId());
-            if(etickets.isEmpty()){
+            if (etickets.isEmpty()) {
                 response = new Response(FAILURE, "No e-tickets were found.");
-            }else{
+            } else {
                 response = new Response(etickets, SUCCESS, "Here are your e-tickets.");
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            log.error("Error occurred while getting tickets.", e);
         }
 
         return response;
     }
 
-        public Response cancelTicket(AuthenticatedUser authenticatedUser, int pnr) {
-            response = authenticationService.getAuthenticatedUser(authenticatedUser);
-            if (!response.isSuccess()) return response;
-            User user = (User)(response.getData());
+    public Response cancelTicket(AuthenticatedUser authenticatedUser, int pnr) {
+        response = authenticationService.getAuthenticatedUser(authenticatedUser);
+        if (Boolean.FALSE.equals(response.isSuccess())) return response;
+//        User user = (User) (response.getData());
 
         Response transactionResponse = getTransaction(authenticatedUser, pnr);
-        if(transactionResponse.getStatus().equals(FAILURE)){
+        if (transactionResponse.getStatus().equals(FAILURE)) {
             return transactionResponse;
         }
-        Transaction transaction = (Transaction)(transactionResponse.getData());
+        Transaction transaction = (Transaction) (transactionResponse.getData());
         if (transaction.isCancelled()) {
             response = new Response(pnr, FAILURE, "Ticket is already cancelled.");
         } else {
             transaction.setCancelled(true);
             try {
-               transactionDao.cancelTransaction(transaction);
+                transactionDao.cancelTransaction(transaction);
             } catch (SQLException e) {
-                throw new RuntimeException(e);
+                log.error("Error occurred while cancelling the ticket.", e);
             }
             response = new Response(pnr, SUCCESS, "Cancellation of ticket was successful.");
         }

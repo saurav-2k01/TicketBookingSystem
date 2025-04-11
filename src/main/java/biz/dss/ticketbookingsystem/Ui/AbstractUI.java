@@ -32,7 +32,7 @@ abstract public class AbstractUI {
             }
             ui.displayUi(authenticatedUser);
         }else{
-            System.out.println(response.getMessage());
+            System.out.println("Wrong Credential");
         }
     }
 

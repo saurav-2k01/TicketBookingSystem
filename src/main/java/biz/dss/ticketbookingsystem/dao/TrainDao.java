@@ -12,19 +12,19 @@ import java.util.Objects;
 import java.util.Optional;
 
 public interface TrainDao {
-    Optional<Train> addTrain(Train train);
+    Optional<Train> addTrain(Train train) throws SQLException;
 
     Optional<Train> getTrainById(Integer id);
 
-    Optional<Train> getTrainByTrainNumber(Integer trainNumber);
+    Optional<Train> getTrainByTrainNumber(Integer trainNumber) throws SQLException;
 
     Optional<Train> getTrainByTrainName(String trainName);
 
     Optional<Train> updateTrain(Train train) throws SQLException;
 
-    Optional<Train> deleteTrain(Train train);
+    Optional<Train> deleteTrain(Train train) throws SQLException;
 
-    List<Train> getTrains();
+    List<Train> getTrains() throws SQLException;
 
     boolean removeRunningDay(Train train, List<DayOfWeek> runningDays) throws SQLException;
 

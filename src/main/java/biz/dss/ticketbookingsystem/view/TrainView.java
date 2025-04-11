@@ -11,12 +11,14 @@ import biz.dss.ticketbookingsystem.utils.Response;
 import biz.dss.ticketbookingsystem.valueobjects.AuthenticatedUser;
 import biz.dss.ticketbookingsystem.valueobjects.AvailableSeats;
 import biz.dss.ticketbookingsystem.valueobjects.TrainSearchDetail;
+import lombok.extern.slf4j.Slf4j;
 
 import java.time.DayOfWeek;
 import java.util.*;
 
 import static biz.dss.ticketbookingsystem.utils.ResponseStatus.FAILURE;
 
+@Slf4j
 public class TrainView {
     private final TrainController trainController;
     private final StationController stationController;
@@ -229,7 +231,9 @@ public class TrainView {
             System.out.println(filteredTrainResponse.getMessage());
             return;
         }
-        trainController.getTrains().getData();
+
+
+//        Object data = trainController.getTrains().getData();
         List<Train> filteredTrains = (List<Train>) (filteredTrainResponse.getData());
         Formatter.tableTemplate(filteredTrains);
         if(Objects.isNull(trainSearchInput.getDate())){
@@ -241,18 +245,29 @@ public class TrainView {
                     break;
                 }else if(!choice.equalsIgnoreCase("n")){
                     choice = inputview.getStringInput("Choice: ");
+                    System.out.println("Enter a valid choice input.");
                 }else{
                     return;
                 }
             }
         }
-        Optional<Train> train;
+        Optional<Train> train ;
         while(true){
             int trainNumber = inputview.getIntegerInput("Enter train no.: ");
             if(trainNumber<0){
                 System.out.println("Enter a valid train number.");
             }
+
             train = filteredTrains.stream().filter(t -> t.getTrainNumber() == trainNumber).findFirst();
+            if(train.isPresent() && Boolean.FALSE.equals(train.get().getRunningDays().contains(trainSearchInput.getDate().getDayOfWeek()))){
+                System.out.println("selected train does not run on your selected date.");
+                Response newlyFilteredTrain = trainController.searchTrains(trainSearchInput);
+                if(newlyFilteredTrain.isSuccess()){
+                    System.out.println("Below listed trains runs on your selected date.");
+                    Formatter.tableTemplate((List<Train>) newlyFilteredTrain.getData());
+                }
+                continue;
+            }
             if (train.isEmpty()) {
                 System.out.println("Enter valid train number.");
             }else{

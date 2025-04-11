@@ -1,0 +1,39 @@
+2025-04-11 18:44:41 [main] INFO  b.d.t.s.AuthenticationServiceImpl - user 'Abrar@22' is successfully logged in.
+2025-04-11 18:48:37 [main] WARN  b.d.t.s.AuthenticationServiceImpl - Invalid password for username: 'Abrar@22'
+2025-04-11 18:49:14 [main] INFO  b.d.t.s.AuthenticationServiceImpl - user 'Abrar@22' is successfully logged in.
+2025-04-11 18:59:15 [main] WARN  b.d.t.s.AuthenticationServiceImpl - User not found for username: 'Stark'
+2025-04-11 18:59:40 [main] WARN  b.d.t.s.AuthenticationServiceImpl - User not found for username: 'Sachin'
+2025-04-11 18:59:57 [main] INFO  b.d.t.s.AuthenticationServiceImpl - user 'stark' is successfully logged in.
+2025-04-11 19:11:51 [main] ERROR b.d.t.s.BookingServiceImpl - Error occurred while getting transaction.
+org.postgresql.util.PSQLException: ResultSet not positioned properly, perhaps you need to call next.
+	at org.postgresql.jdbc.PgResultSet.getRawValue(PgResultSet.java:3276)
+	at org.postgresql.jdbc.PgResultSet.getInt(PgResultSet.java:2579)
+	at org.postgresql.jdbc.PgResultSet.getInt(PgResultSet.java:2945)
+	at biz.dss.ticketbookingsystem.doaimpl.jdbcdao.TransactionJdbcDaoImpl.getPassengerFromResultSet(TransactionJdbcDaoImpl.java:331)
+	at biz.dss.ticketbookingsystem.doaimpl.jdbcdao.TransactionJdbcDaoImpl.getTransactionByPnr(TransactionJdbcDaoImpl.java:93)
+	at biz.dss.ticketbookingsystem.serviceimpl.BookingServiceImpl.getTransaction(BookingServiceImpl.java:153)
+	at biz.dss.ticketbookingsystem.controller.BookingController.getTransaction(BookingController.java:25)
+	at biz.dss.ticketbookingsystem.view.BookingView.displayTicket(BookingView.java:89)
+	at biz.dss.ticketbookingsystem.Ui.UserUI.displayUi(UserUI.java:37)
+	at biz.dss.ticketbookingsystem.Ui.AbstractUI.login(AbstractUI.java:33)
+	at biz.dss.ticketbookingsystem.Ui.AbstractUI.home(AbstractUI.java:56)
+	at biz.dss.ticketbookingsystem.Main.main(Main.java:49)
+2025-04-11 19:14:45 [main] INFO  b.d.t.s.AuthenticationServiceImpl - user 'Abrar@22' is successfully logged in.
+2025-04-11 19:15:38 [main] ERROR b.d.t.s.BookingServiceImpl - Error occurred while getting transaction.
+org.postgresql.util.PSQLException: ResultSet not positioned properly, perhaps you need to call next.
+	at org.postgresql.jdbc.PgResultSet.getRawValue(PgResultSet.java:3276)
+	at org.postgresql.jdbc.PgResultSet.getInt(PgResultSet.java:2579)
+	at org.postgresql.jdbc.PgResultSet.getInt(PgResultSet.java:2945)
+	at biz.dss.ticketbookingsystem.doaimpl.jdbcdao.TransactionJdbcDaoImpl.getPassengerFromResultSet(TransactionJdbcDaoImpl.java:331)
+	at biz.dss.ticketbookingsystem.doaimpl.jdbcdao.TransactionJdbcDaoImpl.getTransactionByPnr(TransactionJdbcDaoImpl.java:93)
+	at biz.dss.ticketbookingsystem.serviceimpl.BookingServiceImpl.getTransaction(BookingServiceImpl.java:153)
+	at biz.dss.ticketbookingsystem.serviceimpl.BookingServiceImpl.cancelTicket(BookingServiceImpl.java:186)
+	at biz.dss.ticketbookingsystem.controller.BookingController.cancelTicket(BookingController.java:40)
+	at biz.dss.ticketbookingsystem.view.BookingView.cancelTicket(BookingView.java:138)
+	at biz.dss.ticketbookingsystem.Ui.UserUI.displayUi(UserUI.java:38)
+	at biz.dss.ticketbookingsystem.Ui.AbstractUI.login(AbstractUI.java:33)
+	at biz.dss.ticketbookingsystem.Ui.AbstractUI.home(AbstractUI.java:56)
+	at biz.dss.ticketbookingsystem.Main.main(Main.java:49)
+2025-04-11 19:29:23 [main] INFO  b.d.t.s.AuthenticationServiceImpl - user 'saurav2k01' is successfully logged in.
+2025-04-11 19:30:19 [main] ERROR b.d.t.s.UserServiceImplNew - Error occurred while deleting user.
+2025-04-11 19:30:51 [main] ERROR b.d.t.s.UserServiceImplNew - Error occurred while deleting user.

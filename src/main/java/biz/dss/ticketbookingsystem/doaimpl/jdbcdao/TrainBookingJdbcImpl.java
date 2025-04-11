@@ -22,28 +22,30 @@ public class TrainBookingJdbcImpl implements TrainBookingDao {
 
     @Override
     public List<TrainBooking> getTrainBookings() throws SQLException{
-        PreparedStatement preparedStatement = connection.prepareStatement(SqlQueries.getAllTrainBooking);
-        ResultSet resultSet = preparedStatement.executeQuery();
-        List<TrainBooking> trainBookings = new ArrayList<>();
-        while(resultSet.next()){
-//            int id = resultSet.getInt("id");
-            int trainNumber = resultSet.getInt("train_number");
-            int availableSeats = resultSet.getInt("available_seats");
-            LocalDate runningDate = resultSet.getDate("running_date").toLocalDate();
+        ResultSet resultSet;
+        try (PreparedStatement preparedStatement = connection.prepareStatement(SqlQueries.getAllTrainBooking)) {
+            resultSet = preparedStatement.executeQuery();
 
-            int coachId = resultSet.getInt("coach_id");
-            String travellingClass = resultSet.getString("travelling_class");
-            String coachName = resultSet.getString("coach_name");
-            int totalSeats = resultSet.getInt("total_seats");
-            double fareFactor = resultSet.getDouble("fare_factor");
-            Coach coach = new Coach(TravellingClass.valueOf(travellingClass), coachName, totalSeats, fareFactor);
-            coach.setId(coachId);
+            List<TrainBooking> trainBookings = new ArrayList<>();
+            while (resultSet.next()) {
+                int trainNumber = resultSet.getInt("train_number");
+                int availableSeats = resultSet.getInt("available_seats");
+                LocalDate runningDate = resultSet.getDate("running_date").toLocalDate();
 
-            TrainBooking trainBooking1 = new TrainBooking(trainNumber, coach, runningDate);
-            trainBooking1.setAvailableSeats(availableSeats);
-            trainBookings.add(trainBooking1);
+                int coachId = resultSet.getInt("coach_id");
+                String travellingClass = resultSet.getString("travelling_class");
+                String coachName = resultSet.getString("coach_name");
+                int totalSeats = resultSet.getInt("total_seats");
+                double fareFactor = resultSet.getDouble("fare_factor");
+                Coach coach = new Coach(TravellingClass.valueOf(travellingClass), coachName, totalSeats, fareFactor);
+                coach.setId(coachId);
+
+                TrainBooking trainBooking1 = new TrainBooking(trainNumber, coach, runningDate);
+                trainBooking1.setAvailableSeats(availableSeats);
+                trainBookings.add(trainBooking1);
+            }
+            return trainBookings;
         }
-        return trainBookings;
     }
 
     @Override
@@ -71,15 +73,15 @@ public class TrainBookingJdbcImpl implements TrainBookingDao {
             if(rowAffected>0){
                 return Optional.of(trainBooking);
             }
+            return Optional.empty();
         }
-        return Optional.empty();
     }
 
     public Optional<TrainBooking> getTrainBooking(TrainBooking trainBooking) throws SQLException{
         try(PreparedStatement preparedStatement =  connection.prepareStatement(SqlQueries.getTrainBooking)){
             preparedStatement.setInt(1, trainBooking.getId());
             ResultSet resultSet = preparedStatement.executeQuery();
-            while(resultSet.next()){
+            if(resultSet.next()){
                 int id = resultSet.getInt("id");
                 int trainNumber = resultSet.getInt("train_number");
                 int availableSeats = resultSet.getInt("available_seats");
@@ -97,7 +99,7 @@ public class TrainBookingJdbcImpl implements TrainBookingDao {
                 trainBooking1.setAvailableSeats(availableSeats);
                 return Optional.of(trainBooking1);
             }
+            return Optional.empty();
         }
-        return Optional.empty();
     }
 }

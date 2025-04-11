@@ -43,7 +43,7 @@ public class AdminView {
 
     public void getUsers(AuthenticatedUser authenticatedUser) {
         Response usersResponse = userController.getUsers(authenticatedUser);
-        if(usersResponse.isSuccess()){
+        if(Boolean.TRUE.equals(usersResponse.isSuccess())){
             Formatter.tableTemplate((List<User>)(usersResponse.getData()));
         }
     }
