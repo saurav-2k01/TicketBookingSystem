@@ -10,7 +10,7 @@ import biz.dss.ticketbookingsystem.view.InputView;
 
 public class UserUI extends AbstractUI {
     private final BookingView bookingView;
-    private AuthenticatedUser authenticatedUser;
+//    private AuthenticatedUser authenticatedUser;
 
 
     public UserUI(AuthenticationController authenticationController, InputView inputView, UserView userView, BookingView bookingView, TrainView trainView,  StationView stationView) {

@@ -3,6 +3,7 @@ package biz.dss.ticketbookingsystem.serviceimpl;
 import biz.dss.ticketbookingsystem.dao.TrainBookingDao;
 import biz.dss.ticketbookingsystem.dao.TransactionDao;
 import biz.dss.ticketbookingsystem.enums.TravellingClass;
+import biz.dss.ticketbookingsystem.enums.UserType;
 import biz.dss.ticketbookingsystem.models.*;
 import biz.dss.ticketbookingsystem.service.AuthenticationService;
 import biz.dss.ticketbookingsystem.service.BookingService;
@@ -15,6 +16,7 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.*;
 
+import static biz.dss.ticketbookingsystem.enums.UserType.ADMIN;
 import static biz.dss.ticketbookingsystem.utils.ResponseStatus.FAILURE;
 import static biz.dss.ticketbookingsystem.utils.ResponseStatus.SUCCESS;
 
@@ -163,16 +165,18 @@ public class BookingServiceImpl implements BookingService {
     public Response getTickets(AuthenticatedUser authenticatedUser) {
         response = authenticationService.getAuthenticatedUser(authenticatedUser);
         if (Boolean.FALSE.equals(response.isSuccess())) return response;
-//        User user = (User) (response.getData());
+        User user = (User) (response.getData());
         try {
-            List<Transaction> etickets = transactionDao.getTransactionByUserId(authenticatedUser.getId());
-            if (etickets.isEmpty()) {
-                response = new Response(FAILURE, "No e-tickets were found.");
-            } else {
-                response = new Response(etickets, SUCCESS, "Here are your e-tickets.");
+            List<Transaction> etickets;
+            if (user.getUserType().equals(ADMIN)){
+                etickets = transactionDao.getTransactions();
+            }else{
+                etickets = transactionDao.getTransactionByUserId(user.getId());
             }
+            response = new Response(etickets, SUCCESS, String.format("%d e-tickets were found.", etickets.size()));
         } catch (SQLException e) {
             log.error("Error occurred while getting tickets.", e);
+            response = new Response(FAILURE, "Some error occurred while finding your tickets.");
         }
 
         return response;

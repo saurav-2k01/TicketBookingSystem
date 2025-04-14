@@ -41,9 +41,9 @@ public class UserServiceImplNew implements UserService {
             log.error("Error occurred while adding user.");
         }
         if (addedUser.isPresent()) {
-            return response = new Response(user, SUCCESS, String.format("%s has been as registered user.", user.getName()));
+            return response = new Response(user, SUCCESS, String.format("%s has been as registered as %s.", user.getName(), user.getUserType()));
         }
-        return response = new Response(FAILURE, String.format("Failed to register %s as registered user.", user.getName()));
+        return response = new Response(FAILURE, String.format("Failed to register %s as %s", user.getName(), user.getUserType()));
     }
 
 
@@ -99,11 +99,14 @@ public class UserServiceImplNew implements UserService {
         response = authenticationService.getAuthenticatedUser(authenticatedUser);
         if(Boolean.FALSE.equals(response.isSuccess())) return response;
         User user = (User)(response.getData());
+
         if (Boolean.FALSE.equals(user.getIsLoggedIn()) && Boolean.FALSE.equals(user.getUserType().equals(ADMIN))){
             return response = new Response(FAILURE, "only admins can use this feature.");
         }
         if (Objects.isNull(username)) {
             return new Response(FAILURE, "Email cannot be null.");
+        }else if (username.equals(user.getUserName()) && user.getUserType().equals(ADMIN)){
+            return new Response(FAILURE, "Admin cannot delete his own account.");
         }
 
         try {

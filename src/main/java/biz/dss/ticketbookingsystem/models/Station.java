@@ -40,7 +40,7 @@ public class Station  implements Formatable, Comparable {
 
     @Override
     public int compareTo(Object o) {
-        if(Objects.isNull(o)) return 10000;
+        if(Objects.isNull(sequence_num)||Objects.isNull(o)) return 10000;
         Station other = (Station)(o);
         return sequence_num-other.sequence_num;
     }

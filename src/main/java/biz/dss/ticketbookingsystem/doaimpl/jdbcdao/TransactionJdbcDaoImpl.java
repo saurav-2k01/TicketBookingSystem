@@ -88,22 +88,26 @@ public class TransactionJdbcDaoImpl implements TransactionDao {
                 if (Objects.isNull(user) && Boolean.FALSE.equals(Objects.isNull(userFromResultSet))) {
                     user = userFromResultSet;
                 }
-            }
 //                passenger
-            User passenger = getPassengerFromResultSet(resultSet);
-            if (Boolean.FALSE.equals(Objects.isNull(passenger))) {
-                passengers.add(passenger);
+                User passenger = getPassengerFromResultSet(resultSet);
+                if (Objects.nonNull(passenger)) {
+                    passengers.add(passenger);
+                }
             }
+
+
             if (Objects.isNull(train)) {
                 Optional<Train> trainByTrainNumber = getTrainByTrainNumber(trainNumber);
-                if (trainByTrainNumber.isEmpty()) return Optional.empty();
-
-                train = trainByTrainNumber.get();
-                if (Objects.isNull(source) && Objects.isNull(destination)) {
-                    int finalSourceId = sourceId;
-                    source = train.getRoute().stream().filter(s -> s.getId() == finalSourceId).findFirst().get();
-                    int finalDestinationId = destinationId;
-                    destination = train.getRoute().stream().filter(d -> d.getId() == finalDestinationId).findFirst().get();
+                if (trainByTrainNumber.isPresent()){
+                    train = trainByTrainNumber.get();
+                    if (Objects.isNull(source) && Objects.isNull(destination)) {
+                        int finalSourceId = sourceId;
+                        source = train.getRoute().stream().filter(s -> s.getId() == finalSourceId).findFirst().get();
+                        int finalDestinationId = destinationId;
+                        destination = train.getRoute().stream().filter(d -> d.getId() == finalDestinationId).findFirst().get();
+                    }
+                }else{
+                    return Optional.empty();
                 }
             }
 
@@ -127,14 +131,11 @@ public class TransactionJdbcDaoImpl implements TransactionDao {
                 pnrList.add(pnr);
             }
             List<Transaction> transactions = new ArrayList<>();
-            pnrList.forEach(p -> {
-                try {
-                    Optional<Transaction> transactionByPnr = getTransactionByPnr(p);
-                    transactionByPnr.ifPresent(transactions::add);
-                } catch (SQLException e) {
-                    throw new RuntimeException(e);
-                }
-            });
+
+            for(int pnr: pnrList){
+                Optional<Transaction> transactionByPnr = getTransactionByPnr(pnr);
+                transactionByPnr.ifPresent(transactions::add);
+            }
             return transactions;
         }
     }
@@ -299,7 +300,7 @@ public class TransactionJdbcDaoImpl implements TransactionDao {
         if (id == 0) return null;
         String stationName = resultSet.getString("station_name");
         String shortName = resultSet.getString("short_name");
-        int sequenceNum = resultSet.getInt("sequence_num");
+        int sequenceNum = resultSet.getInt("seq_number");
         Station station = new Station(id, stationName, shortName);
         station.setSequence_num(sequenceNum);
         return station;

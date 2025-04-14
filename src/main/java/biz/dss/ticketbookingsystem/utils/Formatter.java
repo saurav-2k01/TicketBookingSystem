@@ -18,6 +18,7 @@ public class Formatter {
         System.out.printf("Date of Journey: %s%n", transaction.getDateOfJourney());
         System.out.printf("Booked By: %s%n", transaction.getUser().getUserName());
         System.out.printf("Source: %s          Destination: %s%n", transaction.getSource().getName(), transaction.getDestination().getName());
+        System.out.printf("Cancelled: %s", transaction.isCancelled()?"yes":"No");
         tableTemplate(transaction.getPassengers());
     }
 

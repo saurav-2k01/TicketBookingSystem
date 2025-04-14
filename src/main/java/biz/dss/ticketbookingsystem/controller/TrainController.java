@@ -52,7 +52,7 @@ public class TrainController {
     }
 
     public Response getCoach(Integer coachId) {
-        return trainService.getTrain(coachId);
+        return trainService.getCoach(coachId);
     }
 
     public Response addRoute(AuthenticatedUser authenticatedUser, List<Station> route) {

@@ -98,6 +98,7 @@ public class TrainServiceImpl implements TrainService {
         currentTrain.setCoaches(coaches);
         try {
             trainDao.updateTrain(currentTrain);
+            trainDao.getTrainByTrainNumber(currentTrain.getTrainNumber()).ifPresent(this::setCurrentTrain);
             response = new Response(coaches, SUCCESS, "Coach added successfully.");
         } catch (SQLException e) {
             log.error("Error occurred while updating train.", e);
@@ -114,13 +115,17 @@ public class TrainServiceImpl implements TrainService {
         if (Boolean.FALSE.equals(user.getIsLoggedIn()) && Boolean.FALSE.equals(user.getUserType().equals(ADMIN))) {
             return response = new Response(FAILURE, "only admins can use this feature.");
         }
+        if(Boolean.FALSE.equals(currentTrain.getCoachList().contains(coach))){
+            return  new Response(FAILURE, String.format("Train with train number %d does not have %s.",currentTrain.getTrainNumber(), coach.getCoachName()));
+        }
         currentTrain.getCoachList().remove(coach);
         try {
             trainDao.removeCoach(currentTrain, List.of(coach));
-            response = new Response(coach, SUCCESS, "Coach added successfully.");
+            trainDao.getTrainByTrainNumber(currentTrain.getTrainNumber()).ifPresent(this::setCurrentTrain);
+            response = new Response(coach, SUCCESS, "Coach removed successfully.");
         } catch (SQLException e) {
             log.error("Error occurred while removing coach.", e);
-            response = new Response(FAILURE, "Unable to add coach");
+            response = new Response(FAILURE, "Unable to removed coach");
         }
         return response;
     }
@@ -176,6 +181,7 @@ public class TrainServiceImpl implements TrainService {
         currentTrain.setRoute(route);
         try {
             trainDao.updateTrain(currentTrain);
+            trainDao.getTrainByTrainNumber(currentTrain.getTrainNumber()).ifPresent(this::setCurrentTrain);
             response = new Response(SUCCESS, "Added route.");
         } catch (SQLException e) {
             log.error("Error occurred while updating train.", e);
@@ -193,9 +199,13 @@ public class TrainServiceImpl implements TrainService {
         if (Boolean.FALSE.equals(user.getIsLoggedIn()) && Boolean.FALSE.equals(user.getUserType().equals(ADMIN))) {
             return response = new Response(FAILURE, "only admins can use this feature.");
         }
+        if(Boolean.FALSE.equals(new HashSet<>(currentTrain.getRoute()).containsAll(route))){
+            return  new Response(FAILURE, String.format("Train with train number %d does not run on this route.",currentTrain.getTrainNumber()));
+        }
         currentTrain.getRoute().removeAll(route);
         try {
             trainDao.removeRoute(currentTrain, route);
+            trainDao.getTrainByTrainNumber(currentTrain.getTrainNumber()).ifPresent(this::setCurrentTrain);
             response = new Response(SUCCESS, "Removed route from the train.");
         } catch (SQLException e) {
             log.error("Error occurred while removing route.", e);
@@ -250,6 +260,7 @@ public class TrainServiceImpl implements TrainService {
         Optional<Train> train = Optional.empty();
         try {
             train = trainDao.updateTrain(currentTrain);
+            trainDao.getTrainByTrainNumber(currentTrain.getTrainNumber()).ifPresent(this::setCurrentTrain);
         } catch (SQLException e) {
             log.error("Error occurred while updating train.", e);
         }
@@ -269,9 +280,13 @@ public class TrainServiceImpl implements TrainService {
         if (Boolean.FALSE.equals(user.getIsLoggedIn()) && Boolean.FALSE.equals(user.getUserType().equals(ADMIN))) {
             return response = new Response(FAILURE, "only admins can use this feature.");
         }
+        if(Boolean.FALSE.equals(currentTrain.getRunningDays().contains(day))){
+            return  new Response(FAILURE, String.format("Train with train number %d does not run on the %s.",currentTrain.getTrainNumber(), day));
+        }
         currentTrain.getRunningDays().remove(day);
         try {
             trainDao.removeRunningDay(currentTrain, List.of(day));
+            trainDao.getTrainByTrainNumber(currentTrain.getTrainNumber()).ifPresent(this::setCurrentTrain);
             response = new Response(day, SUCCESS, "Removed running day successfully.");
         } catch (SQLException e) {
             log.error("Error occurred while removing running day.", e);

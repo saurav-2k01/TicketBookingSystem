@@ -23,6 +23,8 @@ src/main/java/biz/dss/ticketbookingsystem/utils/Rough.java
 .springBeans
 .sts4-cache
 
+/logs
+
 ### NetBeans ###
 /nbproject/private/
 /nbbuild/

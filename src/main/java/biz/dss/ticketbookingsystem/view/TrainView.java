@@ -13,6 +13,7 @@ import biz.dss.ticketbookingsystem.valueobjects.AvailableSeats;
 import biz.dss.ticketbookingsystem.valueobjects.TrainSearchDetail;
 import lombok.extern.slf4j.Slf4j;
 
+import javax.print.attribute.standard.MediaSize;
 import java.time.DayOfWeek;
 import java.util.*;
 
@@ -44,23 +45,36 @@ public class TrainView {
     }
 
     public void removeTrain(AuthenticatedUser authenticatedUser) {
-        displayTrainDetail();
-        Integer trainNumber = inputview.getIntegerInput("Enter train number: ");
-        Response response = this.trainController.removeTrain(authenticatedUser, trainNumber);
-        System.out.println(response.getMessage());
+        boolean trainsDisplayed = showAllTrains();
+        if (trainsDisplayed) {
+            Integer trainNumber = inputview.getIntegerInput("Enter train number: ");
+            Response response = this.trainController.removeTrain(authenticatedUser, trainNumber);
+            System.out.println(response.getMessage());
+        }
     }
 
     public void addCoach(AuthenticatedUser authenticatedUser) {
         List<Coach> coaches = new ArrayList<>();
         List<TravellingClass> travellingClasses = Arrays.stream(TravellingClass.values()).toList();
-//        travellingClasses.forEach(System.out::println);//todo show index
+        System.out.println("===========TRAVELLING CLASS===========");
+        travellingClasses.forEach(travellingClass -> System.out.printf("[%d] %s%n", travellingClass.ordinal() + 1, travellingClass));
         TravellingClass travellingClass = inputview.getTravellingClass("Select Travelling CLass: ", travellingClasses);
         Integer totalSeats = inputview.getIntegerInput("Enter total number of seats: ");
         Double fareFactor = inputview.getDoubleInput("Enter fare factor [input should be number with decimal]: ");
         int qty = inputview.getIntegerInput("Enter number of coaches you want to add : ");
 
+        boolean isCoachNameCorrect = true;
         for (int i = 0; i < qty; i++) {
-            String name = inputview.getStringInput("Enter Coach Name for coach " + i + 1 + ": ");
+            if (Boolean.FALSE.equals(isCoachNameCorrect)) {
+                i = i - 1;
+            }
+            String name = inputview.getStringInput("Enter coach name for coach " + (i + 1) + ": ");
+            isCoachNameCorrect = true;
+            if (name.length() >= 15) {
+                System.out.println("Coach name cannot be greater than 15 characters.");
+                isCoachNameCorrect = false;
+                continue;
+            }
             Coach coach = new Coach(travellingClass, name, totalSeats, fareFactor);
             coaches.add(coach);
         }
@@ -69,28 +83,30 @@ public class TrainView {
     }
 
     public void removeCoach(AuthenticatedUser authenticatedUser) {
-        getCoaches();
-        int coachId = inputview.getIntegerInput("Enter Coach Id: ");
-        Response coachResponse = trainController.getCoach(coachId);
-        if (coachResponse.getStatus().equals(FAILURE)) {
-            System.out.println(coachResponse.getMessage());
-            return;
+        boolean displayedCoaches = displayCoaches();
+        if(displayedCoaches){
+            int coachId = inputview.getIntegerInput("Enter Coach Id: ");
+            Response coachResponse = trainController.getCoach(coachId);
+            if (coachResponse.getStatus().equals(FAILURE)) {
+                System.out.println(coachResponse.getMessage());
+                return;
+            }
+            Coach coach = (Coach) (coachResponse.getData());
+            Response response = trainController.removeCoach(authenticatedUser, coach);
+            System.out.println(response.getMessage());
         }
-        Coach coach = (Coach) (coachResponse.getData());
-        Response response = trainController.removeCoach(authenticatedUser, coach);
-        System.out.println(response.getMessage());
     }
 
 
-    public void showAllTrains() {
-//        trainController.getTrains().values().stream().forEach(System.out::println);
+    public boolean showAllTrains() {
         Response trainsResponse = trainController.getTrains();
         if (trainsResponse.getStatus().equals(FAILURE)) {
             System.out.println(trainsResponse.getMessage());
-            return;
+            return false;
         }
         List<Train> trains = (List<Train>) (trainsResponse.getData());
         Formatter.tableTemplate(trains);
+        return Boolean.FALSE.equals(trains.isEmpty());
     }
 
     public void addRoute(AuthenticatedUser authenticatedUser) {
@@ -117,7 +133,7 @@ public class TrainView {
                 route.add(station);
             }
         }
-        System.out.println(route);
+        Formatter.tableTemplate(route);
         Response response = trainController.addRoute(authenticatedUser, route);
         System.out.println(response.getMessage());
     }
@@ -131,20 +147,26 @@ public class TrainView {
         Train train = (Train) (trainResponse.getData());
         Formatter.tableTemplate(train.getRoute().stream().sorted().toList());
         Station station = inputview.getStation("Select Station: ");
-        Response response = this.trainController.removeRoute(authenticatedUser,List.of(station));
+        Response response = this.trainController.removeRoute(authenticatedUser, List.of(station));
         System.out.println(response.getMessage());
     }
 
-    public void manageSpecificTrain() {
-        Integer trainNumber = inputview.getIntegerInput("Enter Train Number: ");
-        Response trainResponse = trainController.getTrain(trainNumber);
-        if (trainResponse.getStatus().equals(FAILURE)) {
-            System.out.println(trainResponse.getMessage());
-            return;
+    public boolean manageSpecificTrain() {
+        boolean trainsDisplayed = showAllTrains();
+        if (trainsDisplayed) {
+            Integer trainNumber = inputview.getIntegerInput("Enter Train Number: ");
+            Response trainResponse = trainController.getTrain(trainNumber);
+            if (trainResponse.getStatus().equals(FAILURE)) {
+                System.out.println(trainResponse.getMessage());
+                return false;
+            }
+            Train train = (Train) (trainResponse.getData());
+            Response response = trainController.setCurrentTrain(train);
+            System.out.println(response.getMessage());
+            return true;
+        } else {
+            return false;
         }
-        Train train = (Train) (trainResponse.getData());
-        Response response = trainController.setCurrentTrain(train);
-        System.out.println(response.getMessage());
     }
 
 
@@ -160,13 +182,13 @@ public class TrainView {
 
     public void addRunningDay(AuthenticatedUser authenticatedUser) {
         List<DayOfWeek> runningDays = new ArrayList<>();
-        while(true){
+        while (true) {
             DayOfWeek runningDay = inputview.getRunningDay("Enter Day: ");
             runningDays.add(runningDay);
             String choice = inputview.getStringInput("Do you want to add more running days? (y/n)");
-            if(choice.equalsIgnoreCase("N")){
+            if (choice.equalsIgnoreCase("N")) {
                 break;
-            }else if (!choice.equalsIgnoreCase("y")){
+            } else if (!choice.equalsIgnoreCase("y")) {
                 System.out.println("Enter a valid input.");
             }
         }
@@ -196,15 +218,16 @@ public class TrainView {
         System.out.println(coachResponse.getMessage());
     }
 
-    public void getCoaches() {
+    public boolean displayCoaches() {
         Response currentTrainResponse = trainController.getCurrentTrain();
         if (currentTrainResponse.getStatus().equals(FAILURE)) {
             System.out.println(currentTrainResponse.getMessage());
-            return;
+            return false;
         }
         Train currentTrain = (Train) (currentTrainResponse.getData());
         List<Coach> coachList = currentTrain.getCoachList();
         Formatter.tableTemplate(coachList);
+        return Boolean.FALSE.equals(coachList.isEmpty());
     }
 
     public void displayTrainDetail() {
@@ -214,13 +237,21 @@ public class TrainView {
             return;
         }
         Train train = (Train) (currentTrainResponse.getData());
-        System.out.println(train.getTrainNumber());
-        System.out.println(train.getTrainName());
-        System.out.println(train.getSource());
-        System.out.println(train.getDestination());
-        System.out.println(train.getRunningDays());
-        System.out.println(train.getRoute());
-        System.out.println(train.getCoachList());
+//        System.out.println(train.getTrainNumber());
+//        System.out.println(train.getTrainName());
+//        System.out.println(train.getSource());
+//        System.out.println(train.getDestination());
+//        System.out.println(train.getRunningDays());
+//        System.out.println(train.getRoute());
+//        System.out.println(train.getCoachList());
+        String line = Formatter.multiplyChar(100, '=');
+        System.out.println(line);
+        System.out.printf("Train Number: %d                   Train Name: %s%n", train.getTrainNumber(), train.getTrainName());
+        System.out.printf("Source: %s                     Destination: %s%n", train.getSource().getName(), train.getDestination().getName());
+        System.out.printf("Running Days: %s%n", String.join(", ",train.getRunningDays().stream().map(Enum::toString).toList()));
+        Formatter.tableTemplate(train.getRoute());
+        Formatter.tableTemplate(train.getCoachList());
+        System.out.println(line);
     }
 
     public void searchTrain() {
@@ -236,33 +267,33 @@ public class TrainView {
 //        Object data = trainController.getTrains().getData();
         List<Train> filteredTrains = (List<Train>) (filteredTrainResponse.getData());
         Formatter.tableTemplate(filteredTrains);
-        if(Objects.isNull(trainSearchInput.getDate())){
+        if (Objects.isNull(trainSearchInput.getDate())) {
             System.out.println("Do you want to check available seats ? (y/n)");
             String choice = inputview.getStringInput("Choice: ");
-            while(true){
-                if(choice.equalsIgnoreCase("y")){
+            while (true) {
+                if (choice.equalsIgnoreCase("y")) {
                     trainSearchInput.setDate(inputview.getDate("Enter date of journey: "));
                     break;
-                }else if(!choice.equalsIgnoreCase("n")){
+                } else if (!choice.equalsIgnoreCase("n")) {
                     choice = inputview.getStringInput("Choice: ");
                     System.out.println("Enter a valid choice input.");
-                }else{
+                } else {
                     return;
                 }
             }
         }
-        Optional<Train> train ;
-        while(true){
+        Optional<Train> train;
+        while (true) {
             int trainNumber = inputview.getIntegerInput("Enter train no.: ");
-            if(trainNumber<0){
+            if (trainNumber < 0) {
                 System.out.println("Enter a valid train number.");
             }
 
             train = filteredTrains.stream().filter(t -> t.getTrainNumber() == trainNumber).findFirst();
-            if(train.isPresent() && Boolean.FALSE.equals(train.get().getRunningDays().contains(trainSearchInput.getDate().getDayOfWeek()))){
+            if (train.isPresent() && Boolean.FALSE.equals(train.get().getRunningDays().contains(trainSearchInput.getDate().getDayOfWeek()))) {
                 System.out.println("selected train does not run on your selected date.");
                 Response newlyFilteredTrain = trainController.searchTrains(trainSearchInput);
-                if(newlyFilteredTrain.isSuccess()){
+                if (newlyFilteredTrain.isSuccess()) {
                     System.out.println("Below listed trains runs on your selected date.");
                     Formatter.tableTemplate((List<Train>) newlyFilteredTrain.getData());
                 }
@@ -270,7 +301,7 @@ public class TrainView {
             }
             if (train.isEmpty()) {
                 System.out.println("Enter valid train number.");
-            }else{
+            } else {
                 break;
             }
         }
