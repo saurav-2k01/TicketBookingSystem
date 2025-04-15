@@ -1,7 +1,6 @@
 package biz.dss.ticketbookingsystem.controller;
 
 import biz.dss.ticketbookingsystem.models.Train;
-import biz.dss.ticketbookingsystem.models.User;
 import biz.dss.ticketbookingsystem.service.BookingService;
 import biz.dss.ticketbookingsystem.utils.Response;
 import biz.dss.ticketbookingsystem.valueobjects.AuthenticatedUser;
@@ -40,7 +39,4 @@ public class BookingController{
         return bookingService.cancelTicket(authenticatedUser, pnr);
     }
 
-
-
-    /*Methods*/
 }

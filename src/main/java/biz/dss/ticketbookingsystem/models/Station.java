@@ -11,7 +11,7 @@ import java.util.Objects;
 
 @Data
 @EqualsAndHashCode(exclude = "sequence_num")
-public class Station  implements Formatable, Comparable {
+public class Station  implements Formatable, Comparable<Station> {
     private Integer id;
     private String name;
     private String shortName;
@@ -39,9 +39,10 @@ public class Station  implements Formatable, Comparable {
     }
 
     @Override
-    public int compareTo(Object o) {
+    public int compareTo(Station o) {
         if(Objects.isNull(sequence_num)||Objects.isNull(o)) return 10000;
-        Station other = (Station)(o);
-        return sequence_num-other.sequence_num;
+        return sequence_num-o.sequence_num;
     }
+
+//   todo come back here solve compare to method's station o parameter problem
 }

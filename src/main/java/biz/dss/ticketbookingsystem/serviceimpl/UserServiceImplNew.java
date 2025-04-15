@@ -8,7 +8,6 @@ import biz.dss.ticketbookingsystem.utils.Response;
 import biz.dss.ticketbookingsystem.valueobjects.AuthenticatedUser;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.swing.text.html.Option;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Objects;
@@ -82,7 +81,6 @@ public class UserServiceImplNew implements UserService {
             return new Response(FAILURE, "Username cannot be null.");
         }
         Optional<User> foundUser = Optional.empty();
-        System.out.println(foundUser.get());
         try {
             foundUser = userDao.getUserByUserName(username);
         } catch (SQLException e) {

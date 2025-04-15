@@ -1,7 +1,6 @@
 package biz.dss.ticketbookingsystem.dao;
 
 import biz.dss.ticketbookingsystem.models.TrainBooking;
-import biz.dss.ticketbookingsystem.utils.SqlQueries;
 
 import java.sql.SQLException;
 import java.util.List;

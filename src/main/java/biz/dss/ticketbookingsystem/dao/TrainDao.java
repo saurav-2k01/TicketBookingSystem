@@ -7,8 +7,6 @@ import biz.dss.ticketbookingsystem.models.Train;
 import java.sql.SQLException;
 import java.time.DayOfWeek;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 
 public interface TrainDao {

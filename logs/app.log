@@ -14,9 +14,9 @@ org.postgresql.util.PSQLException: ResultSet not positioned properly, perhaps yo
 	at biz.dss.ticketbookingsystem.serviceimpl.BookingServiceImpl.getTransaction(BookingServiceImpl.java:153)
 	at biz.dss.ticketbookingsystem.controller.BookingController.getTransaction(BookingController.java:25)
 	at biz.dss.ticketbookingsystem.view.BookingView.displayTicket(BookingView.java:89)
-	at biz.dss.ticketbookingsystem.Ui.UserUI.displayUi(UserUI.java:37)
-	at biz.dss.ticketbookingsystem.Ui.AbstractUI.login(AbstractUI.java:33)
-	at biz.dss.ticketbookingsystem.Ui.AbstractUI.home(AbstractUI.java:56)
+	at biz.dss.ticketbookingsystem.ui.UserUI.displayUi(UserUI.java:37)
+	at biz.dss.ticketbookingsystem.ui.AbstractUI.login(AbstractUI.java:33)
+	at biz.dss.ticketbookingsystem.ui.AbstractUI.home(AbstractUI.java:56)
 	at biz.dss.ticketbookingsystem.Main.main(Main.java:49)
 2025-04-11 19:14:45 [main] INFO  b.d.t.s.AuthenticationServiceImpl - user 'Abrar@22' is successfully logged in.
 2025-04-11 19:15:38 [main] ERROR b.d.t.s.BookingServiceImpl - Error occurred while getting transaction.
@@ -30,10 +30,75 @@ org.postgresql.util.PSQLException: ResultSet not positioned properly, perhaps yo
 	at biz.dss.ticketbookingsystem.serviceimpl.BookingServiceImpl.cancelTicket(BookingServiceImpl.java:186)
 	at biz.dss.ticketbookingsystem.controller.BookingController.cancelTicket(BookingController.java:40)
 	at biz.dss.ticketbookingsystem.view.BookingView.cancelTicket(BookingView.java:138)
-	at biz.dss.ticketbookingsystem.Ui.UserUI.displayUi(UserUI.java:38)
-	at biz.dss.ticketbookingsystem.Ui.AbstractUI.login(AbstractUI.java:33)
-	at biz.dss.ticketbookingsystem.Ui.AbstractUI.home(AbstractUI.java:56)
+	at biz.dss.ticketbookingsystem.ui.UserUI.displayUi(UserUI.java:38)
+	at biz.dss.ticketbookingsystem.ui.AbstractUI.login(AbstractUI.java:33)
+	at biz.dss.ticketbookingsystem.ui.AbstractUI.home(AbstractUI.java:56)
 	at biz.dss.ticketbookingsystem.Main.main(Main.java:49)
 2025-04-11 19:29:23 [main] INFO  b.d.t.s.AuthenticationServiceImpl - user 'saurav2k01' is successfully logged in.
 2025-04-11 19:30:19 [main] ERROR b.d.t.s.UserServiceImplNew - Error occurred while deleting user.
 2025-04-11 19:30:51 [main] ERROR b.d.t.s.UserServiceImplNew - Error occurred while deleting user.
+2025-04-15 12:39:46 [main] WARN  b.d.t.s.AuthenticationServiceImpl - Invalid password for username: 'saurav2k01'
+2025-04-15 12:40:11 [main] INFO  b.d.t.s.AuthenticationServiceImpl - user 'saurav2k01' is successfully logged in.
+2025-04-15 12:52:58 [main] ERROR b.d.t.u.DbConnection - Error occurred while connecting to database.
+java.sql.SQLException: The url cannot be null
+	at java.sql/java.sql.DriverManager.getConnection(DriverManager.java:665)
+	at java.sql/java.sql.DriverManager.getConnection(DriverManager.java:230)
+	at biz.dss.ticketbookingsystem.utils.DbConnection.getConnection(DbConnection.java:38)
+	at biz.dss.ticketbookingsystem.doaimpl.jdbcdao.TrainJdbcDaoImpl.<init>(TrainJdbcDaoImpl.java:16)
+	at java.base/jdk.internal.reflect.DirectConstructorHandleAccessor.newInstance(DirectConstructorHandleAccessor.java:62)
+	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:501)
+	at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:485)
+	at biz.dss.ticketbookingsystem.factory.DaoFactory.getInstanceOfTrainDao(DaoFactory.java:43)
+	at biz.dss.ticketbookingsystem.Main.main(Main.java:19)
+2025-04-15 12:52:58 [main] ERROR b.d.t.u.DbConnection - Error occurred while connecting to database.
+java.sql.SQLException: The url cannot be null
+	at java.sql/java.sql.DriverManager.getConnection(DriverManager.java:665)
+	at java.sql/java.sql.DriverManager.getConnection(DriverManager.java:230)
+	at biz.dss.ticketbookingsystem.utils.DbConnection.getConnection(DbConnection.java:38)
+	at biz.dss.ticketbookingsystem.doaimpl.jdbcdao.UserJdbcDaoImpl.<init>(UserJdbcDaoImpl.java:19)
+	at java.base/jdk.internal.reflect.DirectConstructorHandleAccessor.newInstance(DirectConstructorHandleAccessor.java:62)
+	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:501)
+	at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:485)
+	at biz.dss.ticketbookingsystem.factory.DaoFactory.getInstanceOfUserDao(DaoFactory.java:27)
+	at biz.dss.ticketbookingsystem.Main.main(Main.java:21)
+2025-04-15 12:52:58 [main] ERROR b.d.t.u.DbConnection - Error occurred while connecting to database.
+java.sql.SQLException: The url cannot be null
+	at java.sql/java.sql.DriverManager.getConnection(DriverManager.java:665)
+	at java.sql/java.sql.DriverManager.getConnection(DriverManager.java:230)
+	at biz.dss.ticketbookingsystem.utils.DbConnection.getConnection(DbConnection.java:38)
+	at biz.dss.ticketbookingsystem.doaimpl.jdbcdao.StationJdbcDaoImpl.<init>(StationJdbcDaoImpl.java:17)
+	at java.base/jdk.internal.reflect.DirectConstructorHandleAccessor.newInstance(DirectConstructorHandleAccessor.java:62)
+	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:501)
+	at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:485)
+	at biz.dss.ticketbookingsystem.factory.DaoFactory.getInstanceOfStationDao(DaoFactory.java:59)
+	at biz.dss.ticketbookingsystem.Main.main(Main.java:22)
+2025-04-15 12:52:58 [main] ERROR b.d.t.u.DbConnection - Error occurred while connecting to database.
+java.sql.SQLException: The url cannot be null
+	at java.sql/java.sql.DriverManager.getConnection(DriverManager.java:665)
+	at java.sql/java.sql.DriverManager.getConnection(DriverManager.java:230)
+	at biz.dss.ticketbookingsystem.utils.DbConnection.getConnection(DbConnection.java:38)
+	at biz.dss.ticketbookingsystem.doaimpl.jdbcdao.TransactionJdbcDaoImpl.<init>(TransactionJdbcDaoImpl.java:19)
+	at java.base/jdk.internal.reflect.DirectConstructorHandleAccessor.newInstance(DirectConstructorHandleAccessor.java:62)
+	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:501)
+	at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:485)
+	at biz.dss.ticketbookingsystem.factory.DaoFactory.getInstanceOfTransactionDao(DaoFactory.java:75)
+	at biz.dss.ticketbookingsystem.Main.main(Main.java:23)
+2025-04-15 12:52:58 [main] ERROR b.d.t.u.DbConnection - Error occurred while connecting to database.
+java.sql.SQLException: The url cannot be null
+	at java.sql/java.sql.DriverManager.getConnection(DriverManager.java:665)
+	at java.sql/java.sql.DriverManager.getConnection(DriverManager.java:230)
+	at biz.dss.ticketbookingsystem.utils.DbConnection.getConnection(DbConnection.java:38)
+	at biz.dss.ticketbookingsystem.doaimpl.jdbcdao.TrainBookingJdbcImpl.<init>(TrainBookingJdbcImpl.java:17)
+	at java.base/jdk.internal.reflect.DirectConstructorHandleAccessor.newInstance(DirectConstructorHandleAccessor.java:62)
+	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:501)
+	at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:485)
+	at biz.dss.ticketbookingsystem.factory.DaoFactory.getInstanceOfTrainBookingDao(DaoFactory.java:91)
+	at biz.dss.ticketbookingsystem.Main.main(Main.java:24)
+2025-04-15 13:01:34 [main] ERROR b.d.t.u.DbConnection - Error occurred while connecting to database.
+java.sql.SQLException: The url cannot be null
+	at java.sql/java.sql.DriverManager.getConnection(DriverManager.java:665)
+	at java.sql/java.sql.DriverManager.getConnection(DriverManager.java:230)
+	at biz.dss.ticketbookingsystem.utils.DbConnection.getConnection(DbConnection.java:38)
+	at biz.dss.ticketbookingsystem.Main.main(Main.java:23)
+2025-04-15 15:53:13 [main] INFO  b.d.t.s.AuthenticationServiceImpl - user 'saurav2k01' is successfully logged in.
+2025-04-15 19:18:14 [main] INFO  b.d.t.s.AuthenticationServiceImpl - user 'saurav2k01' is successfully logged in.

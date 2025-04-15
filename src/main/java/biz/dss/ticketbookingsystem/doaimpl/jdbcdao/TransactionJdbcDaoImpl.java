@@ -1,6 +1,5 @@
 package biz.dss.ticketbookingsystem.doaimpl.jdbcdao;
 
-import biz.dss.ticketbookingsystem.dao.TrainBookingDao;
 import biz.dss.ticketbookingsystem.dao.TransactionDao;
 import biz.dss.ticketbookingsystem.enums.Gender;
 import biz.dss.ticketbookingsystem.enums.TravellingClass;
@@ -8,15 +7,12 @@ import biz.dss.ticketbookingsystem.enums.UserType;
 import biz.dss.ticketbookingsystem.models.*;
 import biz.dss.ticketbookingsystem.utils.DbConnection;
 import biz.dss.ticketbookingsystem.utils.SqlQueries;
-import biz.dss.ticketbookingsystem.utils.UtilClass;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.swing.text.html.Option;
-import java.sql.*;
 import java.sql.Date;
+import java.sql.*;
 import java.time.DayOfWeek;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Slf4j
 public class TransactionJdbcDaoImpl implements TransactionDao {
@@ -41,7 +37,7 @@ public class TransactionJdbcDaoImpl implements TransactionDao {
 
     @Override
     public Optional<Transaction> cancelTransaction(Transaction transaction) throws SQLException {
-        try (PreparedStatement preparedStatement = connection.prepareStatement(SqlQueries.cancelTicket)) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(SqlQueries.CANCEL_TICKET)) {
             preparedStatement.setInt(1, transaction.getPnr());
             int rowAffected = preparedStatement.executeUpdate();
             if (rowAffected > 0) {
@@ -55,7 +51,7 @@ public class TransactionJdbcDaoImpl implements TransactionDao {
 
     @Override
     public Optional<Transaction> getTransactionByPnr(Integer pnr) throws SQLException {
-        try (PreparedStatement preparedStatement = connection.prepareStatement(SqlQueries.getTransaction)) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(SqlQueries.GET_TRANSACTION)) {
             preparedStatement.setInt(1, pnr);
             ResultSet resultSet = preparedStatement.executeQuery();
             int pnr1 = 0;
@@ -66,9 +62,9 @@ public class TransactionJdbcDaoImpl implements TransactionDao {
             Date dateOfJourney = null;
             boolean isCancelled = false;
             User user = null;
-            Train train = null;
-            Station source = null;
-            Station destination = null;
+            Train train;
+            Station source;
+            Station destination;
             List<User> passengers = new ArrayList<>();
             while (resultSet.next()) {
 //                transaction
@@ -96,22 +92,30 @@ public class TransactionJdbcDaoImpl implements TransactionDao {
             }
 
 
-            if (Objects.isNull(train)) {
+//            if (Objects.isNull(train)) {
+//                Optional<Train> trainByTrainNumber = getTrainByTrainNumber(trainNumber);
+//                if (trainByTrainNumber.isPresent()){
+//                    train = trainByTrainNumber.get();
+//                    if (Objects.isNull(source) && Objects.isNull(destination)) {
+//                        int finalSourceId = sourceId;
+//                        source = train.getRoute().stream().filter(s -> s.getId() == finalSourceId).findFirst().orElse(null);
+//                        int finalDestinationId = destinationId;
+//                        destination = train.getRoute().stream().filter(d -> d.getId() == finalDestinationId).findFirst().orElse(null);
+//                    }
+//                }else{
+//                    return Optional.empty();
+//                }
+//            }
                 Optional<Train> trainByTrainNumber = getTrainByTrainNumber(trainNumber);
                 if (trainByTrainNumber.isPresent()){
                     train = trainByTrainNumber.get();
-                    if (Objects.isNull(source) && Objects.isNull(destination)) {
-                        int finalSourceId = sourceId;
-                        source = train.getRoute().stream().filter(s -> s.getId() == finalSourceId).findFirst().get();
-                        int finalDestinationId = destinationId;
-                        destination = train.getRoute().stream().filter(d -> d.getId() == finalDestinationId).findFirst().get();
-                    }
+                    int finalSourceId = sourceId;
+                    source = train.getRoute().stream().filter(s -> s.getId() == finalSourceId).findFirst().orElse(null);
+                    int finalDestinationId = destinationId;
+                    destination = train.getRoute().stream().filter(d -> d.getId() == finalDestinationId).findFirst().orElse(null);
                 }else{
                     return Optional.empty();
                 }
-            }
-
-
             Transaction transaction = new Transaction(train, source, destination, Objects.isNull(dateOfJourney) ? null : dateOfJourney.toLocalDate(), passengers, user, totalFare);
             transaction.setPnr(pnr1);
             transaction.setCancelled(isCancelled);
@@ -148,7 +152,7 @@ public class TransactionJdbcDaoImpl implements TransactionDao {
     @Override
     public List<Transaction> getTransactions() throws SQLException {
         ResultSet resultSet;
-        try (PreparedStatement preparedStatement = connection.prepareStatement("select pnr from transaction;")) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(SqlQueries.GET_ALL_PNR)) {
             resultSet = preparedStatement.executeQuery();
             List<Integer> pnrList = new ArrayList<>();
             while (resultSet.next()) {
@@ -170,7 +174,7 @@ public class TransactionJdbcDaoImpl implements TransactionDao {
 
     private boolean addPassengers(List<User> passengers) throws SQLException {
         boolean status = true;
-        try (PreparedStatement preparedStatement = connection.prepareStatement(SqlQueries.addPassenger)) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(SqlQueries.ADD_PASSENGER)) {
             for (User passenger : passengers) {
                 preparedStatement.setInt(1, passenger.getId());
                 preparedStatement.setString(2, passenger.getName());
@@ -182,8 +186,10 @@ public class TransactionJdbcDaoImpl implements TransactionDao {
             }
             int[] rowAffected = preparedStatement.executeBatch();
             for (int i : rowAffected) {
-                if (i == 0) status = false;
-                break;
+                if (i == 0) {
+                    status = false;
+                    break;
+                }
             }
             if (status) {
                 return true;
@@ -195,7 +201,7 @@ public class TransactionJdbcDaoImpl implements TransactionDao {
     }
 
     private Optional<Transaction> createTransaction(Transaction transaction) throws SQLException {
-        try (PreparedStatement preparedStatement = connection.prepareStatement(SqlQueries.addTransaction)) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(SqlQueries.ADD_TRANSACTION)) {
             preparedStatement.setInt(1, transaction.getPnr());
             preparedStatement.setDate(2, Date.valueOf(transaction.getDateOfJourney()));
             preparedStatement.setDouble(3, transaction.getTotalFare());
@@ -215,7 +221,7 @@ public class TransactionJdbcDaoImpl implements TransactionDao {
 
     private boolean mapPassengerTransaction(int pnr, List<User> passengers) throws SQLException {
         boolean status = true;
-        try (PreparedStatement preparedStatement = connection.prepareStatement(SqlQueries.mapPassengerTransaction)) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(SqlQueries.MAP_PASSENGER_TRANSACTION)) {
             preparedStatement.setInt(1, pnr);
             for (User passenger : passengers) {
                 preparedStatement.setInt(2, passenger.getId());
@@ -223,8 +229,10 @@ public class TransactionJdbcDaoImpl implements TransactionDao {
             }
             int[] rowAffected = preparedStatement.executeBatch();
             for (int i : rowAffected) {
-                if (i == 0) status = false;
-                break;
+                if (i == 0){
+                    status = false;
+                    break;
+                }
             }
             if (status) {
                 return true;
@@ -236,7 +244,7 @@ public class TransactionJdbcDaoImpl implements TransactionDao {
     }
 
     private boolean mapUserTransaction(int userId, int pnr) throws SQLException {
-        try (PreparedStatement preparedStatement = connection.prepareStatement(SqlQueries.mapUserTransaction)) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(SqlQueries.MAP_USER_TRANSACTIONS)) {
             preparedStatement.setInt(1, userId);
             preparedStatement.setInt(2, pnr);
             int rowAffected = preparedStatement.executeUpdate();
@@ -251,24 +259,24 @@ public class TransactionJdbcDaoImpl implements TransactionDao {
 
     private Optional<Train> getTrainByTrainNumber(Integer trainNumber) throws SQLException {
         ResultSet resultSet;
-        try (PreparedStatement preparedStatement = connection.prepareStatement(SqlQueries.getTrainByTrainNumber)) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(SqlQueries.GET_TRAIN_BY_TRAIN_NUMBER)) {
             preparedStatement.setInt(1, trainNumber);
             resultSet = preparedStatement.executeQuery();
-            int trainNumber_ = 0;
+            int trainNumberRes = 0;
             String trainName = null;
             Set<Coach> coaches = new HashSet<>();
             Set<Station> route = new HashSet<>();
             Set<DayOfWeek> runningDays = new HashSet<>();
 
             while (resultSet.next()) {
-                if (trainNumber_ == 0) {
-                    trainNumber_ = resultSet.getInt("train_number");
+                if (trainNumberRes == 0) {
+                    trainNumberRes = resultSet.getInt("train_number");
                 }
                 if (Objects.isNull(trainName)) {
                     trainName = resultSet.getString("train_name");
                 }
                 Coach coachFromResultSet = getCoachFromResultSet(resultSet);
-                if (Objects.isNull(coachFromResultSet)) {
+                if (Boolean.FALSE.equals(Objects.isNull(coachFromResultSet))) {
                     coaches.add(coachFromResultSet);
                 }
                 route.add(getStationFromResultSet(resultSet));

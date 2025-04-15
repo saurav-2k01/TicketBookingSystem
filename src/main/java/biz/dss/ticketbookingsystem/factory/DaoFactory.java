@@ -2,10 +2,12 @@ package biz.dss.ticketbookingsystem.factory;
 
 import biz.dss.ticketbookingsystem.dao.*;
 import biz.dss.ticketbookingsystem.doaimpl.collectiondao.UserCollectionDaoImpl;
+import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Objects;
 
+@Slf4j
 public class DaoFactory {
 
     private static UserDao userDao;
@@ -16,7 +18,6 @@ public class DaoFactory {
 
     private DaoFactory(){}
 
-
     public static UserDao getInstanceOfUserDao(Class<?> implementationClass){
         if (Objects.isNull(userDao)){
             synchronized (DaoFactory.class){
@@ -24,8 +25,8 @@ public class DaoFactory {
                     try {
                         userDao = (UserDao) implementationClass.getConstructor().newInstance();
                     } catch (NoSuchMethodException | InvocationTargetException |InstantiationException | IllegalAccessException | ClassCastException e) {
-                        System.out.println(e.getMessage());
-
+                        System.err.println("Error occurred while instantiating UserDao.");
+                        log.error("Error occurred while instantiating UserDao of class {}.", implementationClass, e);
                     }
                 }
             }
@@ -40,9 +41,8 @@ public class DaoFactory {
                     try {
                         trainDao = (TrainDao) implementationClass.getConstructor().newInstance();
                     } catch (NoSuchMethodException | InvocationTargetException |InstantiationException | IllegalAccessException | ClassCastException e) {
-                        System.out.println(e.getLocalizedMessage());
-                        System.out.println(e.getCause());
-                        e.printStackTrace();
+                        System.err.println("Error occurred while instantiating TrainDao.");
+                        log.error("Error occurred while instantiating TrainDao of class {}.", implementationClass, e);
                     }
                 }
             }
@@ -57,7 +57,8 @@ public class DaoFactory {
                     try {
                         stationDao = (StationDao) implementationClass.getConstructor().newInstance();
                     } catch (NoSuchMethodException | InvocationTargetException |InstantiationException | IllegalAccessException | ClassCastException e) {
-                        System.out.println(e.getLocalizedMessage());
+                        System.err.println("Error occurred while instantiating StationDao.");
+                        log.error("Error occurred while instantiating StationDao of class {}.", implementationClass, e);
                     }
                 }
             }
@@ -65,14 +66,15 @@ public class DaoFactory {
         return stationDao;
     }
 
-    public static TransactionDao getInstanceOfTransaction(Class<?> implementationClass){
+    public static TransactionDao getInstanceOfTransactionDao(Class<?> implementationClass){
         if (Objects.isNull(transactionDao)){
             synchronized (DaoFactory.class){
                 if(Objects.isNull(transactionDao)){
                     try {
                         transactionDao = (TransactionDao) implementationClass.getConstructor().newInstance();
                     } catch (NoSuchMethodException | InvocationTargetException |InstantiationException | IllegalAccessException | ClassCastException e) {
-                        System.out.println(e.getLocalizedMessage());
+                        System.err.println("Error occurred while instantiating TransactionDao.");
+                        log.error("Error occurred while instantiating TransactionDao of class {}.", implementationClass, e);
                     }
                 }
             }
@@ -87,7 +89,8 @@ public class DaoFactory {
                     try {
                         trainBookingDao = (TrainBookingDao) implementationClass.getConstructor().newInstance();
                     } catch (NoSuchMethodException | InvocationTargetException |InstantiationException | IllegalAccessException | ClassCastException e) {
-                        System.out.println(e.getLocalizedMessage());
+                        System.err.println("Error occurred while instantiating TrainBookingDao.");
+                        log.error("Error occurred while instantiating TrainBookingDao of class {}.", implementationClass, e);
                     }
                 }
             }

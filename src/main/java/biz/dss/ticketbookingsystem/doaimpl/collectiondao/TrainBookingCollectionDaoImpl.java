@@ -3,8 +3,10 @@ package biz.dss.ticketbookingsystem.doaimpl.collectiondao;
 import biz.dss.ticketbookingsystem.dao.TrainBookingDao;
 import biz.dss.ticketbookingsystem.models.TrainBooking;
 
-import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 
 public class TrainBookingCollectionDaoImpl implements TrainBookingDao {
@@ -34,7 +36,7 @@ public class TrainBookingCollectionDaoImpl implements TrainBookingDao {
             throw new NullPointerException();
         }
         Integer id = trainBooking.getId();
-        Optional<TrainBooking> trainBookingResult = trainBookings.stream().filter(tb -> tb.getId() == id).findFirst();
+        Optional<TrainBooking> trainBookingResult = trainBookings.stream().filter(tb -> tb.getId().equals(id)).findFirst();
         if(trainBookingResult.isPresent()){
             int index = trainBookings.indexOf(trainBookingResult.get());
             trainBookings.set(index, trainBooking);

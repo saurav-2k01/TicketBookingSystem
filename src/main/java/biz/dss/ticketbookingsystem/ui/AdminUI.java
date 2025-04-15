@@ -1,17 +1,18 @@
-package biz.dss.ticketbookingsystem.Ui;
+package biz.dss.ticketbookingsystem.ui;
 
 import biz.dss.ticketbookingsystem.controller.AuthenticationController;
-import biz.dss.ticketbookingsystem.models.Train;
 import biz.dss.ticketbookingsystem.valueobjects.AuthenticatedUser;
 import biz.dss.ticketbookingsystem.view.*;
 
 public class AdminUI extends AbstractUI {
+
     public AdminUI(AuthenticationController authenticationController, InputView inputView, UserView userView, TrainView trainView, BookingView bookingView, StationView stationView) {
         super(authenticationController, inputView, userView, trainView, bookingView, stationView);
     }
 
     public void displayUi(AuthenticatedUser authenticatedUser){
         this.authenticatedUser = authenticatedUser;
+        System.out.printf("==============================================WELCOME %s==============================================%n", authenticatedUser.getUserName());
         boolean flag = true;
         while(flag){
             System.out.println("\n[1] View Users\n[2] Manage Admins\n[3] Manage Trains\n[4] View All Transaction\n[5] View Single Transaction\n[0] Logout");
@@ -35,6 +36,7 @@ public class AdminUI extends AbstractUI {
 
     private void manageAdmin(AuthenticatedUser authenticatedUser){
         this.authenticatedUser = authenticatedUser;
+        System.out.printf("==============================================MANAGE ADMIN==============================================%n", authenticatedUser.getUserName());
         while(true){
             System.out.println("\n[1] Add Admin\n[2] Remove Admin\n[3] View Admins\n[0] Back");
             Integer choice = super.inputView.getChoice("User's choice: ");
@@ -52,7 +54,7 @@ public class AdminUI extends AbstractUI {
 
     private void  manageAllTrains(AuthenticatedUser authenticatedUser){
         this.authenticatedUser = authenticatedUser;
-
+        System.out.printf("==============================================MANAGE ALL TRAINS==============================================%n", authenticatedUser.getUserName());
         while(true){
             System.out.println("\n[1] Add Train\n[2] Remove Train\n[3] Manage Specific Train\n[4] View All Trains\n[5] Search Train\n[0] Back");
             Integer choice = inputView.getChoice("User's choice: ");
@@ -74,6 +76,8 @@ public class AdminUI extends AbstractUI {
     }
 
     private void manageSpecificTrain(AuthenticatedUser authenticatedUser) {
+        System.out.printf("==============================================MANAGE SPECIFIC TRAIN==============================================%n", authenticatedUser.getUserName());
+
         while (true) {
             System.out.println("[1] Manage Coach\n[2]  Manage Route\n[3] Manage Running days\n[4] Display Train details\n[0] Back");
             Integer choice = inputView.getChoice("User's choice");
@@ -90,6 +94,7 @@ public class AdminUI extends AbstractUI {
     }
 
     private void manageCoach(AuthenticatedUser authenticatedUser) {
+        System.out.printf("==============================================MANAGE COACH==============================================%n", authenticatedUser.getUserName());
 
         while (true) {
             System.out.println("[1] Add coach\n[2] Remove Coach\n[3] View Coach Detail\n[0] Back");
@@ -106,6 +111,8 @@ public class AdminUI extends AbstractUI {
     }
 
     private void manageRoute(AuthenticatedUser authenticatedUser) {
+        System.out.printf("==============================================MANAGE ROUTE==============================================%n", authenticatedUser.getUserName());
+
         while (true) {
             System.out.println("[1] Add Route\n[2] Remove Route\n[3] View Route Detail\n[0] Back");
             Integer choice = inputView.getChoice("Admin's choice");
@@ -121,6 +128,8 @@ public class AdminUI extends AbstractUI {
     }
 
     private void manageRunningDay(AuthenticatedUser authenticatedUser) {
+        System.out.printf("==============================================MANAGE RUNNING DAYS==============================================%n", authenticatedUser.getUserName());
+
         while (true) {
             System.out.println("[1] Add Running Day\n[2] Remove Running Day\n[3] Show Running Days\n[0] Back");
             Integer choice = inputView.getChoice("Admin's choice");

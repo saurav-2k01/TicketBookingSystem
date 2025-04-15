@@ -10,9 +10,6 @@ import biz.dss.ticketbookingsystem.valueobjects.TrainSearchDetail;
 import java.time.DayOfWeek;
 import java.util.List;
 
-
-//todo complete trainserice class
-
 public interface TrainService {
 
     Response addTrain(AuthenticatedUser authenticatedUser, Train train);

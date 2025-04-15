@@ -10,3 +10,4 @@ public class UtilClass {
     public static Random random = new Random();
 
 }
+

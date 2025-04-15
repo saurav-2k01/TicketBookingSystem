@@ -3,8 +3,10 @@ package biz.dss.ticketbookingsystem.doaimpl.collectiondao;
 import biz.dss.ticketbookingsystem.dao.TransactionDao;
 import biz.dss.ticketbookingsystem.models.Transaction;
 
-import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 public class TransactionCollectionDaoImpl implements TransactionDao {
     private final List<Transaction> transactions = new ArrayList<>();

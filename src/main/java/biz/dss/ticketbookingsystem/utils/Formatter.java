@@ -8,6 +8,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
 import java.util.regex.Pattern;
+import java.util.stream.IntStream;
 
 public class Formatter {
 
@@ -24,7 +25,9 @@ public class Formatter {
 
     public static <T extends Formatable> void tableTemplate(List<T> list) {
         if (list.isEmpty()) return;
-        T firstObject = list.getFirst(); // @TODO handle exception
+        T firstObject = list.getFirst();
+        if(Objects.isNull(firstObject)) return;
+
         StringBuilder fields = new StringBuilder();
         String title = firstObject.getDisplayableTitle();
 
@@ -39,7 +42,6 @@ public class Formatter {
         System.out.println(fields);
         System.out.println(multiplyChar(titleBar.length() - Formatable.EXTRA_CHAR, '_'));
 
-
         for (T item : list) {
             try {
                 item.getFieldValues().forEach(x -> System.out.print((x) + multiplyChar(Formatable.MAX_CHAR_LIMIT - String.valueOf(x).length(), ' ')));
@@ -53,13 +55,10 @@ public class Formatter {
     }
 
     public static String multiplyChar(int x, char ch) {
-        String temp = "";
-
+       String temp = "";
         for (int i = 0; i < x + Formatable.EXTRA_CHAR; i++) { // @TODO replace with intstream
             temp += ch;
         }
-
-
         return temp;
     }
 
@@ -72,9 +71,7 @@ public class Formatter {
         String pattern2 = "\\d{1,2}/\\d{1,2}/\\d{4}";
         String pattern3 = "\\d{4}-\\d{1,2}-\\d{1,2}";
         String pattern4 = "\\d{4}/\\d{1,2}/\\d{1,2}";
-
         LocalDate formattedDate = null;
-
         try {
             if (Pattern.matches(pattern1, date)) {
                 formattedDate = LocalDate.parse(date, format1);
@@ -88,13 +85,13 @@ public class Formatter {
         } catch (Exception e) {
             e.getLocalizedMessage();
         }
-
         return formattedDate;
     }
 
-
-
-
+    public static String fancyString(int x, int y, String str){
+        String constant = "\u001B[%d%dm%s";
+        return String.format(constant, x, y, str);
+    }
 }
 
 

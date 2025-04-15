@@ -1,4 +1,4 @@
-package biz.dss.ticketbookingsystem.Ui;
+package biz.dss.ticketbookingsystem.ui;
 
 import biz.dss.ticketbookingsystem.controller.*;
 import biz.dss.ticketbookingsystem.valueobjects.AuthenticatedUser;
@@ -10,14 +10,11 @@ import biz.dss.ticketbookingsystem.view.InputView;
 
 public class UserUI extends AbstractUI {
     private final BookingView bookingView;
-//    private AuthenticatedUser authenticatedUser;
-
 
     public UserUI(AuthenticationController authenticationController, InputView inputView, UserView userView, BookingView bookingView, TrainView trainView,  StationView stationView) {
         super(authenticationController, inputView, userView, trainView, bookingView, stationView);
         this.bookingView = bookingView;
     }
-
 
     @Override
     public void displayUi(AuthenticatedUser authenticatedUser) {

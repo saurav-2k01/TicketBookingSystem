@@ -1,9 +1,6 @@
 package biz.dss.ticketbookingsystem.models;
 
-import biz.dss.ticketbookingsystem.utils.UtilClass;
 import lombok.Data;
-import lombok.Getter;
-
 import java.time.LocalDate;
 
 @Data

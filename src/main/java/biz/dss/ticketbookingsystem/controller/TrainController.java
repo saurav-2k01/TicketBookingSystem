@@ -14,11 +14,8 @@ import java.util.List;
 
 @RequiredArgsConstructor
 public class TrainController {
-
-    /*Fields*/
     private final TrainService trainService;
 
-    /*Methods*/
     public Response addTrain(AuthenticatedUser authenticatedUser, Train train) {
         return trainService.addTrain(authenticatedUser, train);
     }

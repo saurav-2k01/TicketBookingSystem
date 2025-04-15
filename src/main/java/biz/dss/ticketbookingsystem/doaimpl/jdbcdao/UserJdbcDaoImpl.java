@@ -6,9 +6,7 @@ import biz.dss.ticketbookingsystem.enums.UserType;
 import biz.dss.ticketbookingsystem.models.User;
 import biz.dss.ticketbookingsystem.utils.DbConnection;
 import biz.dss.ticketbookingsystem.utils.SqlQueries;
-import biz.dss.ticketbookingsystem.utils.UtilClass;
 
-import javax.swing.text.html.Option;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -18,13 +16,13 @@ import java.util.List;
 import java.util.Optional;
 
 public class UserJdbcDaoImpl implements UserDao {
-    private Connection connection = DbConnection.getConnection();
+    private final Connection connection = DbConnection.getConnection();
 
     @Override
     public Optional<User> addUser(User user) throws SQLException {
 
         int affectedRows;
-        try (PreparedStatement preparedStatement = connection.prepareStatement(SqlQueries.addUserQuery)) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(SqlQueries.ADD_USER_QUERY)) {
             preparedStatement.setInt(1, user.getId());
             preparedStatement.setString(2, user.getName());
             preparedStatement.setString(3, user.getUserName());
@@ -47,11 +45,11 @@ public class UserJdbcDaoImpl implements UserDao {
     @Override
     public Optional<User> getUserById(Integer id) throws SQLException {
         ResultSet resultSet;
-        try (PreparedStatement preparedStatement = connection.prepareStatement(SqlQueries.getUserById)) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(SqlQueries.GET_USER_BY_USERID)) {
             preparedStatement.setInt(1, id);
             resultSet = preparedStatement.executeQuery();
-            while(resultSet.next()){
-                int id_ = resultSet.getInt("id");
+            if(resultSet.next()){
+                int idRes = resultSet.getInt("id");
                 String name = resultSet.getString("name");
                 String userName = resultSet.getString("username");
                 int age = resultSet.getInt("age");
@@ -61,7 +59,7 @@ public class UserJdbcDaoImpl implements UserDao {
                 String seatNumber = resultSet.getString("seat_number");
                 String userType = resultSet.getString("user_type");
                 boolean isLoggedIn = resultSet.getBoolean("is_logged_in");
-                User user = User.builder().id(id_).name(name).userName(userName)
+                User user = User.builder().id(idRes).name(name).userName(userName)
                         .age(age).gender(Gender.valueOf(gender.toUpperCase()))
                         .password(password).email(email).userType(UserType.valueOf(userType.toUpperCase()))
                         .seatNumber(seatNumber).isLoggedIn(isLoggedIn).build();
@@ -76,7 +74,7 @@ public class UserJdbcDaoImpl implements UserDao {
     public Optional<User> getUserByEmail(String email) throws SQLException {
 
         ResultSet resultSet;
-        try (PreparedStatement preparedStatement = connection.prepareStatement(SqlQueries.getUserByEmail)) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(SqlQueries.GET_USER_BY_EMAIL)) {
             preparedStatement.setString(1, email);
             resultSet = preparedStatement.executeQuery();
             if(resultSet.next()){
@@ -85,14 +83,14 @@ public class UserJdbcDaoImpl implements UserDao {
                 String userName = resultSet.getString("username");
                 int age = resultSet.getInt("age");
                 String gender = resultSet.getString("gender");
-                String email_ = resultSet.getString("email");
+                String emailRes = resultSet.getString("email");
                 String password = resultSet.getString("password");
                 String seatNumber = resultSet.getString("seat_number");
                 String userType = resultSet.getString("user_type");
                 boolean isLoggedIn = resultSet.getBoolean("is_logged_in");
                 User user = User.builder().id(id).name(name).userName(userName)
                         .age(age).gender(Gender.valueOf(gender.toUpperCase()))
-                        .password(password).email(email_).userType(UserType.valueOf(userType.toUpperCase()))
+                        .password(password).email(emailRes).userType(UserType.valueOf(userType.toUpperCase()))
                         .seatNumber(seatNumber).isLoggedIn(isLoggedIn).build();
                 return Optional.of(user);
             }
@@ -104,7 +102,7 @@ public class UserJdbcDaoImpl implements UserDao {
     @Override
     public Optional<User> getUserByUserName(String username) throws SQLException {
         ResultSet resultSet;
-        try (PreparedStatement preparedStatement = connection.prepareStatement(SqlQueries.getUserByUserName)) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(SqlQueries.GET_USER_BY_USERNAME)) {
             preparedStatement.setString(1, username);
             resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
@@ -131,7 +129,7 @@ public class UserJdbcDaoImpl implements UserDao {
     @Override
     public Optional<User> updateUser(User user) throws SQLException {
         int affectedRows;
-        try (PreparedStatement preparedStatement = connection.prepareStatement(SqlQueries.updateUserById)) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(SqlQueries.UPDATE_USER_BY_USERID)) {
             preparedStatement.setInt(1, user.getId());
             preparedStatement.setString(2, user.getName());
             preparedStatement.setString(3, user.getUserName());
@@ -156,7 +154,7 @@ public class UserJdbcDaoImpl implements UserDao {
         Optional<User> userOpt = getUserByUserName(username);
         if(userOpt.isEmpty()) return Optional.empty();
         int affectedRows;
-        try (PreparedStatement preparedStatement = connection.prepareStatement(SqlQueries.deleteUserbyUserName)) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(SqlQueries.DELETE_USER_BY_USERNAME)) {
             preparedStatement.setString(1, username);
             affectedRows = preparedStatement.executeUpdate();
             if(affectedRows>0){
@@ -170,7 +168,7 @@ public class UserJdbcDaoImpl implements UserDao {
     public List<User> getUsers() throws SQLException {
         List<User> users = new ArrayList<>();
         ResultSet resultSet;
-        try (PreparedStatement preparedStatement = connection.prepareStatement(SqlQueries.getAllUsers)) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(SqlQueries.GET_ALL_USERS)) {
             resultSet = preparedStatement.executeQuery();
             while(resultSet.next()){
                 int id = resultSet.getInt("id");

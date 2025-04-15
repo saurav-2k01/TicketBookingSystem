@@ -3,7 +3,6 @@ package biz.dss.ticketbookingsystem.serviceimpl;
 import biz.dss.ticketbookingsystem.dao.TrainBookingDao;
 import biz.dss.ticketbookingsystem.dao.TransactionDao;
 import biz.dss.ticketbookingsystem.enums.TravellingClass;
-import biz.dss.ticketbookingsystem.enums.UserType;
 import biz.dss.ticketbookingsystem.models.*;
 import biz.dss.ticketbookingsystem.service.AuthenticationService;
 import biz.dss.ticketbookingsystem.service.BookingService;

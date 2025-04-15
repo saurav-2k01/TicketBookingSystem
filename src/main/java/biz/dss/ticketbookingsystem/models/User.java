@@ -6,10 +6,8 @@ import biz.dss.ticketbookingsystem.intefaces.Formatable;
 import biz.dss.ticketbookingsystem.utils.UtilClass;
 import lombok.Builder;
 import lombok.Data;
-import lombok.Setter;
 
 import java.util.ArrayList;
-import java.util.Formattable;
 import java.util.List;
 
 import static biz.dss.ticketbookingsystem.enums.UserType.ADMIN;

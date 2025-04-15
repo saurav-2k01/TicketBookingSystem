@@ -1,9 +1,9 @@
 package biz.dss.ticketbookingsystem.doaimpl.collectiondao;
 
 import biz.dss.ticketbookingsystem.dao.UserDao;
-import biz.dss.ticketbookingsystem.models.Train;
 import biz.dss.ticketbookingsystem.models.User;
 import biz.dss.ticketbookingsystem.utils.PopulateSomeHardCodedData;
+
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -12,9 +12,6 @@ import java.util.Optional;
 public class UserCollectionDaoImpl implements UserDao {
     private final List<User> users = PopulateSomeHardCodedData.populateUsers();
     static UserDao userDao;
-
-    public UserCollectionDaoImpl(){
-    }
 
     @Override
     public Optional<User> addUser(User user) throws NullPointerException{
