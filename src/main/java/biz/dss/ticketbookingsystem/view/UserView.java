@@ -28,7 +28,22 @@ public class UserView{
         String name = inputView.getName("Name: ");
         Integer age = inputView.getAge("Age: ", 100, 18);
         Gender gender = inputView.getGender("Gender: ");
-        String userName = inputView.getName("Username: ");
+        String userName;
+        while(true){
+            userName =  inputView.getName("Username: ");
+            response = userController.userExists(userName);
+            if(response.isSuccess()){
+                boolean userExists = (boolean) (response.getData());
+                if(userExists){
+                    System.out.println(response.getMessage());
+                    System.out.println("Try another username.");
+                }else{
+                    break;
+                }
+            }else{
+                System.out.println(response.getMessage());
+            }
+        }
         String email = inputView.getEmail("Email: ");
         String password = inputView.getPassword("Password: ");
         User newUser = User.builder().name(name).age(age).gender(gender).userName(userName).email(email).password(password).userType(REGISTERED_USER).build();
@@ -73,7 +88,22 @@ public class UserView{
         String name = inputView.getName("Name: ");
         Integer age = inputView.getAge("Age: ", 100, 18);
         Gender gender = inputView.getGender("Gender: ");
-        String userName = inputView.getName("Username: ");
+        String userName;
+        while(true){
+            userName =  inputView.getName("Username: ");
+            response = userController.userExists(userName);
+            if(response.isSuccess()){
+                boolean userExists = (boolean) (response.getData());
+                if(userExists){
+                    System.out.println(response.getMessage());
+                    System.out.println("Try another username.");
+                }else{
+                    break;
+                }
+            }else{
+                System.out.println(response.getMessage());
+            }
+        }
         String email = inputView.getEmail("Email: ");
         String password = inputView.getPassword("Password: ");
         User newUser = User.builder().name(name).age(age).gender(gender).userName(userName).email(email).password(password).userType(ADMIN).build();

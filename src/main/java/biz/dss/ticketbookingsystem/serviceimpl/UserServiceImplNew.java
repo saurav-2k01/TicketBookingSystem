@@ -91,27 +91,25 @@ public class UserServiceImplNew implements UserService {
     }
 
 
-
-
     public Response deleteUser(AuthenticatedUser authenticatedUser, String username) {
         response = authenticationService.getAuthenticatedUser(authenticatedUser);
-        if(Boolean.FALSE.equals(response.isSuccess())) return response;
-        User user = (User)(response.getData());
+        if (Boolean.FALSE.equals(response.isSuccess())) return response;
+        User user = (User) (response.getData());
 
-        if (Boolean.FALSE.equals(user.getIsLoggedIn()) && Boolean.FALSE.equals(user.getUserType().equals(ADMIN))){
+        if (Boolean.FALSE.equals(user.getIsLoggedIn()) && Boolean.FALSE.equals(user.getUserType().equals(ADMIN))) {
             return response = new Response(FAILURE, "only admins can use this feature.");
         }
         if (Objects.isNull(username)) {
             return new Response(FAILURE, "Email cannot be null.");
-        }else if (username.equals(user.getUserName()) && user.getUserType().equals(ADMIN)){
+        } else if (username.equals(user.getUserName()) && user.getUserType().equals(ADMIN)) {
             return new Response(FAILURE, "Admin cannot delete his own account.");
         }
 
         try {
-         Optional<User> deletedUser = userDao.deleteUser(username);
-            if(deletedUser.isPresent()){
+            Optional<User> deletedUser = userDao.deleteUser(username);
+            if (deletedUser.isPresent()) {
                 response = new Response(deletedUser, SUCCESS, String.format("user '%s' was deleted.", deletedUser.get().getName()));
-            }else{
+            } else {
                 response = new Response(FAILURE, String.format("No user found for username '%s'.", username));
             }
         } catch (SQLException e) {
@@ -124,14 +122,14 @@ public class UserServiceImplNew implements UserService {
 
     public Response getUsers(AuthenticatedUser authenticatedUser) {
         response = authenticationService.getAuthenticatedUser(authenticatedUser);
-        if(Boolean.FALSE.equals(response.isSuccess())) return response;
-        User user = (User)(response.getData());
-        if (Boolean.FALSE.equals(user.getIsLoggedIn()) && Boolean.FALSE.equals(user.getUserType().equals(ADMIN))){
+        if (Boolean.FALSE.equals(response.isSuccess())) return response;
+        User user = (User) (response.getData());
+        if (Boolean.FALSE.equals(user.getIsLoggedIn()) && Boolean.FALSE.equals(user.getUserType().equals(ADMIN))) {
             return response = new Response(FAILURE, "only admins can use this feature.");
         }
         List<User> users = null;
         try {
-            users = userDao.getUsers().stream().filter(u->u.getUserType().equals(REGISTERED_USER)).toList();
+            users = userDao.getUsers().stream().filter(u -> u.getUserType().equals(REGISTERED_USER)).toList();
         } catch (SQLException e) {
             log.error("Error occurred while getting users", e);
         }
@@ -145,9 +143,9 @@ public class UserServiceImplNew implements UserService {
 
     public Response getAllAdmins(AuthenticatedUser authenticatedUser) {
         response = authenticationService.getAuthenticatedUser(authenticatedUser);
-        if(Boolean.FALSE.equals(response.isSuccess())) return response;
-        User user = (User)(response.getData());
-        if (Boolean.FALSE.equals(user.getIsLoggedIn()) && Boolean.FALSE.equals(user.getUserType().equals(ADMIN))){
+        if (Boolean.FALSE.equals(response.isSuccess())) return response;
+        User user = (User) (response.getData());
+        if (Boolean.FALSE.equals(user.getIsLoggedIn()) && Boolean.FALSE.equals(user.getUserType().equals(ADMIN))) {
             return response = new Response(FAILURE, "only admins can use this feature.");
         }
         List<User> admins;
@@ -164,5 +162,16 @@ public class UserServiceImplNew implements UserService {
         }
 
         return response;
-}
+    }
+
+    public Response userExists(String userName){
+        try {
+            Optional<User> userResp = userDao.getUserByUserName(userName);
+            response = userResp.map(user->new Response(true, SUCCESS, String.format("User exists with the username: %s.", userName))).orElse(new Response(false, SUCCESS, String.format("No user exists with the username %s", userName)));
+        } catch (SQLException e) {
+            log.error("Error occurred while getting users.", e);
+            response = new Response(false, FAILURE, String.format("Got error find user with the username %s", userName));
+        }
+        return response;
+    }
 }

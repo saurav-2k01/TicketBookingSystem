@@ -40,4 +40,8 @@ public class UserController{
     public Response getAllAdmins(AuthenticatedUser authenticatedUser) {
         return userService.getAllAdmins(authenticatedUser);
     }
+
+    public Response userExists(String userName){
+        return userService.userExists(userName);
+    }
 }

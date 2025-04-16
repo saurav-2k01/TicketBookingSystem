@@ -31,8 +31,8 @@ public class DbConnection {
     }
 
     public static Connection getConnection() {
-        if (Objects.isNull(connection)) {
-            synchronized (DbConnection.class) {
+//        if (Objects.isNull(connection)) {
+//            synchronized (DbConnection.class) {
                 if (Objects.isNull(connection)) {
                     try {
                         connection = DriverManager.getConnection(PROPERTIES.getProperty("url1"), PROPERTIES.getProperty("user1"), PROPERTIES.getProperty("password1"));
@@ -43,8 +43,8 @@ public class DbConnection {
                         System.err.println(message);
                     }
                 }
-            }
-        }
+//            }
+//        }
         return connection;
     }
 }

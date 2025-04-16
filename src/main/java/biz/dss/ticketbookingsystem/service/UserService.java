@@ -20,4 +20,6 @@ public interface UserService {
 
     Response getAllAdmins(AuthenticatedUser authenticatedUser);
 
+    Response userExists(String userName);
+
 }

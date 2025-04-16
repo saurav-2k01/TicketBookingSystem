@@ -102,3 +102,8 @@ java.sql.SQLException: The url cannot be null
 	at biz.dss.ticketbookingsystem.Main.main(Main.java:23)
 2025-04-15 15:53:13 [main] INFO  b.d.t.s.AuthenticationServiceImpl - user 'saurav2k01' is successfully logged in.
 2025-04-15 19:18:14 [main] INFO  b.d.t.s.AuthenticationServiceImpl - user 'saurav2k01' is successfully logged in.
+2025-04-16 12:59:44 [main] INFO  b.d.t.s.AuthenticationServiceImpl - user 'saurav2k01' is successfully logged in.
+2025-04-16 13:44:20 [main] WARN  b.d.t.s.AuthenticationServiceImpl - User not found for username: 'sdas'
+2025-04-16 13:50:20 [main] INFO  b.d.t.s.AuthenticationServiceImpl - user 'saurav2k01' is successfully logged in.
+2025-04-16 14:44:17 [main] INFO  b.d.t.s.AuthenticationServiceImpl - user 'saurav2k01' is successfully logged in.
+2025-04-16 19:11:42 [main] INFO  b.d.t.s.AuthenticationServiceImpl - user 'saurav2k01' is successfully logged in.

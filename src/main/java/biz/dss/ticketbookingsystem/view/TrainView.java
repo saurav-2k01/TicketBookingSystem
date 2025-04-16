@@ -282,6 +282,14 @@ public class TrainView {
                 }
             }
         }
+        List<Train> filteredTrainList = filteredTrains.stream().
+                filter(train -> train.getRunningDays().contains(trainSearchInput.getDate().getDayOfWeek()))
+                .toList();
+
+        if(filteredTrainList.isEmpty()){
+            System.out.println("Above listed trains does not run on your selected date.");
+            return;
+        }
         Optional<Train> train;
         while (true) {
             int trainNumber = inputview.getIntegerInput("Enter train no.: ");

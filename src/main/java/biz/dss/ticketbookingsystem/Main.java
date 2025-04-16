@@ -14,182 +14,74 @@ import biz.dss.ticketbookingsystem.view.*;
 
 import java.sql.Connection;
 import java.sql.SQLOutput;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 public class Main {
     public static void main(String[] args) {
-//        ExecutorService executorService = Executors.newFixedThreadPool(5);
-//
+//        ExecutorService executorService = Executors.newFixedThreadPool(4);
+//        Set<Integer> hascodes = new HashSet<>();
 //        Runnable task1 = () -> {
 //            System.out.println("==== Executing task1.......");
 //            UserDao task1Instance = DaoFactory.getInstanceOfUserDao(UserJdbcDaoImpl.class);
 //            System.out.println("--- Instance hashcode: {}" + task1Instance.hashCode());
-//
+//            hascodes.add(task1Instance.hashCode());
 //        };
 //
 //        Runnable task2 = () -> {
 //            System.out.println("==== Executing task2.......");
 //            UserDao instanceOfUserDao2 = DaoFactory.getInstanceOfUserDao(UserJdbcDaoImpl.class);
 //            System.out.println("--- Instance hashcode: {}" + instanceOfUserDao2.hashCode());
-//
+//            hascodes.add(instanceOfUserDao2.hashCode());
 //        };
 //
 //        Runnable task3 = () -> {
 //            System.out.println("==== Executing task3.......");
 //            UserDao task3Instance = DaoFactory.getInstanceOfUserDao(UserJdbcDaoImpl.class);
 //            System.out.println("--- Instance hashcode: {}" + task3Instance.hashCode());
+//            hascodes.add(task3Instance.hashCode());
 //        };
 //
 //        Runnable task4 = () -> {
 //            System.out.println("==== Executing task4.......");
 //            UserDao instanceOfUserDao = DaoFactory.getInstanceOfUserDao(UserJdbcDaoImpl.class);
 //            System.out.println("--- Instance hashcode: {}" + instanceOfUserDao.hashCode());
+//            hascodes.add(instanceOfUserDao.hashCode());
 //        };
 //
-//        executorService.submit(task1);
-//        executorService.submit(task2);
-//        executorService.submit(task3);
-//        executorService.submit(task4);
-//        executorService.submit(task3);
-//        executorService.submit(task4);
-//        executorService.submit(task3);
-//        executorService.submit(task4);
-//        executorService.submit(task3);
-//        executorService.submit(task4);
-//        executorService.submit(task3);
-//        executorService.submit(task4);        executorService.submit(task3);
-//        executorService.submit(task4);
+//        List<Runnable> runnableList =List.of(task1, task2,task3, task4);
 //
-//        executorService.submit(task3);
-//        executorService.submit(task4);
-//        executorService.submit(task3);
-//        executorService.submit(task4);
-//        executorService.submit(task3);
-//        executorService.submit(task4);
-//        executorService.submit(task3);
-//        executorService.submit(task4);
-//        executorService.submit(task3);
-//        executorService.submit(task4);
-//        executorService.submit(task3);
-//        executorService.submit(task4);
-//        executorService.submit(task3);
-//        executorService.submit(task4);        executorService.submit(task3);
-//        executorService.submit(task4);
-//        executorService.submit(task3);
-//        executorService.submit(task4);
-//        executorService.submit(task3);
-//        executorService.submit(task4);
-//        executorService.submit(task3);
-//        executorService.submit(task4);
-//        executorService.submit(task3);
-//        executorService.submit(task4);
-//        executorService.submit(task3);
-//        executorService.submit(task4);
-//        executorService.submit(task3);
-//        executorService.submit(task4);
-//        executorService.submit(task3);
-//        executorService.submit(task4);
-//        executorService.submit(task3);
-//        executorService.submit(task4);
-//        executorService.submit(task3);
-//        executorService.submit(task4);
-//        executorService.submit(task3);
-//        executorService.submit(task4);
-//        executorService.submit(task4);
-//        executorService.submit(task3);
-//        executorService.submit(task4);
-//        executorService.submit(task4);
-//        executorService.submit(task3);
-//        executorService.submit(task4);
-//        executorService.submit(task4);
-//        executorService.submit(task3);
-//        executorService.submit(task4);
-//        executorService.submit(task4);
-//        executorService.submit(task3);
-//        executorService.submit(task4);
-//        executorService.submit(task4);
-//        executorService.submit(task3);
-//        executorService.submit(task4);
-//        executorService.submit(task4);
-//        executorService.submit(task3);
-//        executorService.submit(task4);
-//        executorService.submit(task4);
-//        executorService.submit(task3);
-//        executorService.submit(task4);
-//        executorService.submit(task4);
-//        executorService.submit(task3);
-//        executorService.submit(task4);
-//        executorService.submit(task4);
-//        executorService.submit(task3);
-//        executorService.submit(task4);
-//        executorService.submit(task4);
-//        executorService.submit(task3);
-//        executorService.submit(task4);
-//        executorService.submit(task4);
-//        executorService.submit(task3);
-//        executorService.submit(task4);
-//        executorService.submit(task4);
-//        executorService.submit(task3);
-//        executorService.submit(task4);
-//        executorService.submit(task4);
-//        executorService.submit(task3);
-//        executorService.submit(task4);executorService.submit(task4);
-//        executorService.submit(task3);
-//        executorService.submit(task4);
-//        executorService.submit(task4);
-//        executorService.submit(task3);
-//        executorService.submit(task4);
-//        executorService.submit(task4);
-//        executorService.submit(task3);
-//        executorService.submit(task4);executorService.submit(task4);
-//        executorService.submit(task3);
-//        executorService.submit(task4);
-//        executorService.submit(task4);
-//        executorService.submit(task3);
-//        executorService.submit(task4);
-//        executorService.submit(task4);
-//        executorService.submit(task3);
-//        executorService.submit(task4);
-//        executorService.submit(task4);
-//        executorService.submit(task3);
-//        executorService.submit(task4);executorService.submit(task4);
-//        executorService.submit(task3);
-//        executorService.submit(task4);
-//        executorService.submit(task4);
-//        executorService.submit(task3);
-//        executorService.submit(task4);
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
+//        for(int i=0;i<4;i++){
+//            System.out.println(i+1);
+//            executorService.submit(runnableList.get(i%runnableList.size()));
+//        }
 //
 //        try {
-//            if(! executorService.awaitTermination(2_000, TimeUnit.SECONDS)) {
+//            if(! executorService.awaitTermination(2_000, TimeUnit.MILLISECONDS)) {
 //                executorService.shutdownNow();
 //            }
 //        } catch (InterruptedException e) {
 //            throw new RuntimeException(e);
 //        }
+//        System.out.println(hascodes);
 //
 //
 //        System.out.println("--- Main thread executed.......");
 
 
-        TrainDao trainDao = DaoFactory.getInstanceOfTrainDao((TrainJdbcDaoImpl.class));
-        UserDao userDao = DaoFactory.getInstanceOfUserDao(UserJdbcDaoImpl.class);
-        StationDao stationDao = DaoFactory.getInstanceOfStationDao(StationJdbcDaoImpl.class);
-        TransactionDao transactionDao = DaoFactory.getInstanceOfTransactionDao(TransactionJdbcDaoImpl.class);
-        TrainBookingDao trainBookingDao = DaoFactory.getInstanceOfTrainBookingDao(TrainBookingJdbcImpl.class);
+//        TrainDao trainDao = DaoFactory.getInstanceOfTrainDao((TrainJdbcDaoImpl.class));
+//        UserDao userDao = DaoFactory.getInstanceOfUserDao(UserJdbcDaoImpl.class);
+//        StationDao stationDao = DaoFactory.getInstanceOfStationDao(StationJdbcDaoImpl.class);
+//        TransactionDao transactionDao = DaoFactory.getInstanceOfTransactionDao(TransactionJdbcDaoImpl.class);
+//        TrainBookingDao trainBookingDao = DaoFactory.getInstanceOfTrainBookingDao(TrainBookingJdbcImpl.class);
+
+        TrainDao trainDao = new TrainJdbcDaoImpl();
+        UserDao userDao = new UserJdbcDaoImpl();
+        StationDao stationDao = new StationJdbcDaoImpl();
+        TransactionDao transactionDao = new TransactionJdbcDaoImpl();
+        TrainBookingDao trainBookingDao = new TrainBookingJdbcImpl();
 
         AuthenticationService authenticationService = new AuthenticationServiceImpl(userDao);
         BookingService bookingService = new BookingServiceImpl(authenticationService, transactionDao, trainBookingDao);
