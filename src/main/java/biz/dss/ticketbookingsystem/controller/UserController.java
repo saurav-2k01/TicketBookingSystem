@@ -29,8 +29,8 @@ public class UserController{
         return userService.getUserByUserName(username);
     }
 
-    public Response deleteUser(AuthenticatedUser authenticatedUser, String username) {
-        return userService.deleteUser(authenticatedUser, username);
+    public Response deleteAdmin(AuthenticatedUser authenticatedUser, String username) {
+        return userService.deleteAdmin(authenticatedUser, username);
     }
 
     public Response getUsers(AuthenticatedUser authenticatedUser) {

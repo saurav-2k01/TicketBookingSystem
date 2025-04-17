@@ -132,12 +132,9 @@ public class TrainServiceImpl implements TrainService {
 
     @Override
     public Response getCoach(Integer coachId) {
-        Coach coach = currentTrain.getCoachList().stream().filter(c -> Objects.equals(c.getId(), coachId)).toList().getFirst();
-        if (Objects.isNull(coach)) {
-            response = new Response(FAILURE, "No coach found with specified id.");
-        } else {
-            response = new Response(coach, SUCCESS, "Coach found.");
-        }
+        Optional<Coach> coach = currentTrain.getCoachList().stream().filter(c -> Objects.equals(c.getId(), coachId)).findFirst();
+        response = coach.map(value -> new Response(value, SUCCESS, "Coach found."))
+                .orElseGet(() -> new Response(FAILURE, "No coach found with specified id."));
         return response;
     }
 

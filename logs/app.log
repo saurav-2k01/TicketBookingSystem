@@ -107,3 +107,194 @@ java.sql.SQLException: The url cannot be null
 2025-04-16 13:50:20 [main] INFO  b.d.t.s.AuthenticationServiceImpl - user 'saurav2k01' is successfully logged in.
 2025-04-16 14:44:17 [main] INFO  b.d.t.s.AuthenticationServiceImpl - user 'saurav2k01' is successfully logged in.
 2025-04-16 19:11:42 [main] INFO  b.d.t.s.AuthenticationServiceImpl - user 'saurav2k01' is successfully logged in.
+2025-04-17 12:51:37 [main] INFO  b.d.t.s.AuthenticationServiceImpl - user 'saurav2k01' is successfully logged in.
+2025-04-17 13:05:35 [main] INFO  b.d.t.s.AuthenticationServiceImpl - user 'saurav2k01' is successfully logged in.
+2025-04-17 13:10:19 [main] WARN  b.d.t.s.AuthenticationServiceImpl - User not found for username: ' Abrar@22'
+2025-04-17 13:10:56 [main] INFO  b.d.t.s.AuthenticationServiceImpl - user 'Abrar@22' is successfully logged in.
+2025-04-17 13:27:37 [main] INFO  b.d.t.s.AuthenticationServiceImpl - user 'Abrar@22' is successfully logged in.
+2025-04-17 13:34:35 [main] INFO  b.d.t.s.AuthenticationServiceImpl - user 'Abrar@22' is successfully logged in.
+2025-04-17 13:37:00 [main] INFO  b.d.t.s.AuthenticationServiceImpl - user 'saurav2k01' is successfully logged in.
+2025-04-17 16:15:59 [main] INFO  b.d.t.s.AuthenticationServiceImpl - user 'Abrar@22' is successfully logged in.
+2025-04-17 16:17:53 [main] INFO  b.d.t.s.AuthenticationServiceImpl - user 'saurav2k01' is successfully logged in.
+2025-04-17 16:18:51 [main] ERROR b.d.t.s.BookingServiceImpl - Error occurred while getting transaction count by train number.
+2025-04-17 16:19:13 [main] ERROR b.d.t.s.BookingServiceImpl - Error occurred while getting transaction count by train number.
+2025-04-17 16:21:52 [main] INFO  b.d.t.s.AuthenticationServiceImpl - user 'saurav2k01' is successfully logged in.
+2025-04-17 16:22:02 [main] ERROR b.d.t.s.BookingServiceImpl - Error occurred while getting transaction count by train number.
+org.postgresql.util.PSQLException: ERROR: syntax error at or near "where"
+  Position: 78
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2725)
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2412)
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:371)
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:502)
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:419)
+	at org.postgresql.jdbc.PgPreparedStatement.executeWithFlags(PgPreparedStatement.java:194)
+	at org.postgresql.jdbc.PgPreparedStatement.executeQuery(PgPreparedStatement.java:137)
+	at biz.dss.ticketbookingsystem.doaimpl.jdbcdao.TransactionJdbcDaoImpl.getTransactionsCountByTrainNumber(TransactionJdbcDaoImpl.java:179)
+	at biz.dss.ticketbookingsystem.serviceimpl.BookingServiceImpl.getTransactionsCountByTrainNumber(BookingServiceImpl.java:216)
+	at biz.dss.ticketbookingsystem.controller.BookingController.getTransactionsCountByTrainNumber(BookingController.java:43)
+	at biz.dss.ticketbookingsystem.view.BookingView.getTransactionsCountByTrainNumber(BookingView.java:179)
+	at biz.dss.ticketbookingsystem.view.TrainView.removeTrain(TrainView.java:51)
+	at biz.dss.ticketbookingsystem.ui.AdminUI.manageAllTrains(AdminUI.java:64)
+	at biz.dss.ticketbookingsystem.ui.AdminUI.displayUi(AdminUI.java:27)
+	at biz.dss.ticketbookingsystem.ui.AbstractUI.login(AbstractUI.java:34)
+	at biz.dss.ticketbookingsystem.ui.AbstractUI.home(AbstractUI.java:58)
+	at biz.dss.ticketbookingsystem.Main.main(Main.java:106)
+2025-04-17 16:23:00 [main] WARN  b.d.t.s.AuthenticationServiceImpl - Invalid password for username: 'saurav2k01'
+2025-04-17 16:23:07 [main] INFO  b.d.t.s.AuthenticationServiceImpl - user 'saurav2k01' is successfully logged in.
+2025-04-17 16:23:13 [main] ERROR b.d.t.s.BookingServiceImpl - Error occurred while getting transaction count by train number.
+org.postgresql.util.PSQLException: ERROR: syntax error at or near "where"
+  Position: 82
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2725)
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2412)
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:371)
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:502)
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:419)
+	at org.postgresql.jdbc.PgPreparedStatement.executeWithFlags(PgPreparedStatement.java:194)
+	at org.postgresql.jdbc.PgPreparedStatement.executeQuery(PgPreparedStatement.java:137)
+	at biz.dss.ticketbookingsystem.doaimpl.jdbcdao.TransactionJdbcDaoImpl.getTransactionsCountByTrainNumber(TransactionJdbcDaoImpl.java:179)
+	at biz.dss.ticketbookingsystem.serviceimpl.BookingServiceImpl.getTransactionsCountByTrainNumber(BookingServiceImpl.java:216)
+	at biz.dss.ticketbookingsystem.controller.BookingController.getTransactionsCountByTrainNumber(BookingController.java:43)
+	at biz.dss.ticketbookingsystem.view.BookingView.getTransactionsCountByTrainNumber(BookingView.java:179)
+	at biz.dss.ticketbookingsystem.view.TrainView.removeTrain(TrainView.java:51)
+	at biz.dss.ticketbookingsystem.ui.AdminUI.manageAllTrains(AdminUI.java:64)
+	at biz.dss.ticketbookingsystem.ui.AdminUI.displayUi(AdminUI.java:27)
+	at biz.dss.ticketbookingsystem.ui.AbstractUI.login(AbstractUI.java:34)
+	at biz.dss.ticketbookingsystem.ui.AbstractUI.home(AbstractUI.java:58)
+	at biz.dss.ticketbookingsystem.Main.main(Main.java:106)
+2025-04-17 16:23:42 [main] INFO  b.d.t.s.AuthenticationServiceImpl - user 'saurav2k01' is successfully logged in.
+2025-04-17 16:27:12 [main] INFO  b.d.t.s.AuthenticationServiceImpl - user 'saurav2k01' is successfully logged in.
+2025-04-17 16:29:12 [main] INFO  b.d.t.s.AuthenticationServiceImpl - user 'saurav2k01' is successfully logged in.
+2025-04-17 16:32:04 [main] INFO  b.d.t.s.AuthenticationServiceImpl - user 'saurav2k01' is successfully logged in.
+2025-04-17 17:04:27 [main] WARN  b.d.t.s.AuthenticationServiceImpl - User not found for username: 'saurab2k01'
+2025-04-17 17:04:43 [main] INFO  b.d.t.s.AuthenticationServiceImpl - user 'saurav2k01' is successfully logged in.
+2025-04-17 17:09:16 [main] INFO  b.d.t.s.AuthenticationServiceImpl - user 'saurav2k01' is successfully logged in.
+2025-04-17 17:15:46 [main] ERROR b.d.t.s.TrainServiceImpl - Error occurred while updating train.
+java.sql.BatchUpdateException: Batch entry 11 insert into coach(id, travelling_class, coach_name, total_seats,fare_factor)
+values(('418322'::int4),('GEN'),('2'),('27983773'::int4),('89.0'::double precision))
+on conflict (id) do update
+set id = ('418322'::int4), travelling_class = ('GEN'), coach_name = ('2'), total_seats = ('27983773'::int4), fare_factor = ('89.0'::double precision)
+ was aborted: ERROR: smallint out of range  Call getNextException to see other errors in the batch.
+	at org.postgresql.jdbc.BatchResultHandler.handleCompletion(BatchResultHandler.java:186)
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:590)
+	at org.postgresql.jdbc.PgStatement.internalExecuteBatch(PgStatement.java:912)
+	at org.postgresql.jdbc.PgStatement.executeBatch(PgStatement.java:936)
+	at org.postgresql.jdbc.PgPreparedStatement.executeBatch(PgPreparedStatement.java:1733)
+	at biz.dss.ticketbookingsystem.doaimpl.jdbcdao.TrainJdbcDaoImpl.addCoaches(TrainJdbcDaoImpl.java:264)
+	at biz.dss.ticketbookingsystem.doaimpl.jdbcdao.TrainJdbcDaoImpl.updateCoaches(TrainJdbcDaoImpl.java:220)
+	at biz.dss.ticketbookingsystem.doaimpl.jdbcdao.TrainJdbcDaoImpl.updateTrain(TrainJdbcDaoImpl.java:117)
+	at biz.dss.ticketbookingsystem.serviceimpl.TrainServiceImpl.addCoach(TrainServiceImpl.java:100)
+	at biz.dss.ticketbookingsystem.controller.TrainController.addCoach(TrainController.java:44)
+	at biz.dss.ticketbookingsystem.view.TrainView.addCoach(TrainView.java:101)
+	at biz.dss.ticketbookingsystem.ui.AdminUI.manageCoach(AdminUI.java:104)
+	at biz.dss.ticketbookingsystem.ui.AdminUI.manageSpecificTrain(AdminUI.java:86)
+	at biz.dss.ticketbookingsystem.ui.AdminUI.manageAllTrains(AdminUI.java:68)
+	at biz.dss.ticketbookingsystem.ui.AdminUI.displayUi(AdminUI.java:27)
+	at biz.dss.ticketbookingsystem.ui.AbstractUI.login(AbstractUI.java:34)
+	at biz.dss.ticketbookingsystem.ui.AbstractUI.home(AbstractUI.java:58)
+	at biz.dss.ticketbookingsystem.Main.main(Main.java:106)
+Caused by: org.postgresql.util.PSQLException: ERROR: smallint out of range
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2725)
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2412)
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:579)
+	... 16 common frames omitted
+2025-04-17 17:16:04 [main] ERROR b.d.t.s.TrainServiceImpl - Error occurred while updating train.
+java.sql.BatchUpdateException: Batch entry 11 insert into coach(id, travelling_class, coach_name, total_seats,fare_factor)
+values(('418322'::int4),('GEN'),('2'),('27983773'::int4),('89.0'::double precision))
+on conflict (id) do update
+set id = ('418322'::int4), travelling_class = ('GEN'), coach_name = ('2'), total_seats = ('27983773'::int4), fare_factor = ('89.0'::double precision)
+ was aborted: ERROR: smallint out of range  Call getNextException to see other errors in the batch.
+	at org.postgresql.jdbc.BatchResultHandler.handleCompletion(BatchResultHandler.java:186)
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:590)
+	at org.postgresql.jdbc.PgStatement.internalExecuteBatch(PgStatement.java:912)
+	at org.postgresql.jdbc.PgStatement.executeBatch(PgStatement.java:936)
+	at org.postgresql.jdbc.PgPreparedStatement.executeBatch(PgPreparedStatement.java:1733)
+	at biz.dss.ticketbookingsystem.doaimpl.jdbcdao.TrainJdbcDaoImpl.addCoaches(TrainJdbcDaoImpl.java:264)
+	at biz.dss.ticketbookingsystem.doaimpl.jdbcdao.TrainJdbcDaoImpl.updateCoaches(TrainJdbcDaoImpl.java:220)
+	at biz.dss.ticketbookingsystem.doaimpl.jdbcdao.TrainJdbcDaoImpl.updateTrain(TrainJdbcDaoImpl.java:117)
+	at biz.dss.ticketbookingsystem.serviceimpl.TrainServiceImpl.addCoach(TrainServiceImpl.java:100)
+	at biz.dss.ticketbookingsystem.controller.TrainController.addCoach(TrainController.java:44)
+	at biz.dss.ticketbookingsystem.view.TrainView.addCoach(TrainView.java:101)
+	at biz.dss.ticketbookingsystem.ui.AdminUI.manageCoach(AdminUI.java:104)
+	at biz.dss.ticketbookingsystem.ui.AdminUI.manageSpecificTrain(AdminUI.java:86)
+	at biz.dss.ticketbookingsystem.ui.AdminUI.manageAllTrains(AdminUI.java:68)
+	at biz.dss.ticketbookingsystem.ui.AdminUI.displayUi(AdminUI.java:27)
+	at biz.dss.ticketbookingsystem.ui.AbstractUI.login(AbstractUI.java:34)
+	at biz.dss.ticketbookingsystem.ui.AbstractUI.home(AbstractUI.java:58)
+	at biz.dss.ticketbookingsystem.Main.main(Main.java:106)
+Caused by: org.postgresql.util.PSQLException: ERROR: smallint out of range
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2725)
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2412)
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:579)
+	... 16 common frames omitted
+2025-04-17 17:16:07 [main] ERROR b.d.t.s.TrainServiceImpl - Error occurred while updating train.
+java.sql.BatchUpdateException: Batch entry 11 insert into coach(id, travelling_class, coach_name, total_seats,fare_factor)
+values(('418322'::int4),('GEN'),('2'),('27983773'::int4),('89.0'::double precision))
+on conflict (id) do update
+set id = ('418322'::int4), travelling_class = ('GEN'), coach_name = ('2'), total_seats = ('27983773'::int4), fare_factor = ('89.0'::double precision)
+ was aborted: ERROR: smallint out of range  Call getNextException to see other errors in the batch.
+	at org.postgresql.jdbc.BatchResultHandler.handleCompletion(BatchResultHandler.java:186)
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:590)
+	at org.postgresql.jdbc.PgStatement.internalExecuteBatch(PgStatement.java:912)
+	at org.postgresql.jdbc.PgStatement.executeBatch(PgStatement.java:936)
+	at org.postgresql.jdbc.PgPreparedStatement.executeBatch(PgPreparedStatement.java:1733)
+	at biz.dss.ticketbookingsystem.doaimpl.jdbcdao.TrainJdbcDaoImpl.addCoaches(TrainJdbcDaoImpl.java:264)
+	at biz.dss.ticketbookingsystem.doaimpl.jdbcdao.TrainJdbcDaoImpl.updateCoaches(TrainJdbcDaoImpl.java:220)
+	at biz.dss.ticketbookingsystem.doaimpl.jdbcdao.TrainJdbcDaoImpl.updateTrain(TrainJdbcDaoImpl.java:117)
+	at biz.dss.ticketbookingsystem.serviceimpl.TrainServiceImpl.addCoach(TrainServiceImpl.java:100)
+	at biz.dss.ticketbookingsystem.controller.TrainController.addCoach(TrainController.java:44)
+	at biz.dss.ticketbookingsystem.view.TrainView.addCoach(TrainView.java:101)
+	at biz.dss.ticketbookingsystem.ui.AdminUI.manageCoach(AdminUI.java:104)
+	at biz.dss.ticketbookingsystem.ui.AdminUI.manageSpecificTrain(AdminUI.java:86)
+	at biz.dss.ticketbookingsystem.ui.AdminUI.manageAllTrains(AdminUI.java:68)
+	at biz.dss.ticketbookingsystem.ui.AdminUI.displayUi(AdminUI.java:27)
+	at biz.dss.ticketbookingsystem.ui.AbstractUI.login(AbstractUI.java:34)
+	at biz.dss.ticketbookingsystem.ui.AbstractUI.home(AbstractUI.java:58)
+	at biz.dss.ticketbookingsystem.Main.main(Main.java:106)
+Caused by: org.postgresql.util.PSQLException: ERROR: smallint out of range
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2725)
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2412)
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:579)
+	... 16 common frames omitted
+2025-04-17 17:16:11 [main] ERROR b.d.t.s.TrainServiceImpl - Error occurred while updating train.
+java.sql.BatchUpdateException: Batch entry 11 insert into coach(id, travelling_class, coach_name, total_seats,fare_factor)
+values(('418322'::int4),('GEN'),('2'),('27983773'::int4),('89.0'::double precision))
+on conflict (id) do update
+set id = ('418322'::int4), travelling_class = ('GEN'), coach_name = ('2'), total_seats = ('27983773'::int4), fare_factor = ('89.0'::double precision)
+ was aborted: ERROR: smallint out of range  Call getNextException to see other errors in the batch.
+	at org.postgresql.jdbc.BatchResultHandler.handleCompletion(BatchResultHandler.java:186)
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:590)
+	at org.postgresql.jdbc.PgStatement.internalExecuteBatch(PgStatement.java:912)
+	at org.postgresql.jdbc.PgStatement.executeBatch(PgStatement.java:936)
+	at org.postgresql.jdbc.PgPreparedStatement.executeBatch(PgPreparedStatement.java:1733)
+	at biz.dss.ticketbookingsystem.doaimpl.jdbcdao.TrainJdbcDaoImpl.addCoaches(TrainJdbcDaoImpl.java:264)
+	at biz.dss.ticketbookingsystem.doaimpl.jdbcdao.TrainJdbcDaoImpl.updateCoaches(TrainJdbcDaoImpl.java:220)
+	at biz.dss.ticketbookingsystem.doaimpl.jdbcdao.TrainJdbcDaoImpl.updateTrain(TrainJdbcDaoImpl.java:117)
+	at biz.dss.ticketbookingsystem.serviceimpl.TrainServiceImpl.addCoach(TrainServiceImpl.java:100)
+	at biz.dss.ticketbookingsystem.controller.TrainController.addCoach(TrainController.java:44)
+	at biz.dss.ticketbookingsystem.view.TrainView.addCoach(TrainView.java:101)
+	at biz.dss.ticketbookingsystem.ui.AdminUI.manageCoach(AdminUI.java:104)
+	at biz.dss.ticketbookingsystem.ui.AdminUI.manageSpecificTrain(AdminUI.java:86)
+	at biz.dss.ticketbookingsystem.ui.AdminUI.manageAllTrains(AdminUI.java:68)
+	at biz.dss.ticketbookingsystem.ui.AdminUI.displayUi(AdminUI.java:27)
+	at biz.dss.ticketbookingsystem.ui.AbstractUI.login(AbstractUI.java:34)
+	at biz.dss.ticketbookingsystem.ui.AbstractUI.home(AbstractUI.java:58)
+	at biz.dss.ticketbookingsystem.Main.main(Main.java:106)
+Caused by: org.postgresql.util.PSQLException: ERROR: smallint out of range
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2725)
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2412)
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:579)
+	... 16 common frames omitted
+2025-04-17 17:17:31 [main] WARN  b.d.t.s.AuthenticationServiceImpl - User not found for username: ' nououdoiudf343c n9'
+2025-04-17 17:19:41 [main] INFO  b.d.t.s.AuthenticationServiceImpl - user 'GUN675367547VDFfdfdh' is successfully logged in.
+2025-04-17 17:22:03 [main] INFO  b.d.t.s.AuthenticationServiceImpl - user 'GUN675367547VDFfdfdh' is successfully logged in.
+2025-04-17 17:24:29 [main] INFO  b.d.t.s.AuthenticationServiceImpl - user 'GUN675367547VDFfdfdh' is successfully logged in.
+2025-04-17 17:30:36 [main] INFO  b.d.t.s.AuthenticationServiceImpl - user 'GUN675367547VDFfdfdh' is successfully logged in.
+2025-04-17 17:32:03 [main] WARN  b.d.t.s.AuthenticationServiceImpl - Invalid password for username: 'saurav2k01'
+2025-04-17 17:34:39 [main] INFO  b.d.t.s.AuthenticationServiceImpl - user 'saurav2k01' is successfully logged in.
+2025-04-17 17:49:39 [main] INFO  b.d.t.s.AuthenticationServiceImpl - user 'GUN675367547VDFfdfdh' is successfully logged in.
+2025-04-17 17:56:29 [main] WARN  b.d.t.s.AuthenticationServiceImpl - User not found for username: 'sauarav2k01'
+2025-04-17 17:56:42 [main] INFO  b.d.t.s.AuthenticationServiceImpl - user 'saurav2k01' is successfully logged in.
+2025-04-17 18:05:53 [main] INFO  b.d.t.s.AuthenticationServiceImpl - user 'GUN675367547VDFfdfdh' is successfully logged in.
+2025-04-17 18:09:30 [main] INFO  b.d.t.s.AuthenticationServiceImpl - user 'GUN675367547VDFfdfdh' is successfully logged in.
+2025-04-17 18:14:15 [main] INFO  b.d.t.s.AuthenticationServiceImpl - user 'GUN675367547VDFfdfdh' is successfully logged in.
+2025-04-17 18:16:05 [main] INFO  b.d.t.s.AuthenticationServiceImpl - user 'GUN675367547VDFfdfdh' is successfully logged in.

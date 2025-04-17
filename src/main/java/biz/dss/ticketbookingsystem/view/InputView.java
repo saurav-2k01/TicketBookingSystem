@@ -119,7 +119,11 @@ public class InputView {
             System.out.println(inputMsg);
             String dateInput = input.nextLine();
             if (Validator.validateDateFormat.test(dateInput)) {
-                LocalDate date = Formatter.formatDate(dateInput);
+                LocalDate date = Formatter.formatDate(dateInput);//todo thrown null pointer exception f
+                if(Objects.isNull(date)){
+                    System.out.println("Enter a valid date.");
+                    continue;
+                }
                 if (Validator.dateIsAfterToday.test(date)) {
                     return date;
                 } else {

@@ -115,7 +115,7 @@ public class UserView{
         boolean displayed = displayAllAdmins(authenticatedUser);
         if(displayed){
             String userName = inputView.getStringInput("Enter username: ");
-            response = userController.deleteUser(authenticatedUser, userName);
+            response = userController.deleteAdmin(authenticatedUser, userName);
             System.out.println(response.getMessage());
         }
     }

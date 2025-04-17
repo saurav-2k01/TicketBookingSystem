@@ -14,7 +14,7 @@ public interface UserService {
 
     Response getUserByUserName(String username);
 
-    Response deleteUser(AuthenticatedUser authenticatedUser, String username);
+    Response deleteAdmin(AuthenticatedUser authenticatedUser, String username);
 
     Response getUsers(AuthenticatedUser authenticatedUser);
 

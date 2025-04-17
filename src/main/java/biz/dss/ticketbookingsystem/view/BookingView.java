@@ -84,7 +84,6 @@ public class BookingView {
             System.out.println(userResponse.getMessage());
             return;
         }
-//        User user = (User) (userResponse.getData());
         Response transactionResponse = bookingController.getTickets(authenticatedUser);
         System.out.println(transactionResponse.getMessage());
         if (Boolean.TRUE.equals(transactionResponse.isSuccess())) {
@@ -93,7 +92,11 @@ public class BookingView {
             if(Boolean.FALSE.equals(transactions.isEmpty())){
                 int pnr = inputView.getIntegerInput("PNR: ");
                 Optional<Transaction> foundTicket = transactions.stream().filter(t -> t.getPnr() == pnr).findFirst();
-                foundTicket.ifPresent(Formatter::formatTicket);
+                if(foundTicket.isPresent()){
+                    Formatter.formatTicket(foundTicket.get());
+                }else{
+                    System.out.println(String.format("you don't have any ticket with pnr - %d.", pnr));
+                }
             }
         }
     }
@@ -169,6 +172,16 @@ public class BookingView {
             } else {
                 return false;
             }
+        }
+    }
+
+    public Integer getTransactionsCountByTrainNumber(AuthenticatedUser authenticatedUser, int trainNumber){
+            response = bookingController.getTransactionsCountByTrainNumber(authenticatedUser, trainNumber);
+        if(response.isSuccess()){
+            return (Integer) (response.getData());
+        }else{
+            System.out.println(response.getMessage());
+            return -1;
         }
     }
 }

@@ -66,4 +66,9 @@ public class TransactionCollectionDaoImpl implements TransactionDao {
     public List<Transaction> getTransactions() {
         return transactions;
     }
+
+    @Override
+    public Optional<Integer> getTransactionsCountByTrainNumber(int trainNumber) {
+        return Optional.empty();
+    }
 }

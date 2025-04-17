@@ -91,7 +91,7 @@ public class UserServiceImplNew implements UserService {
     }
 
 
-    public Response deleteUser(AuthenticatedUser authenticatedUser, String username) {
+    public Response deleteAdmin(AuthenticatedUser authenticatedUser, String username) {
         response = authenticationService.getAuthenticatedUser(authenticatedUser);
         if (Boolean.FALSE.equals(response.isSuccess())) return response;
         User user = (User) (response.getData());
@@ -106,6 +106,11 @@ public class UserServiceImplNew implements UserService {
         }
 
         try {
+            Optional<User> admin = userDao.getUserByUserName(username);
+            if(admin.isEmpty() || Boolean.FALSE.equals(admin.get().getUserType().equals(ADMIN))){
+                return new Response(FAILURE, String.format("No Admin found with username %s", username));
+            }
+
             Optional<User> deletedUser = userDao.deleteUser(username);
             if (deletedUser.isPresent()) {
                 response = new Response(deletedUser, SUCCESS, String.format("user '%s' was deleted.", deletedUser.get().getName()));

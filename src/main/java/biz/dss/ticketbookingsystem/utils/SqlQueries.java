@@ -3,6 +3,7 @@ package biz.dss.ticketbookingsystem.utils;
 public class SqlQueries {
 
     private SqlQueries(){}
+
     /**
      * User dao related queries.
      */
@@ -82,6 +83,7 @@ public class SqlQueries {
      */
     public static final String ADD_TRANSACTION = "insert into transaction (pnr, date_of_journey, total_fare, is_cancelled, user_id, train_number, source, destination)\n" + "values (?,?,?,?,?,?,?,?);";
     public static final String GET_ALL_PNR = "select pnr from transaction;";
+    public static final String GET_TRANSACTION_COUNT_BY_TRAIN_NUMBER = "select count(*) as transaction_count from transaction where train_number =? and is_cancelled = false";
     public static final String UPDATE_TRAIN_BOOKING = "update train_bookings set available_seats = ? where train_number=? and coach_id=? and running_date=?;";
     public static final String ADD_PASSENGER = "insert into \"user\" (id, name, gender, age,seat_number,  user_type) values (?,?,?,?,?,?)";
     public static final String MAP_PASSENGER_TRANSACTION = "insert into transaction_passengers(pnr, passenger)\n" + "values(?,?);";

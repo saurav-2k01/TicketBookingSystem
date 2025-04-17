@@ -48,8 +48,28 @@ public class TrainView {
         boolean trainsDisplayed = showAllTrains();
         if (trainsDisplayed) {
             Integer trainNumber = inputview.getIntegerInput("Enter train number: ");
-            Response response = this.trainController.removeTrain(authenticatedUser, trainNumber);
-            System.out.println(response.getMessage());
+            Integer transactionCount = bookingView.getTransactionsCountByTrainNumber(authenticatedUser, trainNumber);
+            boolean choice = false;
+            if(transactionCount>0){
+                System.out.println("This train may have multiple transaction. All of those transactions will get deleted.");
+                while(!choice){
+                    String choiceInput = inputview.getStringInput(" Do you really want to remove this train ? (y/n)");
+                    if(choiceInput.equalsIgnoreCase("y")){
+                        choice = true;
+                    } else if (Boolean.FALSE.equals(choiceInput.equalsIgnoreCase("N"))) {
+                        System.out.println("Enter a valid input choice.");
+                    }else{
+                        break;
+                    }
+                }
+                if(choice) {
+                    Response response = this.trainController.removeTrain(authenticatedUser, trainNumber);
+                    System.out.println(response.getMessage());
+                }
+            }else{
+                Response response = this.trainController.removeTrain(authenticatedUser, trainNumber);
+                System.out.println(response.getMessage());
+            }
         }
     }
 

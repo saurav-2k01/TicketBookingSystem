@@ -39,4 +39,7 @@ public class BookingController{
         return bookingService.cancelTicket(authenticatedUser, pnr);
     }
 
+    public Response getTransactionsCountByTrainNumber(AuthenticatedUser authenticatedUser, int trainNumber){
+        return bookingService.getTransactionsCountByTrainNumber(authenticatedUser, trainNumber);
+    }
 }

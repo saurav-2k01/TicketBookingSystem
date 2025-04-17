@@ -34,9 +34,9 @@ public class AdminView {
         System.out.println(response.getMessage());
     }
 
-    public void deleteUser(AuthenticatedUser authenticatedUser) {
+    public void deleteAdmin(AuthenticatedUser authenticatedUser) {
         String userName = inputView.getName("Username: ");
-        response = userController.deleteUser(authenticatedUser, userName);
+        response = userController.deleteAdmin(authenticatedUser, userName);
         System.out.println(response.getMessage());
     }
 

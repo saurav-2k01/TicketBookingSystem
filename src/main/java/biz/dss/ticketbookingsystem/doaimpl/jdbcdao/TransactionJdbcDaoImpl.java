@@ -172,6 +172,20 @@ public class TransactionJdbcDaoImpl implements TransactionDao {
         }
     }
 
+    @Override
+    public Optional<Integer> getTransactionsCountByTrainNumber(int trainNumber) throws SQLException {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(SqlQueries.GET_TRANSACTION_COUNT_BY_TRAIN_NUMBER)) {
+            preparedStatement.setInt(1, trainNumber);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                int transactionCount = resultSet.getInt("transaction_count");
+                return Optional.of(transactionCount);
+            }
+            return Optional.empty();
+        }
+    }
+
     private boolean addPassengers(List<User> passengers) throws SQLException {
         boolean status = true;
         try (PreparedStatement preparedStatement = connection.prepareStatement(SqlQueries.ADD_PASSENGER)) {

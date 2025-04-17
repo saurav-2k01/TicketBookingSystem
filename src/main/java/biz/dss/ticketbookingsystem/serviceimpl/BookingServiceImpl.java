@@ -184,14 +184,17 @@ public class BookingServiceImpl implements BookingService {
     public Response cancelTicket(AuthenticatedUser authenticatedUser, int pnr) {
         response = authenticationService.getAuthenticatedUser(authenticatedUser);
         if (Boolean.FALSE.equals(response.isSuccess())) return response;
-//        User user = (User) (response.getData());
+        User user = (User) (response.getData());
 
         Response transactionResponse = getTransaction(authenticatedUser, pnr);
         if (transactionResponse.getStatus().equals(FAILURE)) {
             return transactionResponse;
         }
         Transaction transaction = (Transaction) (transactionResponse.getData());
-        if (transaction.isCancelled()) {
+        if(Boolean.FALSE.equals(transaction.getUser().getId().equals(user.getId()))){
+            response = new Response(pnr, FAILURE, String.format("you don't have any ticket with pnr - %d.", pnr));
+        }
+        else if (transaction.isCancelled()) {
             response = new Response(pnr, FAILURE, "Ticket is already cancelled.");
         } else {
             transaction.setCancelled(true);
@@ -205,4 +208,17 @@ public class BookingServiceImpl implements BookingService {
         return response;
     }
 
+    @Override
+    public Response getTransactionsCountByTrainNumber(AuthenticatedUser authenticatedUser, int trainNumber) {
+        response = authenticationService.getAuthenticatedUser(authenticatedUser);
+        if (Boolean.FALSE.equals(response.isSuccess())) return response;
+        try {
+            Optional<Integer> transactionsCount = transactionDao.getTransactionsCountByTrainNumber(trainNumber);
+            transactionsCount.ifPresent(transactionCount -> response = new Response(transactionCount, SUCCESS, String.format("%d transaction found with train number %d.", transactionCount, trainNumber)));
+        } catch (SQLException e) {
+            log.error("Error occurred while getting transaction count by train number.", e);
+            response = new Response(FAILURE, String.format("could not find any transaction for train number %d", trainNumber));
+        }
+        return response;
+    }
 }
